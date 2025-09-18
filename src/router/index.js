@@ -6,6 +6,7 @@ import DrawerLayout from '../components/DrawerLayout.vue'
 import DashboardHome from '../views/dashboard/DashboardHome.vue'
 import DashboardStats from '../views/dashboard/DashboardStats.vue'
 import DashboardSettings from '../views/dashboard/DashboardSettings.vue'
+import EmpresaView from '../views/dashboard/EmpresaView.vue'
 
 const routes = [
   { path: '/', component: LoginView },
@@ -18,7 +19,8 @@ const routes = [
     children: [
       { path: '', component: DashboardHome },
       { path: 'stats', component: DashboardStats },
-      { path: 'settings', component: DashboardSettings }
+      { path: 'settings', component: DashboardSettings },
+      { path: 'empresa', component: EmpresaView }
     ]
   }
 ]

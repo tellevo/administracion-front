@@ -1,0 +1,92 @@
+<template>
+  <div class="min-h-screen bg-base-100 p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-base-content mb-2">
+          Nueva Empresa
+        </h1>
+        <p class="text-base-content/70">
+          Crea una nueva empresa en el sistema
+        </p>
+      </div>
+      <!-- Breadcrumb -->
+      <div class="text-sm breadcrumbs">
+        <ul>
+          <li>
+            <router-link to="/dashboard" class="text-base-content/60 hover:text-primary">
+              Dashboard
+            </router-link>
+          </li>
+          <li class="text-base-content/60">Nueva Empresa</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto">
+      <!-- Form Card -->
+      <div class="bg-base-100 shadow-xl rounded-2xl border border-base-300 overflow-hidden">
+        <div class="bg-gradient-to-r from-primary to-secondary p-6">
+          <h2 class="text-2xl font-bold text-white mb-2">
+            Información de la Empresa
+          </h2>
+          <p class="text-white/90">
+            Complete los siguientes campos para registrar una nueva empresa
+          </p>
+        </div>
+
+        <!-- Form Container -->
+        <div class="p-8">
+          <EmpresaForm
+            @empresa-created="onEmpresaCreated"
+            @empresa-error="onEmpresaError"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import EmpresaForm from '@/components/EmpresaForm.vue'
+
+const router = useRouter()
+
+const onEmpresaCreated = (empresa) => {
+  console.log('Empresa created successfully:', empresa)
+  // Could show a success toast here and redirect to empresa list
+  // For now, just refresh the form or redirect
+  router.push('/dashboard')
+}
+
+const onEmpresaError = (error) => {
+  console.error('Error creating empresa:', error)
+  // Error handling could be enhanced with toast notifications
+}
+</script>
+
+<style scoped>
+/* Custom animations for the gradient header */
+.bg-gradient-to-r {
+  background: linear-gradient(135deg, theme('colors.primary'), theme('colors.secondary'));
+}
+
+/* Custom breadcrumb styling */
+.breadcrumbs ul li {
+  position: relative;
+}
+
+.breadcrumbs ul li:not(:last-child)::after {
+  content: '/';
+  margin-left: 0.5rem;
+  color: theme('colors.base-content') / 60;
+}
+
+/* Enhanced card shadow */
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
+</style>
