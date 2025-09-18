@@ -1,27 +1,235 @@
-# Logs
-logs
-*.log
+# ============================================================================
+# MAIN CATEGORIES - ORGANIZED BY TYPE
+# ============================================================================
+
+# ================================
+# Java / Maven / Spring Boot Build Artifacts
+# ================================
+target/
+*.class
+*.jar
+!/*.jar  # Keep JARs in root if they are intentional artifacts
+*.war
+*.ear
+*.nar
+*.exe
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Spring Boot
+build/
+spring-boot-cache/
+
+# IDE - Java
+.project
+.classpath
+.settings/
+*.launch
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iwu
+*.ipr
+*.iml
+out/
+.idea_modules/
+*.iml
+*.ipr
+
+# IDE - Eclipse
+.metadata/
+bin/
+*.tmp
+*.bak
+*.swp
+*~
+*#
+
+# IDE - NetBeans
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# IDE - Visual Studio Code
+.vscode/settings.json
+.vscode/launch.json
+
+# ================================
+# Node.js / Frontend Build Artifacts
+# ================================
+# Dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Build outputs
+dist/
+dist-ssr/
+build/
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Frontend specific
+.vuepress/
+.nuxt/
+.next/
+vercel/
+.netlify/
+
+# ================================
+# Database Files
+# ================================
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+*.h2.mv.*
+
+# H2 Database files (in-memory persistence)
+h2database/
+*.dat
+*.lock
+*.trace
+
+# Database backups
+*.bak
+*.backup
+database.db.bak
+
+# ================================
+# Operating System Files
+# ================================
+# Windows
+Thumbs.db
+Thumbs.db.tmp
+Desktop.ini
+*.stackdump
+ehthumbs.db
+ehthumbs_vista.db
+
+# macOS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.DS_Store.tmp
+.SerializedObject
+.AppleDouble
+.LSOverride
+Icon
+
+# Linux
+*~
+
+# ================================
+# Logs & Temporary Files
+# ================================
+logs/
+*.log
+*.log.*
+log/
+tmp/
+temp/
+.tmp/
+.cache/
+.dccache/
+
+# Spring Boot Logs
+logfile.txt
+spring.log
+
+# ================================
+# Configuration Files (Should not be versioned)
+# ================================
+src/main/resources/application-local.properties
+src/main/resources/application-prod.properties
+src/main/resources/application-dev.properties
+backend-admin/src/main/resources/application-local.properties
+backend-admin/src/main/resources/application-prod.properties
+backend-admin/src/main/resources/application-dev.properties
+
+# Environment variables
+.env.local
+.env.development
+.env.test
+.env.production
+
+# ================================
+# Test Artifacts
+# ================================
+test-results/
+test-output/
+test-reports/
+**/target/test-results/
+**/target/test-reports/
+
+# JUnit
+/.test-result.txt
+
+# MockWebServer
+**/build/res/
+**/build/docs/javadoc/
+**/build/docs/sonar/resources/
+
+# ================================
+# Gradle
+# ================================
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# ================================
+# IntelliJ IDEA
+# ================================
+.idea/
+*.iws
+*.iwu
+*.ipr
+*.iml
+out/
+idea/
+*.ipr
+*.iws
+*.iml
+
+# ================================
+# Eclipse
+# ================================
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~
+*#
+
+# ================================
+# NetBeans
+# ================================
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ================================
+# Visual Studio Code
+# ================================
+.vscode/settings.json
+.vscode/launch.json
+
+# ================================
+# AI/Coding Assistant Rules (Existing configurations)
+# ================================
 .clinerules/byterover-rules.md
 .kilocode/rules/byterover-rules.md
 .roo/rules/byterover-rules.md
@@ -30,3 +238,110 @@ dist-ssr
 .kiro/steering/byterover-rules.md
 .qoder/rules/byterover-rules.md
 .augment/rules/byterover-rules.md
+
+# ================================
+# Other Tools & Miscellaneous
+# ================================
+# PuTTY
+*.ppk
+*.psession
+
+# Coverity Scan
+cov-int/
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores vs-code versions used for testing vs-code extensions
+.vscode-test/
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ================================
+# Project Specific
+# ================================
+# TeLlevo specific - Database files
+tellevo_admin.h2.db
+tellevo_auth.h2.db
+
+# Backup files
+*.backup
+*.orig
+*.rej
+
+# Temporary files created by editors
+*.~lock*
+*.#*
+*.swp
+*.tgz
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# SublimeText
+*.sublime-*
+
+# Vim
+*.swo
+*.swp
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Vim
+Session.vim
+Sessionx.vim
+.netrwhist
+*~
+*.swp
+*.tmp
+tags
+* EnderDC
+.DS_Store.tmp
+.AppleDouble
+.LSOverride
+Icon
+.AppleDB
+.AppleDF
+
+# Administration Tools
+.backend-admin-debug.log</parameter>
+
+*target/
