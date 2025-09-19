@@ -159,7 +159,7 @@
 
 <script setup>
 import { ref, computed, reactive, watch, nextTick } from 'vue'
-import axios from 'axios'
+import { api } from '@/services/api'
 
 // Props
 const props = defineProps({
@@ -197,8 +197,6 @@ const isSubmitting = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 
-// API URL - configurable
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
 
 // Regular expression for dominio validation
 const dominioRegex = /^@[a-zA-Z]+\.cl$/
@@ -342,14 +340,10 @@ const submitForm = async () => {
     }
 
     let response
-    const headers = {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json'
-    }
 
     if (isEditMode.value && empresaId.value) {
       // Update existing empresa
-      response = await axios.put(`${API_BASE_URL}/empresas/${empresaId.value}`, requestData, { headers })
+      response = await api.empresas.update(empresaId.value, requestData)
       successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
 
       // Emit update event
@@ -362,7 +356,7 @@ const submitForm = async () => {
       // router.push('/dashboard/empresas')
     } else {
       // Create new empresa
-      response = await axios.post(`${API_BASE_URL}/empresas`, requestData, { headers })
+      response = await api.empresas.create(requestData)
       successMessage.value = response.data.message || 'Empresa creada exitosamente'
 
       // Emit create event

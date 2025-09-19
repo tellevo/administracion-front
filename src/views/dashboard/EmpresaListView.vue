@@ -258,7 +258,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import axios from 'axios'
+import { api } from '@/services/api'
 import { useRouter } from 'vue-router'
 
 // Data
@@ -278,8 +278,6 @@ const deleting = ref(false)
 // Router
 const router = useRouter()
 
-// API URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
 
 // Computed properties
 const filteredEmpresas = computed(() => {
@@ -321,11 +319,7 @@ const loadEmpresas = async () => {
   error.value = ''
 
   try {
-    const response = await axios.get(`${API_BASE_URL}/empresas`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const response = await api.empresas.list()
 
     empresas.value = response.data
   } catch (err) {
@@ -362,11 +356,7 @@ const deleteEmpresa = async () => {
   deleting.value = true
 
   try {
-    await axios.delete(`${API_BASE_URL}/empresas/${empresaToDelete.value.id}`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    await api.empresas.delete(empresaToDelete.value.id)
 
     // Remove from local array
     empresas.value = empresas.value.filter(e => e.id !== empresaToDelete.value.id)

@@ -118,7 +118,7 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import { api } from "@/services/api";
 import { useRouter } from "vue-router";
 import logo from '/logo-tellevo2.png'
 const router = useRouter();
@@ -147,7 +147,7 @@ const register = async () => {
     loading.value = true;
     esError.value = false;
     
-    const response = await axios.post('http://localhost:8080/api/register', {
+    const response = await api.register({
       name: name.value,
       email: email.value,
       password: password.value

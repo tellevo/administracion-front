@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  // Use explicit API URL if provided, otherwise fallback to relative '/api' so Nginx proxy works in prod
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -34,12 +35,14 @@ export const api = {
   login: (credentials) => apiClient.post('/login', credentials),
   health: () => apiClient.get('/health'),
   empresas: {
-    list: () => apiClient.get('/empresa'),
-    get: (id) => apiClient.get(`/empresa/${id}`),
-    create: (data) => apiClient.post('/empresa', data),
-    update: (id, data) => apiClient.put(`/empresa/${id}`, data),
-    delete: (id) => apiClient.delete(`/empresa/${id}`)
-  }
+    list: () => apiClient.get('/empresas'),
+    get: (id) => apiClient.get(`/empresas/${id}`),
+    create: (data) => apiClient.post('/empresas', data),
+    update: (id, data) => apiClient.put(`/empresas/${id}`, data),
+    delete: (id) => apiClient.delete(`/empresas/${id}`)
+  },
+  // Optional: registration endpoint if backend supports it later
+  register: (data) => apiClient.post('/register', data)
 }
 
 export default api
