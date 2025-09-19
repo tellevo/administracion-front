@@ -11,12 +11,12 @@
 - **Transparency**: Clear visualization of positive environmental impact
 
 ### 🏗️ System Architecture Overview
-**ARCHITECTURE_TYPE**: Hybrid Multi-Database
+**ARCHITECTURE_TYPE**: JPA Repository Architecture (Full PostgreSQL Migration)
 **FRONTEND_STACK**: Vue.js 3 + Composition API + Vite + Tailwind/DaisyUI
-**BACKEND_STACK**: Spring Boot 3.x + JWT Security + H2/PostgreSQL Databases
-**KEY_FEATURES**: Real-time Logo Preview, Multi-Database Operations, Reactive Forms, JWT Authentication
+**BACKEND_STACK**: Spring Boot 3.x + JWT Security + PostgreSQL Database + JPA
+**KEY_FEATURES**: Real-time Logo Preview, Company CRUD Operations, Reactive Forms, JWT Authentication
 
-**TECH_IMPLEMENTATION_INSIGHT**: Uses hybrid database architecture where H2 handles authentication and general operations, while PostgreSQL handles empresa-specific data via direct JDBC connections. This design allows for efficient data separation while maintaining clean separation of concerns.
+**TECH_IMPLEMENTATION_INSIGHT**: Migrated to complete JPA Repository pattern with PostgreSQL as primary database. Empresa operations now use Spring Data JPA for type-safe, simplified data access. Authentication handled through Spring Security with in-memory users.
 
 ## 🧠 LLM Context - Technical Reference
 
@@ -110,16 +110,17 @@ CROSS_REFERENCE: EmpresaForm.vue validateField() method
 SIMILAR_USAGE: Login forms, registration forms
 ```
 
-#### JDBC Direct Connection Pattern
+#### JPA Repository Pattern
 ```java
-// Pattern: Direct PostgreSQL connection without JPA overhead
-REASON: Enterprise data isolation and direct control
-PERFORMANCE: High (no ORM overhead)
-MAINTAINABILITY: Medium (SQL handling required)
-SCALING: High (connection pooling automatic)
+// Pattern: Spring Data JPA with PostgreSQL for type-safe data access
+REASON: Simplified data access with auto-generated queries and type safety
+PERFORMANCE: High (connection pooling + optimized queries)
+MAINTAINABILITY: High (no manual SQL, declarative interfaces)
+SCALING: Excellent (connection pooling + database clustering support)
 
-CROSS_REFERENCE: EmpresaService.java getPostgresConnection()
-DEPENDS: PostgreSQL driver in pom.xml
+CROSS_REFERENCE: EmpresaRepository.java extends JpaRepository
+CROSS_REFERENCE: EmpresaService.java uses repository.save(), .findById(), .deleteById()
+DEPENDS: Spring Boot Data JPA starter
 ```
 
 ### ⚡ Performance & Optimization
@@ -177,23 +178,27 @@ DETECT: Browser network tab → CORS error identification
 
 #### Core Component Architecture
 ```
-EmpresaView.vue: Container component, handles routing and events
-  ↓ depends on
-EmpresaForm.vue: Form component, validation + logo preview
-  ↓ depends on
-EmpresaService.java: Backend service, JDBC + PostgreSQL
+EmpresaListView.vue: List component, displays empresas in table + CRUD actions
+  ↓ leads to
+EmpresaView.vue: Container component for create/edit, handles routing + localStorage
+  ↓ contains as
+EmpresaForm.vue: Reusable form component, validation + logo preview (create/edit)
+  ↓ calls
+EmpresaController.java: REST API endpoints (/api/empresas/*)
+  ↓ delegates to
+EmpresaService.java: Business service, JPA Repository operations
+  ↓ uses
+EmpresaRepository.java: Spring Data JPA interface
   ↓ connects to
 PostgreSQL: External database at 192.168.100.14:17432/tellevoappdb
 ```
 
 #### Navigation Flow
 ```
-URL: /dashboard/empresa
-→ Router: index.js route configuration
-→ Component: EmpresaView.vue
-→ Form: EmpresaForm.vue with reactive validation
-→ API: POST /api/empresas via EmpresaService
-→ Database: INSERT INTO empresa (PostgreSQL)
+List Companies: /dashboard/empresas → EmpresaListView.vue → GET /api/empresas → Display table
+Create Company: "Nueva Empresa" button → /dashboard/empresa → EmpresaView.vue with EmpresaForm.vue → POST /api/empresas
+Edit Company: "Editar" button in table → localStorage + router.push(/dashboard/empresa) → EmpresaView.vue → EmpresaForm.vue with pre-filled data → PUT /api/empresas/{id}
+Delete Company: "Eliminar" button in table → Confirmation modal → DELETE /api/empresas/{id}
 ```
 
 ### 📈 Scalability Considerations
@@ -220,9 +225,10 @@ EDP_PEAK_LOAD: 500 concurrent users (H2 in-memory limits)
 ```java
 SECURITY_LEVEL: Medium (JWT tokens, no refresh token)
 STORAGE: localStorage (accessible by JavaScript)
-PROTECTION: HTTP-only settings not configured
+PROTECTION: HTTP-only settings not configured, Bearer token headers
+FILTER_CHAIN: JwtAuthenticationFilter → SecurityContext → @PreAuthorize validation
 RISK: XSS attack could steal tokens
-MITIGATION: Short JWT expiration, route guards
+MITIGATION: Short JWT expiration, route guards, proper CORS configuration
 ```
 
 #### Database Security
@@ -256,28 +262,21 @@ Authentication: JWT + localStorage
 
 ### Arquitectura de Base de Datos
 
-#### Sistema Híbrido de Bases de Datos
-El sistema utiliza una **arquitectura híbrida** de dos bases de datos:
+#### Sistema JPA Repository (PostgreSQL Unificado)
+El sistema utiliza un **enfoque unificado JPA Repository** con PostgreSQL como base de datos primaria:
 
-**H2 Database (Autenticación & General):**
-- ✅ **Uso**: Login, autenticación y operaciones generales
-- ✅ **Tipo**: H2 en memoria (desarrollo)
-- ✅ **Conexión**: `jdbc:h2:mem:tellevo_admin`
-- ✅ **Framework**: Spring Data JPA + Hibernate
-- ✅ **Estado**: Configuración principal de Spring Boot
-
-**PostgreSQL (Nova Empresa Only):**
-- ✅ **Uso**: Gestión exclusiva de empresas
-- ✅ **Tipo**: PostgreSQL externa
+**PostgreSQL Database (Principal):**
+- ✅ **Uso**: Todas las operaciones incluyendo autenticación y empresas
+- ✅ **Tipo**: PostgreSQL externa persistente
 - ✅ **Conexión**: `jdbc:postgresql://192.168.100.14:17432/tellevoappdb`
 - ✅ **Credenciales**: Usuario: `postgres`, Password: `tellevo$`
-- ✅ **Framework**: JDBC directo (sin JPA)
-- ✅ **Estado**: Conexión dedicada para operaciones empresariales
+- ✅ **Framework**: Spring Data JPA + Hibernate
+- ✅ **Estado**: Base de datos principal configurada en application.properties
 
 #### Estructura de la Base de Datos (PostgreSQL)
 ```sql
--- Tabla de empresas (creada automáticamente)
-CREATE TABLE IF NOT EXISTS empresa (
+-- Tabla de empresas (administrada por JPA/Hibernate)
+CREATE TABLE empresa (
     id BIGSERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     codigo_pais VARCHAR(2) NOT NULL DEFAULT 'CL',
@@ -285,16 +284,17 @@ CREATE TABLE IF NOT EXISTS empresa (
     logo_url VARCHAR(500) NOT NULL
 );
 
--- Índice para optimización de consultas
-CREATE INDEX IF NOT EXISTS idx_empresa_dominio ON empresa(dominio);
+-- Índice para optimización de consultas (auto-generado)
+CREATE INDEX idx_empresa_dominio ON empresa(dominio);
 ```
 
 #### Flujo de Operaciones
 ```
-Login & Autenticación → H2 Database (Spring Security)
-Creación de Empresa → PostgreSQL (JDBC Directo)
-Datos Generales → H2 Database (Spring Boot Primary)
-Gestión Empresarial → PostgreSQL (Conexión Dedicada)
+Login & Autenticación → PostgreSQL (Spring Security + JPA)
+Creación de Empresa → PostgreSQL (JPA Repository)
+Edición de Empresa → PostgreSQL (JPA Repository)
+Eliminación de Empresa → PostgreSQL (JPA Repository)
+Listado de Empresas → PostgreSQL (JPA Repository)
 ```
 
 ### Estructura del Proyecto
@@ -302,12 +302,13 @@ Gestión Empresarial → PostgreSQL (Conexión Dedicada)
 src/
 ├── components/          # Componentes reutilizables
 │   ├── charts/         # Componentes de visualización
-│   ├── EmpresaForm.vue # Formulario de empresa con validación y logo preview
+│   ├── EmpresaForm.vue # Formulario de empresa reutilizable (crear/editar)
 │   ├── DashboardSummary.vue
-│   └── DrawerLayout.vue
+│   └── DrawerLayout.vue # Layout principal con navegación
 ├── views/              # Vistas principales
 │   ├── dashboard/      # Módulo dashboard
-│   │   ├── EmpresaView.vue  # Vista de nueva empresa
+│   │   ├── EmpresaView.vue      # Vista de crear/editar empresa
+│   │   ├── EmpresaListView.vue  # Vista de lista de empresas con tabla
 │   │   ├── DashboardHome.vue
 │   │   ├── DashboardStats.vue
 │   │   └── DashboardSettings.vue
@@ -880,8 +881,16 @@ npm run dev
 ### Funcionalidades Implementadas
 - ✅ **Autenticación**: Login con JWT tokens
 - ✅ **Dashboard**: Navegación y UI principal
-- ✅ **Nueva Empresa**: Creación con validación completa y preview de logo
-- ✅ **Bases de Datos**: Configuración híbrida H2 + PostgreSQL
+- ✅ **Gestión de Empresas**:
+  - ✅ **Crear Empresa**: Formulario con validación completa y preview de logo en tiempo real
+  - ✅ **Listar Empresas**: Tabla responsive con logos, búsqueda y filtros
+  - ✅ **Editar Empresa**: Formulario reutilizable con pre-poblado de datos
+  - ✅ **Eliminar Empresa**: Confirmación modal con eliminación segura
+- ✅ **Navegación**: Sidebar con menús "Nueva Empresa" y "Gestionar Empresas"
+- ✅ **Base de Datos**: Migración completa a JPA Repository con PostgreSQL
+- ✅ **API REST**: Endpoints CRUD completos para empresas
+- ✅ **Frontend**: Componentes Vue.js responsive con DaisyUI + Tailwind
+- ✅ **Seguridad**: CORS configurado correctamente para desarrollo
 
 ---
 
@@ -928,11 +937,14 @@ SOLUTION: User should use local/intranet SVG URLs or CORS-enabled sources
 IMPACT: Validation still works, only preview affected
 ```
 
-**3. JWT Authentication Errors:**
+**3. 403 Forbidden on API Requests:**
 ```java
-CAUSE: localStorage token corruption or expiration
-SOLUTION: Clear browser storage, re-login
-PREVENTION: Implement refresh tokens in production
+CAUSE: Missing JwtAuthenticationFilter - JWT tokens not being validated
+SOLUTION: Added JwtAuthenticationFilter to SecurityConfig with proper authorities
+VERIFICATION: Check SecurityContext has ROLE_ADMIN after JWT validation
+FILTER_CHAIN: JwtAuthenticationFilter → UsernamePasswordAuthenticationFilter → Authorization
+
+RECENT_FIX: 2025-09-xx - Added comprehensive JWT authentication support
 ```
 
 **4. PostgreSQL Connection Fails:**
@@ -940,6 +952,14 @@ PREVENTION: Implement refresh tokens in production
 ERROR: "Connection refused"
 FIX: Check postgres.url, postgres.username, postgres.password in application.properties
 VERIFY: Test connection independently: psql -h <host> -p <port> -U postgres tellevoappdb
+```
+
+**5. JPA ddl-auto Production Configuration:**
+```java
+CONFIGURATION: spring.jpa.hibernate.ddl-auto=none
+REASON: Prevents automatic schema modifications in production
+SAFETY: Ensures database schema remains untouched
+PRODUCTION_BEST_PRACTICE: Database schema managed separately via migrations
 ```
 
 ### 🔄 Data Recovery Procedures

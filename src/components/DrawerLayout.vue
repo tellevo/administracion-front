@@ -58,14 +58,14 @@
           </li>
           <li>
             <router-link
-              to="/dashboard/empresa"
+              to="/dashboard/empresas"
               class="flex items-center px-3 py-2 rounded-lg transition-colors"
-              :class="isActive('/dashboard/empresa') ? 'bg-primary text-primary-content font-medium' : 'hover:bg-base-200'"
+              :class="isActive('/dashboard/empresas') ? 'bg-primary text-primary-content font-medium' : 'hover:bg-base-200'"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              Nueva Empresa
+              Gestionar Empresas
             </router-link>
           </li>
         </ul>
@@ -136,13 +136,13 @@
           </li>
           <li>
             <router-link
-              to="/dashboard/empresa"
+              to="/dashboard/empresas"
               class="tooltip tooltip-right flex items-center justify-center p-2 rounded-lg"
-              data-tip="Nueva Empresa"
-              :class="isActive('/dashboard/empresa') ? 'bg-primary text-primary-content' : 'hover:bg-base-200'"
+              data-tip="Gestionar Empresas"
+              :class="isActive('/dashboard/empresas') ? 'bg-primary text-primary-content' : 'hover:bg-base-200'"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </router-link>
           </li>

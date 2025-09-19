@@ -135,7 +135,7 @@
         <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
-        {{ isSubmitting ? 'Creando Empresa...' : 'Crear Empresa' }}
+        {{ isSubmitting ? (isEditMode ? 'Actualizando Empresa...' : 'Creando Empresa...') : (isEditMode ? 'Actualizar Empresa' : 'Crear Empresa') }}
       </button>
     </div>
 
@@ -161,7 +161,7 @@
 import { ref, computed, reactive, watch, nextTick } from 'vue'
 import axios from 'axios'
 
-// Props (if needed for future extensions)
+// Props
 const props = defineProps({
   empresa: {
     type: Object,
@@ -170,7 +170,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['empresa-created', 'empresa-error'])
+const emit = defineEmits(['empresa-created', 'empresa-updated', 'empresa-error'])
 
 // Reactive form data
 const form = reactive({
@@ -215,6 +215,20 @@ const isFormValid = computed(() => {
     isValidSvgUrl.value &&
     imageLoaded.value
   )
+})
+
+const isEditMode = computed(() => {
+  return !!(props.empresa || localStorage.getItem('empresaToEdit'))
+})
+
+const empresaId = computed(() => {
+  if (props.empresa) return props.empresa.id
+  const stored = localStorage.getItem('empresaToEdit')
+  if (stored) {
+    const empresa = JSON.parse(stored)
+    return empresa.id
+  }
+  return null
 })
 
 // Validation functions
@@ -327,25 +341,41 @@ const submitForm = async () => {
       logoUrl: form.logoUrl.trim()
     }
 
-    const response = await axios.post(`${API_BASE_URL}/empresas`, requestData, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
-      }
-    })
+    let response
+    const headers = {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    }
 
-    successMessage.value = response.data.message || 'Empresa creada exitosamente'
+    if (isEditMode.value && empresaId.value) {
+      // Update existing empresa
+      response = await axios.put(`${API_BASE_URL}/empresas/${empresaId.value}`, requestData, { headers })
+      successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
 
-    // Emit success event
-    emit('empresa-created', response.data)
+      // Emit update event
+      emit('empresa-updated', response.data)
 
-    // Reset form after successful submission
-    resetForm()
+      // Clear localStorage after edit
+      localStorage.removeItem('empresaToEdit')
+
+      // Navigate back to list (optional)
+      // router.push('/dashboard/empresas')
+    } else {
+      // Create new empresa
+      response = await axios.post(`${API_BASE_URL}/empresas`, requestData, { headers })
+      successMessage.value = response.data.message || 'Empresa creada exitosamente'
+
+      // Emit create event
+      emit('empresa-created', response.data)
+
+      // Reset form after successful submission
+      resetForm()
+    }
 
   } catch (error) {
-    console.error('Error creating empresa:', error)
+    console.error('Error submitting empresa:', error)
 
-    let errorMsg = 'Error desconocido al crear la empresa'
+    let errorMsg = isEditMode.value ? 'Error desconocido al actualizar la empresa' : 'Error desconocido al crear la empresa'
 
     if (error.response) {
       // Server responded with error
@@ -395,11 +425,20 @@ watch(form, () => {
   errorMessage.value = ''
 })
 
-// Initialize form if empresa prop is provided (for future edit functionality)
+// Initialize form if empresa prop is provided or from localStorage
 if (props.empresa) {
   form.nombre = props.empresa.nombre || ''
   form.dominio = props.empresa.dominio || ''
   form.logoUrl = props.empresa.logoUrl || ''
+
+  if (form.logoUrl) {
+    validateLogoUrl()
+  }
+} else if (localStorage.getItem('empresaToEdit')) {
+  const storedEmpresa = JSON.parse(localStorage.getItem('empresaToEdit'))
+  form.nombre = storedEmpresa.nombre || ''
+  form.dominio = storedEmpresa.dominio || ''
+  form.logoUrl = storedEmpresa.logoUrl || ''
 
   if (form.logoUrl) {
     validateLogoUrl()
