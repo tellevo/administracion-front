@@ -1,0 +1,78 @@
+---
+- name: Conectar a servidor y ejecutar comandos para despliegue de Java
+  hosts: hs # Asegúrate de que 'hs' esté definido en tu inventario de Ansible
+  gather_facts: yes # ¡IMPORTANTE! Esto recopila información del host remoto 'hs'
+                    # para poder usar variables como ansible_facts.user_home.
+
+  vars:
+    # Define la ruta de instalación de Java en el servidor remoto.
+    # Usamos ansible_facts.user_home para que sea dinámico según el usuario de conexión.
+    java_install_path_remote: "/root/java/j24"
+    # Ruta local donde tienes Java 21 instalado para la compilación.
+    # AJUSTA ESTA RUTA si tu instalación local de Java 21 es diferente.
+    java_install_path_local: "/opt/jdk-24" # <-- ACTUALIZADO: Ruta JAVA_HOME para tu máquina local
+    # Ruta donde se copiará el JAR en el servidor remoto.
+    remote_app_destination: "/root/administracion/backend-admin/admin-backend-0.0.1-SNAPSHOT.jar"
+    # Ruta local del JAR compilado.
+    local_jar_source: "/home/goviedo/proyectos/tellevo/administracion/backend-admin/target/admin-backend-0.0.1-SNAPSHOT.jar"
+
+
+  tasks:
+    - name: Compilar el proyecto Java con Maven Wrapper en la máquina local
+      ansible.builtin.command: ./mvnw clean package install # Se actualiza a mvnw
+      args:
+        chdir: /home/goviedo/proyectos/tellevo/administracion/backend-admin
+      delegate_to: localhost # Esta tarea se ejecuta en el controlador de Ansible.
+      run_once: true # Solo ejecutar una vez si 'hs' tiene múltiples hosts.
+      environment: # <--- AÑADIDO: Establece el entorno para esta tarea
+        JAVA_HOME: "{{ java_install_path_local }}"
+        PATH: "{{ java_install_path_local }}/bin:{{ ansible_env.PATH | default('') }}"
+
+
+    - name: Asegurarse de que el directorio de destino exista en el servidor remoto
+      ansible.builtin.file:
+        path: "{{ remote_app_destination | dirname }}" # Obtiene el directorio padre de la ruta del JAR
+        state: directory
+        mode: '0755'
+        owner: root # Ajusta el propietario si necesitas un usuario diferente
+        group: root # Ajusta el grupo si necesitas un grupo diferente
+
+    - name: Copiar el archivo JAR al servidor remoto
+      ansible.builtin.copy:
+        src: "{{ local_jar_source }}"
+        dest: "{{ remote_app_destination }}"
+        owner: root # Asegura que el archivo tenga el propietario correcto en el destino
+        group: root
+        mode: '0644'
+
+    - name: Imprimir la ruta que se usará para JAVA_HOME en el host remoto
+      ansible.builtin.debug:
+        msg: "La ruta JAVA_HOME en el host remoto será: {{ java_install_path_remote }}"
+
+    - name: Verificar la versión de Java en el host remoto
+      ansible.builtin.command: java -version
+      register: java_version_output
+      ignore_errors: yes # Permitir que la tarea no falle si Java no se encuentra inmediatamente
+      environment:
+        # Establece JAVA_HOME y añade su binario al PATH para esta tarea específica.
+        JAVA_HOME: "{{ java_install_path_remote }}"
+        PATH: "{{ java_install_path_remote }}/bin:{{ ansible_env.PATH | default('') }}"
+
+    - name: Imprimir la versión de Java detectada
+      ansible.builtin.debug:
+        # java -version a menudo imprime en stderr, por eso se comprueba stderr primero.
+        msg: "La versión de Java en el host remoto es: {{ java_version_output.stderr | default('No se pudo obtener la versión de Java o Java no está configurado correctamente.') }}"
+
+    - name: Ejecutar la aplicación Java con JAVA_HOME establecido para la sesión
+      ansible.builtin.shell: |
+        # Exporta JAVA_HOME y PATH para esta sesión de shell, asegurando que Java se encuentre.
+        export JAVA_HOME="{{ java_install_path_remote }}"
+        export PATH="$JAVA_HOME/bin:$PATH"
+        # Ejecuta la aplicación. Puedes añadir 'nohup' y '&' si quieres que se ejecute en segundo plano.
+        java -jar {{ remote_app_destination }} &
+        echo "Aplicación Java iniciada en segundo plano."
+      args:
+        executable: /bin/bash # Especifica el shell para asegurar la sintaxis de 'export'.
+      async: 10 # Ejecuta el comando en segundo plano en el host remoto, con un timeout de 10 segundos.
+      poll: 0   # No esperes a que termine el comando (ejecución asíncrona).
+
