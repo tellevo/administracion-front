@@ -4,7 +4,12 @@
 ## 📋 Project Overview & Context
 **TeLlevo** is an eco-friendly administration platform for a carpooling system designed to reduce CO₂ footprint through intelligent ride sharing. This frontend provides management and analysis tools for system administrators.
 
-### 🎯 Business Objectives & Requirements
+### � Production Environment
+- **Domain**: https://admin.tellevoapp.com
+- **Backend API**: https://admin.tellevoapp.com/api
+- **Deployment**: Hostinger with Apache configuration
+
+### �🎯 Business Objectives & Requirements
 - **Sustainability**: Reduce CO₂ emissions by promoting shared rides
 - **Analytics**: Provide insights into usage patterns and environmental impact
 - **Management**: Administrative tools for route optimization and user management
@@ -12,9 +17,58 @@
 
 ### 🏗️ System Architecture Overview
 **ARCHITECTURE_TYPE**: JPA Repository Architecture (Full PostgreSQL Migration)
-**FRONTEND_STACK**: Vue.js 3 + Composition API + Vite + Tailwind/DaisyUI
+**FRONTEND_STACK**: Vue.js 3 + Composition API + Vite + Tailwind/DaisyUI + Bun
 **BACKEND_STACK**: Spring Boot 3.x + JWT Security + PostgreSQL Database + JPA
 **KEY_FEATURES**: Real-time Logo Preview, Company CRUD Operations, Reactive Forms, JWT Authentication
+
+### 🎨 Theme Configuration
+The project uses a custom theme configuration with Tailwind and DaisyUI:
+
+```javascript
+// tailwind.config.js
+theme: {
+  colors: {
+    primary: '#1d4ed8',    // Main brand color
+    secondary: '#4f46e5',  // Secondary brand color
+    accent: '#0ea5e9',     // Accent color
+    neutral: '#3d4451',    // Neutral gray
+    'base-100': '#ffffff', // Background
+    'base-200': '#f8fafc', // Secondary background
+    'base-300': '#f1f5f9', // Tertiary background
+  }
+}
+```
+
+### 🚀 Quick Start
+```bash
+# Install dependencies
+bun install
+
+# Development server
+bun dev
+
+# Production build
+bun run build
+
+# Preview production build
+bun run preview
+
+# Type checking
+bun run typecheck
+
+# Clean build files
+bun run clean
+```
+
+### 💅 Styling Guidelines
+- Use Tailwind utility classes for layout and basic styling
+- Leverage DaisyUI components for consistent UI elements
+- Follow the theme color scheme:
+  - `primary`: Main call-to-action buttons
+  - `secondary`: Alternative actions
+  - `accent`: Highlights and accents
+  - `base-100/200/300`: Background hierarchy
+  - Status colors: `info`, `success`, `warning`, `error`
 
 **TECH_IMPLEMENTATION_INSIGHT**: Migrated to complete JPA Repository pattern with PostgreSQL as primary database. Empresa operations now use Spring Data JPA for type-safe, simplified data access. Authentication handled through Spring Security with in-memory users.
 
@@ -920,6 +974,155 @@ npm run dev
 ---
 
 ## 🔧 Troubleshooting Reference
+
+### Frontend Build Pipeline Memory (Vite 6 + PostCSS + Tailwind/DaisyUI)
+This section documents a build failure that occurred and the permanent fixes applied so it isn’t repeated.
+
+Context
+- Tooling: Vite 6.2.x, Vue 3.5.x, PostCSS 8.5.x, TailwindCSS 3.4.x, DaisyUI 5.x, Bun and Node runtimes
+- Package type: "type": "module" (ESM) in package.json
+- CSS stack: Tailwind + DaisyUI via PostCSS
+- Goal: Stable builds with both Bun and Node
+
+Symptoms Observed
+- Vite build error during CSS transform:
+  [vite:css] Attempted to assign to readonly property.
+- When building with Node:
+  Failed to load PostCSS config: module is not defined in ES module scope
+- Tailwind loader error:
+  [postcss] Cannot find module 'daisyui/src/theming/themes'
+
+Root Causes
+1) CSS transformer/minifier mismatch
+   - Vite 6 supports PostCSS and Lightning CSS. Some plugin pipelines or SFC style transforms can throw when AST objects are frozen and a plugin mutates them.
+   - Relying on defaults and switching engines implicitly can trigger subtle failures.
+
+2) PostCSS config format vs ESM project type
+   - With "type": "module", postcss.config.js must be ESM (export default) instead of CommonJS (module.exports), otherwise Vite fails to load PostCSS config.
+
+3) DaisyUI internal path import in Tailwind config
+   - Importing internal theme path 'daisyui/src/theming/themes' isn’t supported through Tailwind’s loader in all environments. This caused module resolution errors at build time.
+
+Permanent Fix Applied (Do Not Revert)
+A) Force PostCSS for transform and esbuild for CSS minify in Vite:
+- Ensures we stay on a stable, well-supported path in our current stack.
+
+vite.config.js (relevant)
+```js
+export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd())
+  return {
+    plugins: [vue()],
+    css: {
+      // Keep PostCSS as the transformer for compatibility
+      transformer: 'postcss'
+    },
+    // ...
+    build: {
+      target: 'es2015',
+      minify: 'esbuild',
+      // Ensure CSS minification is done by esbuild
+      cssMinify: 'esbuild',
+      // ...
+      sourcemap: mode === 'development',
+      reportCompressedSize: false
+    },
+    esbuild: {
+      platform: 'browser',
+      target: 'esnext',
+      legalComments: 'none'
+    }
+  }
+})
+```
+
+B) PostCSS config converted to ESM:
+- Required because package.json specifies "type": "module".
+
+postcss.config.js
+```js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+C) Avoid DaisyUI internal theme imports:
+- Don’t import 'daisyui/src/theming/themes'. Define desired theme values directly.
+
+tailwind.config.js (relevant)
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./index.html","./src/**/*.{vue,js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1d4ed8',
+        secondary: '#4f46e5',
+        accent: '#0ea5e9',
+        neutral: '#3d4451',
+        'base-100': '#ffffff',
+        'base-200': '#f8fafc',
+        'base-300': '#f1f5f9',
+        info: '#3b82f6',
+        success: '#22c55e',
+        warning: '#f59e0b',
+        error: '#ef4444',
+      },
+    },
+  },
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        light: {
+          primary: '#1d4ed8',
+          secondary: '#4f46e5',
+          accent: '#0ea5e9',
+          neutral: '#3d4451',
+          'base-100': '#ffffff',
+          'base-200': '#f8fafc',
+          'base-300': '#f1f5f9',
+        },
+      },
+    ],
+    base: true,
+    styled: true,
+    utils: true,
+    prefix: "",
+    logs: false,
+    themeRoot: ":root"
+  }
+}
+```
+
+Operational Guidance
+- Verified successful builds with:
+  - Node: npx vite build
+  - Bun: bun run build
+- Preview: bun run preview (default http://localhost:4173)
+- Browserslist warning is informational. To update:
+  npx update-browserslist-db@latest
+
+Guardrails (LLM & Human Editors)
+- Do not remove css.transformer: 'postcss' or switch to Lightning CSS without a full validation pass of the CSS pipeline.
+- Do not change build.cssMinify away from 'esbuild' unless you also validate minifier compatibility with Tailwind/DaisyUI.
+- Keep postcss.config.js as ESM (export default) as long as package.json has "type": "module".
+- Do not import DaisyUI internals (e.g., 'daisyui/src/theming/themes'); define themes directly in tailwind.config.js.
+- Ensure Node >= 18 if using Node to build (Vite 6 requires a modern runtime). Bun builds are also supported.
+
+LLM Memory Tags
+- MEMORY_KEYWORD: TELLEVO_VITE6_CSS_PIPELINE
+- PATTERN: Vite6_PostCSS_EsbuildCSS_Tailwind_DaisyUI_NoInternalImports
+- IF failure contains: "vite:css" or "Attempted to assign to readonly property" THEN:
+  1) Confirm css.transformer: 'postcss'
+  2) Confirm build.cssMinify: 'esbuild'
+  3) Ensure postcss.config.js uses export default
+  4) Verify no DaisyUI internal imports in Tailwind config
+  5) Re-run: npx vite build and bun run build
 
 ### 🚨 Critical Issues & Quick Fixes
 

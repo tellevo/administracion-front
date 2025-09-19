@@ -232,7 +232,11 @@ onMounted(() => {
 
 /* Estilo para tooltips */
 .tooltip::before {
-  @apply bg-neutral text-neutral-content text-xs py-1 px-2 rounded;
+  background-color: #3d4451;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }
 
 /* Asegurar que el SVG herede el color del texto */

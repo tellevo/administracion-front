@@ -254,23 +254,24 @@ const cambiarVista = (tipo) => {
 onMounted(() => cargarDatos('semanal'))
 </script>
 
-<style scoped>
+<style>
 .tab {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stats {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  &:hover {
-    transform: translateY(-2px);
-  }
 }
 
-:deep(.chartjs-render-monitor) {
+.stats:hover {
+  transform: translateY(-2px);
+}
+
+.chartjs-render-monitor {
   font-family: 'Inter', sans-serif;
 }
 
-:deep(canvas) {
+canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;

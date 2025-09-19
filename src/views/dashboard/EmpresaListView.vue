@@ -404,34 +404,41 @@ watch([searchTerm, filterStatus], () => {
 <style scoped>
 /* Custom table styling */
 .table {
-  @apply text-sm;
+  font-size: 0.875rem;
 }
 
 .table th {
-  @apply font-semibold bg-base-200 text-base-content;
+  font-weight: 600;
+  background-color: #f8fafc;
+  color: inherit;
 }
 
 .table td {
-  @apply py-4;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 /* Custom avatar styling for logos */
 .avatar img {
-  @apply object-contain p-1;
+  object-fit: contain;
+  padding: 0.25rem;
 }
 
 /* Modal backdrop blur */
 .modal {
-  @apply bg-black bg-opacity-50 backdrop-blur-sm;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
 }
 
 /* Enhanced badge styling */
 .badge-primary {
-  @apply bg-primary text-primary-content;
+  background-color: #1d4ed8;
+  color: white;
 }
 
 .badge-error {
-  @apply bg-error text-error-content;
+  background-color: #ef4444;
+  color: white;
 }
 
 /* Animation for loading states */

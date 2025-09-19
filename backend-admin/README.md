@@ -6,6 +6,32 @@ Spring Boot backend application for TeLlevo administration frontend.
 
 This is a Spring Boot 3.5.3 application using Java 24 that provides authentication services for the TeLlevo administration frontend.
 
+## 🌍 Environments
+
+### Production
+- **Domain**: https://admin.tellevoapp.com
+- **API Base URL**: https://admin.tellevoapp.com/api
+- **CORS**: Configured for production domain
+- **Security**: JWT authentication with HTTPS
+
+### Development
+- **URL**: http://localhost:8080
+- **API Base URL**: http://localhost:8080/api
+- **CORS**: Configured for local Vue.js development server (port 5173)
+- **Hot Reload**: Enabled for rapid development
+
+### Environment-Specific Configuration
+```properties
+# CORS configuration for both environments
+cors.allowed-origins=http://localhost:5173,https://admin.tellevoapp.com
+cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+cors.allowed-headers=*
+cors.allow-credentials=true
+
+# Profile-specific settings
+spring.profiles.active=${SPRING_PROFILE:dev}
+```
+
 ## What's Implemented
 
 ### ✅ Completed Features
@@ -117,14 +143,21 @@ Health check endpoint.
 The application is configured via `src/main/resources/application.properties`:
 
 ```properties
-# Server runs on port 8080
+# Server configuration
 server.port=8080
 
-# CORS enabled for Vue.js frontend (http://localhost:5173)
-cors.allowed-origins=http://localhost:5173
+# CORS configuration for both environments
+cors.allowed-origins=http://localhost:5173,https://admin.tellevoapp.com
+cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+cors.allowed-headers=*
+cors.allow-credentials=true
 
-# JWT token valid for 24 hours
+# JWT configuration
 jwt.expiration=86400000
+jwt.secret=${JWT_SECRET:mySecretKey123456789012345678901234567890}
+
+# Profile-specific settings
+spring.profiles.active=${SPRING_PROFILE:dev}
 
 # Default admin credentials
 spring.security.user.name=admin

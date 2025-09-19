@@ -463,7 +463,7 @@ if (props.empresa) {
 
 /* Custom focus states */
 input:focus {
-  @apply border-primary;
+  border-color: #1d4ed8;
 }
 
 /* Error shake animation */

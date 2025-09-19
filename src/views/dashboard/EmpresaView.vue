@@ -83,7 +83,7 @@ const onEmpresaError = (error) => {
 <style scoped>
 /* Custom animations for the gradient header */
 .bg-gradient-to-r {
-  background: linear-gradient(135deg, theme('colors.primary'), theme('colors.secondary'));
+  background: linear-gradient(135deg, #1d4ed8, #4f46e5);
 }
 
 /* Custom breadcrumb styling */
@@ -94,7 +94,7 @@ const onEmpresaError = (error) => {
 .breadcrumbs ul li:not(:last-child)::after {
   content: '/';
   margin-left: 0.5rem;
-  color: theme('colors.base-content') / 60;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* Enhanced card shadow */

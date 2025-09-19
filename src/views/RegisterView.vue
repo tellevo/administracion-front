@@ -194,7 +194,8 @@ const register = async () => {
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s;
 }
-.fade-enter, .fade-leave-to {
+
+.fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
 </style>
