@@ -2,8 +2,8 @@ import axios from 'axios'
 
 const apiClient = axios.create({
   // Use explicit API URL if provided, otherwise fallback to relative '/api' so Nginx proxy works in prod
-  //baseURL: import.meta.env.VITE_API_URL || '/api',
-  baseURL: 'https://admin.tellevoapp.com/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+  //baseURL: 'https://admin.tellevoapp.com/api',
   headers: {
     'Content-Type': 'application/json',
   },

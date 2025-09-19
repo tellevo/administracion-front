@@ -1,96 +1,158 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 py-8">
-    <div class="animate-fade-in-up">
-      <div class="card w-96 bg-white shadow-2xl rounded-xl overflow-hidden border border-blue-100">
-        <!-- Header con tema azul -->
-        <div class="bg-gradient-to-r from-blue-500 to-cyan-600 p-6 text-white">
-         <div class="flex items-center justify-center space-x-3">
-  <div class="bg-white/90 p-1.5 rounded-full shadow-sm"> <!-- Fondo blanco con sombra -->
-    <img :src="logo" alt="Logo TeLlevo" class="h-8 w-8 object-contain">
-  </div>
-  <h1 class="text-2xl font-bold">TeLlevo</h1>
-</div>
-          <p class="text-sm text-blue-100 text-center mt-2">Reduce tu huella de CO₂ compartiendo viajes</p>
+  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="flex justify-center items-center space-x-3 mb-6">
+        <div class="bg-white p-3 rounded-full shadow-sm border border-gray-200">
+          <img :src="logo" alt="TeLlevo" class="h-8 w-8">
         </div>
+      </div>
+      <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900">
+        Iniciar Sesión
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Accede a tu panel de administración
+        <span class="block mt-1 text-green-600 font-medium">TeLlevo - Movilidad Sostenible</span>
+      </p>
+    </div>
 
-        <div class="card-body p-6">
-          <h2 class="card-title text-blue-800 mb-4">Iniciar Sesión</h2>
-
-          <form @submit.prevent="login" class="space-y-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text text-blue-700">Correo electrónico</span>
-              </label>
-              <input v-model="username" type="email"
-                class="input input-bordered border-blue-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-200 transition"
-                placeholder="tu@email.com" required />
+    <!-- Form -->
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border border-gray-200">
+        <form @submit.prevent="login" class="space-y-6">
+          <!-- Email Field -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+              Correo Electrónico
+            </label>
+            <div class="relative">
+              <input
+                id="email"
+                v-model="username"
+                type="email"
+                autocomplete="email"
+                required
+                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                placeholder="admin@empresa.com"
+              />
             </div>
+          </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text text-blue-700">Contraseña</span>
-              </label>
-              <input v-model="password" type="password" autocomplete="current-password"
-                class="input input-bordered border-blue-200 focus:border-blue-400 focus:ring-1 focus:ring-blue-200 transition"
-                placeholder="••••••••" required />
-              <label class="label">
-                <a href="#" class="label-text-alt link link-hover text-blue-600">¿Olvidaste tu contraseña?</a>
-              </label>
+          <!-- Password Field -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+              Contraseña
+            </label>
+            <div class="relative">
+              <input
+                id="password"
+                v-model="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                placeholder="••••••••••"
+              />
             </div>
+          </div>
 
-            <div class="form-control mt-6">
-              <button
-                class="btn bg-blue-500 hover:bg-blue-600 border-none text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-                :disabled="loading">
-                <span v-if="loading" class="loading loading-spinner"></span>
-                Ingresar
-                <svg v-if="!loading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd" />
+          <!-- Forgot Password -->
+          <div class="flex items-center justify-between">
+            <div class="text-sm">
+              <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div>
+            <button
+              type="submit"
+              :disabled="loading"
+              class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <span v-if="loading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+              </span>
+              <span v-if="!loading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400 transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
                 </svg>
-              </button>
-            </div>
-          </form>
-
-          <div class="divider text-blue-600 text-sm">continúa con Google</div>
-
-<div class="flex justify-center space-x-4">
-  <button class="btn btn-circle btn-outline border-blue-200 hover:bg-blue-50">
-    <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png" 
-         alt="Google Logo" 
-         class="h-6 w-6" />
-  </button>
-</div>
-
-          <div class="text-center mt-4">
-            <button class="btn btn-link text-blue-600 hover:text-blue-800 text-sm transition-colors"
-              @click="irARegistro">
-              ¿No tienes cuenta? <span class="font-semibold">Regístrate</span>
+              </span>
+              {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
             </button>
           </div>
 
-          <!-- Mensaje de estado con animación -->
-          <transition name="fade">
-            <div v-if="mensaje" :class="{ 'bg-blue-100 text-blue-800': !esError, 'bg-red-100 text-red-800': esError }"
-              class="p-3 rounded-lg mt-4 text-sm flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                  clip-rule="evenodd" />
-              </svg>
-              {{ mensaje }}
+          <!-- Registration Link -->
+          <div class="mt-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300" />
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">¿Nuevo en TeLlevo?</span>
+              </div>
             </div>
-          </transition>
-        </div>
-      </div>
 
-      <!-- Pie de página -->
-      <div class="text-center mt-6 text-blue-600 text-sm">
-        <p>Juntos hemos reducido <span class="font-bold">1,245,678 kg</span> de CO₂ este mes</p>
-        <div class="w-full bg-blue-200 rounded-full h-2 mt-2">
-          <div class="bg-blue-500 h-2 rounded-full" style="width: 78%"></div>
+            <div class="mt-6">
+              <button
+                type="button"
+                @click="irARegistro"
+                class="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                Crear Cuenta Administrativa
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Status Message -->
+        <transition name="fade">
+          <div v-if="mensaje" class="mt-6">
+            <div :class="[
+              'rounded-md p-4 text-sm',
+              esError 
+                ? 'bg-red-50 border border-red-200 text-red-800' 
+                : 'bg-green-50 border border-green-200 text-green-800'
+            ]">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg v-if="esError" class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                  </svg>
+                  <svg v-else class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.407 9.864a.75.75 0 00-1.214.882l2.5 3.5a.75.75 0 001.214 0l4-5.5z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p>{{ mensaje }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="flex items-center justify-center space-x-2">
+          <svg class="h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.407 9.864a.75.75 0 00-1.214.882l2.5 3.5a.75.75 0 001.214 0l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          <p class="text-sm text-green-700 font-medium">
+            Sistema seguro y certificado
+          </p>
+        </div>
+        <div class="mt-2 text-center">
+          <p class="text-xs text-green-600">
+            Hemos reducido <span class="font-semibold">1,245,678 kg</span> de CO₂ este mes
+          </p>
+          <div class="mt-2 bg-green-200 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 78%"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -102,6 +164,7 @@ import { ref } from "vue";
 import { api } from "@/services/api";
 import { useRouter } from "vue-router";
 import logo from '/logo-tellevo2.png'
+
 const router = useRouter();
 const username = ref("");
 const password = ref("");
@@ -149,30 +212,34 @@ const login = async () => {
 };
 </script>
 
-<style>
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+<style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Custom focus styles */
+input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Professional button hover effects */
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: all 0.2s ease-in-out;
 }
 </style>

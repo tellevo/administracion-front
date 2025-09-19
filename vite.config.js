@@ -19,13 +19,13 @@ export default defineConfig(({ command, mode }) => {
     server: {
       host: true,
       port: 5173,
-      proxy: {
+      proxy: env.VITE_API_URL === '/api' ? {
         '/api': {
-          target: env.VITE_API_URL,
+          target: 'http://localhost:8080',
           changeOrigin: true,
-          secure: mode === 'production',
+          secure: false,
         },
-      },
+      } : {},
     },
     optimizeDeps: {
       include: ['vue', 'vue-router', 'axios', 'chart.js', 'vue-chartjs'],
