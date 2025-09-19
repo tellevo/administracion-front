@@ -1,160 +1,287 @@
 <template>
-  <form @submit.prevent="submitForm" class="space-y-6">
-    <!-- Nombre Field -->
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text font-medium">Nombre de la Empresa *</span>
-      </label>
-      <input
-        v-model="form.nombre"
-        type="text"
-        class="input input-bordered"
-        placeholder="Ingrese el nombre de la empresa"
-        :class="{
-          'input-error': errors.nombre,
-          'input-success': form.nombre && !errors.nombre
-        }"
-        @input="validateField('nombre')"
-      />
-      <label v-if="errors.nombre" class="label">
-        <span class="label-text-alt text-error">{{ errors.nombre }}</span>
-      </label>
-    </div>
-
-    <!-- Dominio Field -->
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text font-medium">Dominio *</span>
-        <span class="label-text-alt text-sm text-base-content/60">
-          Debe tener el formato @nombreempresa.cl
-        </span>
-      </label>
-      <input
-        v-model="form.dominio"
-        type="text"
-        class="input input-bordered"
-        placeholder="Ej: @pucv.cl"
-        :class="{
-          'input-error': errors.dominio,
-          'input-success': form.dominio && !errors.dominio
-        }"
-        @input="validateField('dominio')"
-      />
-      <label v-if="errors.dominio" class="label">
-        <span class="label-text-alt text-error">{{ errors.dominio }}</span>
-      </label>
-      <label v-if="form.dominio && !errors.dominio" class="label">
-        <span class="label-text-alt text-success">✓ Formato válido</span>
-      </label>
-    </div>
-
-    <!-- Logo URL Field with Preview -->
-    <div class="form-control">
-      <label class="label">
-        <span class="label-text font-medium">URL del Logo *</span>
-        <span class="label-text-alt text-sm text-base-content/60">
-          Debe terminar en .svg
-        </span>
-      </label>
-      <input
-        v-model="form.logoUrl"
-        type="url"
-        class="input input-bordered"
-        placeholder="https://ejemplo.com/logo.svg"
-        :class="{
-          'input-error': errors.logoUrl,
-          'input-success': form.logoUrl && !errors.logoUrl
-        }"
-        @input="validateLogoUrl"
-      />
-      <label v-if="errors.logoUrl" class="label">
-        <span class="label-text-alt text-error">{{ errors.logoUrl }}</span>
-      </label>
-
-      <!-- Logo Preview -->
-      <div v-if="form.logoUrl && isValidSvgUrl" class="mt-4">
-        <label class="label">
-          <span class="label-text font-medium">Vista Previa del Logo:</span>
-        </label>
-        <div class="border-2 border-dashed border-base-300 rounded-lg p-6 bg-base-200">
-          <div class="flex flex-col items-center space-y-4">
-            <!-- Loading State -->
-            <div v-if="loadingImage" class="flex items-center space-x-2">
-              <div class="loading loading-spinner loading-sm"></div>
-              <span class="text-sm text-base-content/60">Cargando imagen...</span>
+  <div class="w-full">
+    <form @submit.prevent="submitForm" class="space-y-8">
+            
+            <!-- Nombre Field -->
+            <div class="form-control group">
+              <label class="label mb-3">
+                <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
+                  <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg mr-3 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  Nombre de la Empresa
+                  <span class="text-red-500 ml-1">*</span>
+                </span>
+              </label>
+              <div class="relative">
+                <input
+                  v-model="form.nombre"
+                  type="text"
+                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl border-2 transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
+                  placeholder="Ingrese el nombre de la empresa"
+                  :class="{
+                    'border-red-300 bg-red-50 focus:border-red-500': errors.nombre,
+                    'border-green-300 bg-green-50 focus:border-green-500': form.nombre && !errors.nombre
+                  }"
+                  @input="validateField('nombre')"
+                />
+                <div v-if="form.nombre && !errors.nombre" class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <label v-if="errors.nombre" class="label">
+                <span class="label-text-alt text-red-500 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                  {{ errors.nombre }}
+                </span>
+              </label>
             </div>
 
-            <!-- Logo Display -->
-            <div v-else-if="imageLoaded" class="relative">
-              <img
-                :src="form.logoUrl"
-                alt="Logo preview"
-                class="h-20 w-20 object-contain mx-auto border border-base-300 rounded-lg bg-white p-2 shadow-sm"
-                @error="handleImageError"
-                @load="handleImageLoad"
-              />
-              <div class="absolute -top-2 -right-2 bg-success text-success-content rounded-full w-6 h-6 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
+            <!-- Dominio Field -->
+            <div class="form-control group">
+              <label class="label mb-3">
+                <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
+                  <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg mr-3 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                    </svg>
+                  </div>
+                  Dominio de la Empresa
+                  <span class="text-red-500 ml-1">*</span>
+                </span>
+                <div class="badge badge-info badge-sm">
+                  Formato: @nombreempresa.cl
+                </div>
+              </label>
+              <div class="relative">
+                <input
+                  v-model="form.dominio"
+                  type="text"
+                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl border-2 transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
+                  placeholder="Ej: @pucv.cl"
+                  :class="{
+                    'border-red-300 bg-red-50 focus:border-red-500': errors.dominio,
+                    'border-green-300 bg-green-50 focus:border-green-500': form.dominio && !errors.dominio
+                  }"
+                  @input="validateField('dominio')"
+                />
+                <div v-if="form.dominio && !errors.dominio" class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <label v-if="errors.dominio" class="label">
+                <span class="label-text-alt text-red-500 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                  {{ errors.dominio }}
+                </span>
+              </label>
+              <label v-else-if="form.dominio && !errors.dominio" class="label">
+                <span class="label-text-alt text-green-600 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Formato válido
+                </span>
+              </label>
+            </div>
+
+            <!-- Logo URL Field with Preview -->
+            <div class="form-control group">
+              <label class="label mb-3">
+                <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
+                  <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg mr-3 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  URL del Logo
+                  <span class="text-red-500 ml-1">*</span>
+                </span>
+                <div class="badge badge-secondary badge-sm">
+                  Formato: .svg
+                </div>
+              </label>
+              <div class="relative">
+                <input
+                  v-model="form.logoUrl"
+                  type="url"
+                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl border-2 transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
+                  placeholder="https://ejemplo.com/logo.svg"
+                  :class="{
+                    'border-red-300 bg-red-50 focus:border-red-500': errors.logoUrl,
+                    'border-green-300 bg-green-50 focus:border-green-500': form.logoUrl && !errors.logoUrl && isValidSvgUrl
+                  }"
+                  @input="validateLogoUrl"
+                />
+                <div v-if="form.logoUrl && !errors.logoUrl && isValidSvgUrl && imageLoaded" class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Error Messages -->
+              <label v-if="errors.logoUrl" class="label">
+                <span class="label-text-alt text-red-500 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                  {{ errors.logoUrl }}
+                </span>
+              </label>
+              <label v-else-if="form.logoUrl && !isValidSvgUrl" class="label">
+                <span class="label-text-alt text-red-500 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                  La URL debe terminar en .svg
+                </span>
+              </label>
+
+              <!-- Logo Preview Section -->
+              <div v-if="form.logoUrl && isValidSvgUrl" class="mt-6">
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+                  <h4 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Vista Previa del Logo
+                  </h4>
+                  
+                  <div class="flex flex-col items-center space-y-4">
+                    <!-- Loading State -->
+                    <div v-if="loadingImage" class="flex items-center space-x-3 py-8">
+                      <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span class="text-gray-600 font-medium">Cargando imagen...</span>
+                    </div>
+
+                    <!-- Logo Display -->
+                    <div v-else-if="imageLoaded" class="relative group">
+                      <div class="bg-white rounded-2xl p-6 shadow-lg border-2 border-gray-100 group-hover:shadow-xl transition-all duration-300">
+                        <img
+                          :src="form.logoUrl"
+                          alt="Logo preview"
+                          class="h-24 w-24 object-contain mx-auto rounded-lg"
+                          @error="handleImageError"
+                          @load="handleImageLoad"
+                        />
+                      </div>
+                      <div class="absolute -top-2 -right-2 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div v-if="imageLoaded" class="text-center bg-green-50 rounded-xl p-4 border border-green-200">
+                      <p class="text-green-700 font-semibold flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Logo cargado correctamente
+                      </p>
+                      <p class="text-green-600 text-sm mt-1">
+                        El logo está listo para usar
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Examples -->
+              <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <p class="text-sm text-blue-700 font-medium mb-2 flex items-center">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Ejemplo de URL válida:
+                </p>
+                <code class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                  https://cdn.worldvectorlogo.com/logos/universidad-catolica.svg
+                </code>
               </div>
             </div>
 
-            <!-- Success Message -->
-            <div v-if="imageLoaded" class="text-center">
-              <p class="text-sm text-success font-medium">✓ Logo cargado correctamente</p>
-              <p class="text-xs text-base-content/60 mt-1">
-                El logo se ve perfecto para usar
-              </p>
+            <!-- Submit Button -->
+            <div class="form-control pt-6">
+              <button
+                type="submit"
+                class="btn h-16 w-full text-lg font-semibold rounded-xl border-0 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                :class="{
+                  'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white': isFormValid && !isSubmitting,
+                  'bg-gray-300 text-gray-500 cursor-not-allowed': !isFormValid || isSubmitting
+                }"
+                :disabled="!isFormValid || isSubmitting"
+              >
+                <div class="flex items-center justify-center space-x-3">
+                  <div v-if="isSubmitting" class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  <span>
+                    {{ isSubmitting ? (isEditMode ? 'Actualizando Empresa...' : 'Creando Empresa...') : (isEditMode ? 'Actualizar Empresa' : 'Crear Empresa') }}
+                  </span>
+                </div>
+              </button>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Validation Message -->
-      <label v-if="form.logoUrl && !isValidSvgUrl" class="label">
-        <span class="label-text-alt text-error">✗ La URL debe terminar en .svg</span>
-      </label>
+            <!-- Success Message -->
+            <div v-if="successMessage" class="alert bg-green-50 border-green-200 text-green-700 shadow-lg rounded-xl">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-green-800">¡Operación Exitosa!</h3>
+                  <div class="mt-2 text-sm text-green-700">
+                    <p>{{ successMessage }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <!-- Examples -->
-      <label class="label">
-        <span class="label-text-alt text-xs text-base-content/50">
-          Ejemplos válidos: https://cdn.worldvectorlogo.com/logos/universidad-catolica.svg
-        </span>
-      </label>
-    </div>
-
-    <!-- Submit Button -->
-    <div class="form-control pt-4">
-      <button
-        type="submit"
-        class="btn btn-primary btn-lg w-full"
-        :disabled="!isFormValid || isSubmitting"
-      >
-        <span v-if="isSubmitting" class="loading loading-spinner loading-sm"></span>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        {{ isSubmitting ? (isEditMode ? 'Actualizando Empresa...' : 'Creando Empresa...') : (isEditMode ? 'Actualizar Empresa' : 'Crear Empresa') }}
-      </button>
-    </div>
-
-    <!-- Success Message -->
-    <div v-if="successMessage" class="alert alert-success">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <span>{{ successMessage }}</span>
-    </div>
-
-    <!-- Error Message -->
-    <div v-if="errorMessage" class="alert alert-error">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <span>{{ errorMessage }}</span>
-    </div>
-  </form>
+            <!-- Error Message -->
+            <div v-if="errorMessage" class="alert bg-red-50 border-red-200 text-red-700 shadow-lg rounded-xl">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">Error en la Operación</h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <p>{{ errorMessage }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+  </div>
 </template>
 
 <script setup>
@@ -196,7 +323,6 @@ const imageError = ref(false)
 const isSubmitting = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
-
 
 // Regular expression for dominio validation
 const dominioRegex = /^@[a-zA-Z]+\.cl$/
@@ -441,8 +567,50 @@ if (props.empresa) {
 </script>
 
 <style scoped>
-/* Enhance loading spinner animation */
-.loading {
+/* Enhanced background gradient */
+.min-h-screen {
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Enhanced hover effects */
+.group:hover .group-hover\:shadow-xl {
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+/* Custom focus states with enhanced glow */
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 14px 0 rgba(59, 130, 246, 0.15);
+}
+
+/* Enhanced button hover effects */
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading spinner enhancement */
+.animate-spin {
   animation: spin 1s linear infinite;
 }
 
@@ -455,24 +623,85 @@ if (props.empresa) {
   }
 }
 
-/* Custom focus states */
-input:focus {
-  border-color: #1d4ed8;
+/* Success/Error message animations */
+.alert {
+  animation: slideInDown 0.5s ease-out;
 }
 
-/* Error shake animation */
-.input-error {
-  animation: shake 0.5s ease-in-out;
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+/* Enhanced backdrop blur effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-/* Success glow effect */
-.input-success:focus {
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+/* Gradient text enhancement */
+.bg-clip-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Enhanced shadow effects */
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom scrollbar for the page */
+.min-h-screen::-webkit-scrollbar {
+  width: 8px;
+}
+
+.min-h-screen::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.min-h-screen::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border-radius: 4px;
+}
+
+.min-h-screen::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+}
+
+/* Enhanced input field styling */
+.input-bordered {
+  border-width: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-bordered:hover {
+  border-color: #93c5fd;
+}
+
+/* Badge enhancements */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+/* Form control group hover effects */
+.form-control.group:hover .label-text {
+  color: #374151;
+}
+
+/* Enhanced card styling */
+.card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 </style>

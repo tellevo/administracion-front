@@ -337,12 +337,10 @@ const handleImageError = (event, empresaId) => {
 }
 
 const editEmpresa = (empresa) => {
-  // Navigate to edit mode - we'll implement this as a modal or separate view
+  // Navigate to edit mode with query parameter and localStorage
   console.log('Edit empresa:', empresa)
-  // For now, we can pass empresa data through route params or localStorage
-  // Since Vue Router doesn't easily support passing objects, we'll use localStorage
   localStorage.setItem('empresaToEdit', JSON.stringify(empresa))
-  router.push('/dashboard/empresa')
+  router.push('/dashboard/empresa?edit=true')
 }
 
 const confirmDelete = (empresa) => {

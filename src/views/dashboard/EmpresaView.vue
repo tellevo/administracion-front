@@ -50,11 +50,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import EmpresaForm from '@/components/EmpresaForm.vue'
 
 const router = useRouter()
+const route = useRoute()
+
+// Clear localStorage on mount unless coming from edit action
+onMounted(() => {
+  // Only clear if there's no specific edit flag or if we're explicitly creating new
+  if (!route.query.edit) {
+    localStorage.removeItem('empresaToEdit')
+  }
+})
 
 const isEditMode = computed(() => {
   return !!localStorage.getItem('empresaToEdit')
