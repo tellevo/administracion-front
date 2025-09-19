@@ -1140,14 +1140,63 @@ SOLUTION: User should use local/intranet SVG URLs or CORS-enabled sources
 IMPACT: Validation still works, only preview affected
 ```
 
-**3. 403 Forbidden on API Requests:**
-```java
-CAUSE: Missing JwtAuthenticationFilter - JWT tokens not being validated
-SOLUTION: Added JwtAuthenticationFilter to SecurityConfig with proper authorities
-VERIFICATION: Check SecurityContext has ROLE_ADMIN after JWT validation
-FILTER_CHAIN: JwtAuthenticationFilter → UsernamePasswordAuthenticationFilter → Authorization
+**3. Production Build API Routing Error (FIXED 2024-12-19):**
+```javascript
+ISSUE: Frontend making requests to localhost:8080 instead of nginx proxy
+CAUSE: Absolute URL in .env.production pointing to localhost
+SOLUTION: Change VITE_API_URL=/api (relative path) in .env.production
+RESULT: Nginx properly proxies API requests to backend
 
-RECENT_FIX: 2025-09-xx - Added comprehensive JWT authentication support
+.env.production:
+VITE_API_URL=/api  // ← FIXED: Use relative path for nginx proxying
+
+Build & Deploy:
+bun run build  // Creates updated dist/ with relative API paths
+# Deploy dist/ to server and update nginx config
+```
+
+**4. 403 Forbidden on Login Endpoint (FIXED 2024-12-19):**
+```java
+CAUSE: JwtAuthenticationFilter running on all requests including /api/login
+ISSUE: JWT validation attempted before user has a token (during login)
+ERROR: 403 Forbidden on https://admin.tellevoapp.com/api/login
+
+SOLUTION: Updated JwtAuthenticationFilter.java to skip permitAll endpoints
+CODE_FIX: Added path checking before JWT validation
+if (path.equals("/api/login") || path.equals("/api/health") || 
+    path.startsWith("/api/auth/") || request.getMethod().equals("OPTIONS")) {
+    filterChain.doFilter(request, response);
+    return; // Skip JWT validation for these endpoints
+}
+
+DEPLOYMENT: Requires backend recompilation and redeployment
+mvn clean package && redeploy JAR to server
+```
+
+**5. CORS Preflight OPTIONS Requests (FIXED 2024-12-19):**
+```nginx
+ISSUE: Browser making OPTIONS requests that fail with CORS errors
+CAUSE: Nginx not handling preflight requests properly
+
+SOLUTION: Updated nginx.conf with CORS headers
+location /api/ {
+    proxy_pass http://localhost:8080/api/;
+    
+    # Handle CORS preflight requests
+    if ($request_method = 'OPTIONS') {
+        add_header Access-Control-Allow-Origin 'https://admin.tellevoapp.com';
+        add_header Access-Control-Allow-Headers 'Authorization,Content-Type';
+        add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,OPTIONS';
+        add_header Access-Control-Allow-Credentials 'true';
+        return 204;
+    }
+    
+    # Standard CORS headers for actual requests
+    add_header Access-Control-Allow-Origin 'https://admin.tellevoapp.com';
+    add_header Access-Control-Allow-Credentials 'true';
+}
+
+DEPLOYMENT: Copy nginx.conf.corrected to server and reload nginx
 ```
 
 **4. PostgreSQL Connection Fails:**
