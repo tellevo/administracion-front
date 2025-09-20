@@ -11,7 +11,7 @@ public class EmpresaRequest {
     private String nombre;
 
     @NotBlank(message = "El dominio es obligatorio")
-    @Pattern(regexp = "^@[a-zA-Z]+\\.cl$", message = "El dominio debe tener el formato @nombreempresa.cl")
+    @Pattern(regexp = "^@[a-zA-Z0-9.-]+\\.[a-z]{2,}$", message = "El dominio debe tener el formato @empresa.dominio válido (ej: @empresa.cl, @empresa.com)")
     @Size(max = 255, message = "El dominio no puede exceder 255 caracteres")
     private String dominio;
 

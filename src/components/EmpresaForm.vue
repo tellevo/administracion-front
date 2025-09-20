@@ -58,7 +58,7 @@
                   <span class="text-red-500 ml-1">*</span>
                 </span>
                 <div class="badge badge-info badge-sm">
-                  Formato: @nombreempresa.cl
+                  Formato: @empresa.dominio (ej: @empresa.cl, @empresa.com)
                 </div>
               </label>
               <div class="relative">
@@ -324,8 +324,8 @@ const isSubmitting = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 
-// Regular expression for dominio validation
-const dominioRegex = /^@[a-zA-Z]+\.cl$/
+// Regular expression for dominio validation (matches backend pattern)
+const dominioRegex = /^@[a-zA-Z0-9.-]+\.[a-z]{2,}$/
 
 // Computed properties
 const isFormValid = computed(() => {
@@ -336,8 +336,8 @@ const isFormValid = computed(() => {
     !errors.nombre &&
     !errors.dominio &&
     !errors.logoUrl &&
-    isValidSvgUrl.value &&
-    imageLoaded.value
+    isValidSvgUrl.value
+    // Removed: && imageLoaded.value - Allow submission with valid URL format even if image preview fails
   )
 })
 
@@ -374,7 +374,7 @@ const validateField = (field) => {
       if (!form.dominio) {
         errors.dominio = 'El dominio es obligatorio'
       } else if (!dominioRegex.test(form.dominio)) {
-        errors.dominio = 'El dominio debe tener el formato @nombreempresa.cl'
+        errors.dominio = 'El dominio debe tener el formato @empresa.dominio válido (ej: @empresa.cl, @empresa.com)'
       } else if (form.dominio.length > 255) {
         errors.dominio = 'El dominio no puede exceder 255 caracteres'
       } else {
@@ -502,9 +502,20 @@ const submitForm = async () => {
       if (error.response.data && error.response.data.message) {
         errorMsg = error.response.data.message
       } else if (error.response.status === 401) {
-        errorMsg = 'No autorizado. Verifique su sesión.'
+        errorMsg = 'Sesión expirada. Por favor, inicie sesión nuevamente.'
+        // Clear invalid token
+        localStorage.removeItem('token')
+        localStorage.removeItem('usuario')
+        // Optionally redirect to login
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 3000)
+      } else if (error.response.status === 403) {
+        errorMsg = 'Acceso denegado. No tiene permisos para esta operación.'
       } else if (error.response.status === 400) {
-        errorMsg = 'Datos inválidos. Revise la información proporcionada.'
+        errorMsg = 'Datos inválidos. Verifique la información proporcionada.'
+      } else if (error.response.status === 409) {
+        errorMsg = 'El dominio ya está en uso. Elija un dominio diferente.'
       } else if (error.response.status >= 500) {
         errorMsg = 'Error del servidor. Intente nuevamente más tarde.'
       }

@@ -40,6 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String jwt = parseJwt(request);
+            logger.debug("Request path: {} - JWT token: {}", path, jwt != null ? "present" : "null");
+
             if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
                 String username = jwtUtil.getUserNameFromJwtToken(jwt);
 
@@ -52,7 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                logger.debug("Authenticated user: {} with roles: {}", username, authorities);
+                logger.info("✅ Authenticated user: {} with roles: {}", username, authorities);
+            } else if (jwt != null) {
+                logger.warn("❌ Invalid JWT token for path: {}", path);
+            } else {
+                logger.warn("❌ No JWT token found for protected path: {}", path);
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e.getMessage());

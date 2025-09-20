@@ -7,21 +7,21 @@
   vars:
     # Define la ruta de instalación de Java en el servidor remoto.
     # Usamos ansible_facts.user_home para que sea dinámico según el usuario de conexión.
-    java_install_path_remote: "/root/java/j24"
+    java_install_path_remote: "/opt/java/jdk-24"
     # Ruta local donde tienes Java 21 instalado para la compilación.
     # AJUSTA ESTA RUTA si tu instalación local de Java 21 es diferente.
-    java_install_path_local: "/opt/jdk-24" # <-- ACTUALIZADO: Ruta JAVA_HOME para tu máquina local
+    java_install_path_local: "/opt/java/jdk-24" # <-- ACTUALIZADO: Ruta JAVA_HOME para tu máquina local
     # Ruta donde se copiará el JAR en el servidor remoto.
     remote_app_destination: "/root/administracion/backend-admin/admin-backend-0.0.1-SNAPSHOT.jar"
     # Ruta local del JAR compilado.
-    local_jar_source: "/home/goviedo/proyectos/tellevo/administracion/backend-admin/target/admin-backend-0.0.1-SNAPSHOT.jar"
+    local_jar_source: "/home/goviedo/proyectos/tellevo/oficiales/administracion/backend-admin/target/admin-backend-0.0.1-SNAPSHOT.jar"
 
 
   tasks:
     - name: Compilar el proyecto Java con Maven Wrapper en la máquina local
       ansible.builtin.command: ./mvnw clean package install # Se actualiza a mvnw
       args:
-        chdir: /home/goviedo/proyectos/tellevo/administracion/backend-admin
+        chdir: /home/goviedo/proyectos/tellevo/oficiales/administracion/backend-admin
       delegate_to: localhost # Esta tarea se ejecuta en el controlador de Ansible.
       run_once: true # Solo ejecutar una vez si 'hs' tiene múltiples hosts.
       environment: # <--- AÑADIDO: Establece el entorno para esta tarea

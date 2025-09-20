@@ -1,50 +1,9 @@
 server {
+    listen 80;
     server_name admin.tellevoapp.com;
 
-    # Redirect HTTP to HTTPS (enable after SSL setup)
-    # return 301 https://$host$request_uri;
-
-    # Proxy API requests to the backend on port 8080
-    location /api/ {
-        proxy_pass http://localhost:8080/api/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        # Handle CORS preflight requests (OPTIONS)
-        if ($request_method = 'OPTIONS') {
-            add_header Access-Control-Allow-Origin 'https://admin.tellevoapp.com';
-            add_header Access-Control-Allow-Headers 'Authorization,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Range';
-            add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,OPTIONS';
-            add_header Access-Control-Allow-Credentials 'true';
-            return 204;
-        }
-        # Pass through CORS headers from backend
-        proxy_hide_header 'Access-Control-Allow-Origin';
-        proxy_hide_header 'Access-Control-Allow-Headers';
-        proxy_hide_header 'Access-Control-Allow-Methods';
-        proxy_hide_header 'Access-Control-Allow-Credentials';
-        add_header Access-Control-Allow-Origin 'https://admin.tellevoapp.com';
-        add_header Access-Control-Allow-Headers 'Authorization,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Range';
-        add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,OPTIONS';
-        add_header Access-Control-Allow-Credentials 'true';
-    }
-
-    # Proxy everything else to the frontend on port 3000
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/admin.tellevoapp.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/admin.tellevoapp.com/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
+    # Redirect all HTTP to HTTPS
+    return 301 https://$host$request_uri;
 }
 
 server {
@@ -53,49 +12,44 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/admin.tellevoapp.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/admin.tellevoapp.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-    # Proxy API requests to the backend on port 8080
+    # API proxy to backend
     location /api/ {
         proxy_pass http://localhost:8080/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        # Handle CORS preflight requests (OPTIONS)
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
+
+        # Handle CORS preflight
         if ($request_method = 'OPTIONS') {
             add_header Access-Control-Allow-Origin 'https://admin.tellevoapp.com';
-            add_header Access-Control-Allow-Headers 'Authorization,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Range';
-            add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,OPTIONS';
             add_header Access-Control-Allow-Credentials 'true';
+            add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS';
+            add_header Access-Control-Allow-Headers 'Authorization,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Range';
+            add_header Access-Control-Max-Age '1728000';
             return 204;
         }
+
         # Pass through CORS headers from backend
-        proxy_hide_header 'Access-Control-Allow-Origin';
-        proxy_hide_header 'Access-Control-Allow-Headers';
-        proxy_hide_header 'Access-Control-Allow-Methods';
-        proxy_hide_header 'Access-Control-Allow-Credentials';
         add_header Access-Control-Allow-Origin 'https://admin.tellevoapp.com';
-        add_header Access-Control-Allow-Headers 'Authorization,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Range';
-        add_header Access-Control-Allow-Methods 'GET,POST,PUT,DELETE,OPTIONS';
         add_header Access-Control-Allow-Credentials 'true';
+        add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS';
+        add_header Access-Control-Allow-Headers 'Authorization,Content-Type,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Range';
     }
 
-    # Proxy everything else to the frontend on port 3000
+    # Frontend proxy
     location / {
         proxy_pass http://localhost:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
     }
-}
-
-server {
-    if ($host = admin.tellevoapp.com) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    listen 80;
-    server_name admin.tellevoapp.com;
-    return 404; # managed by Certbot
 }
