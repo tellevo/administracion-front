@@ -303,10 +303,20 @@ const sidebarAbierto = ref(true)
 const mobileMenuOpen = ref(false)
 
 const isActive = (path) => {
+  // Exact matching for dashboard routes
   if (path === '/dashboard') {
-    return route.path === path
+    // Dashboard should only be active when at the exact /dashboard path
+    return route.path === '/dashboard'
+  } else if (path === '/dashboard/stats') {
+    return route.path === '/dashboard/stats'
+  } else if (path === '/dashboard/settings') {
+    return route.path === '/dashboard/settings'
+  } else if (path === '/dashboard/empresas') {
+    return route.path === '/dashboard/empresas'
   }
-  return route.path.startsWith(path)
+
+  // Fallback for any other routes
+  return route.path === path
 }
 
 const toggleSidebar = () => {
@@ -355,10 +365,7 @@ onMounted(() => {
   @apply bg-gray-900 text-white text-xs py-1 px-2 rounded;
 }
 
-/* Active link styles */
-.router-link-active {
-  @apply bg-blue-500 text-white shadow-md;
-}
+/* Active link styles handled by isActive function */
 
 /* Smooth transitions */
 * {
