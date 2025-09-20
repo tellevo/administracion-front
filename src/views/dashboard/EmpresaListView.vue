@@ -120,20 +120,137 @@
       <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 sm:p-6 mb-6">
         <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1 w-full lg:w-auto">
-            <!-- Search Input - Mobile Optimized -->
+            <!-- Enhanced Search Component - Modern UX -->
             <div class="form-control flex-1 max-w-full sm:max-w-xs">
-              <div class="input-group">
-                <span class="bg-base-200 border-l border-t border-b border-base-300 rounded-l-lg flex items-center px-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </span>
-                <input
-                  v-model="searchTerm"
-                  type="text"
-                  placeholder="Buscar por nombre o dominio..."
-                  class="input input-bordered border-l-0 flex-1 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+              <div class="relative group">
+                <!-- Floating Label -->
+                <label class="absolute -top-2 left-4 bg-base-100 px-2 text-sm font-medium text-primary z-10 transition-all duration-200">
+                  🔍 Buscar Empresas
+                </label>
+
+                <!-- Enhanced Search Input -->
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-primary transition-colors duration-200 group-focus-within:text-primary group-hover:text-primary/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+
+                  <input
+                    v-model="searchTerm"
+                    type="text"
+                    placeholder="Ej: universidad, empresa.cl, organización..."
+                    class="w-full pl-12 pr-20 py-4 bg-gradient-to-r from-base-100 to-base-50/50 border-2 border-base-300 rounded-xl text-base font-medium placeholder-base-content/40 shadow-md hover:shadow-lg focus:border-primary focus:ring-4 focus:ring-primary/10 hover:border-base-content/50 transition-all duration-300 outline-none"
+                    @keydown.ctrl.k.prevent="focusSearch"
+                    @keydown.cmd.k.prevent="focusSearch"
+                    @focus="onSearchFocus"
+                    @blur="onSearchBlur"
+                  />
+
+                  <!-- Search Hints & Clear -->
+                  <div class="absolute inset-y-0 right-0 pr-4 flex items-center space-x-2">
+                    <kbd class="hidden sm:inline-flex items-center px-2 py-1 text-xs font-semibold text-base-content/60 bg-base-200 rounded-md border border-base-300">
+                      ⌘K
+                    </kbd>
+
+                    <!-- Clear Button -->
+                    <button
+                      v-if="searchTerm"
+                      @click="clearSearch"
+                      class="p-1 rounded-md hover:bg-base-200 transition-colors duration-200"
+                      title="Limpiar búsqueda"
+                    >
+                      <svg class="h-4 w-4 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Smart Contextual Help System -->
+                <div
+                  v-if="searchHelpVisible && !helpDisabled"
+                  class="absolute top-full left-0 right-0 mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl rounded-xl border-2 border-blue-200 z-20 transition-all duration-300"
+                >
+                  <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                      <!-- Dynamic Icon based on context -->
+                      <div v-if="showNoResultsHelp" class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                        <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.634 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                      </div>
+                      <div v-else class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-sm font-semibold text-blue-900">
+                          {{ showNoResultsHelp ? 'No se encontraron resultados' : '💡 Consejos de búsqueda' }}
+                        </h4>
+                        <button
+                          @click="dismissSearchHelp"
+                          class="text-blue-400 hover:text-blue-600 transition-colors duration-200 p-1"
+                          title="Cerrar ayuda"
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                          </svg>
+                        </button>
+                      </div>
+
+                      <!-- Contextual Message -->
+                      <div class="text-sm text-blue-800 mb-3">
+                        <template v-if="showNoResultsHelp">
+                          <span class="font-medium">Intenta con:</span>
+                          <ul class="mt-2 space-y-1">
+                            <li>• Nombre completo: "Universidad Católica"</li>
+                            <li>• Parte del nombre: "universidad"</li>
+                            <li>• Dominio exacto: "ucv.cl"</li>
+                            <li>• Parte del dominio: "@gmail.cl"</li>
+                          </ul>
+                        </template>
+                        <template v-else>
+                          <p>Busca empresas por:
+                            <strong class="bg-blue-200 px-1 rounded">Nombre completo</strong>,
+                            <strong class="bg-blue-200 px-1 rounded">Parte del nombre</strong>,
+                            <strong class="bg-blue-200 px-1 rounded">Dominio (@dominio.cl)</strong>
+                          </p>
+                          <p class="mt-2 text-xs text-blue-600">💡 Presiona <kbd class="bg-blue-200 px-1 rounded text-xs mx-1">⌘K</kbd> para buscar rápido</p>
+                        </template>
+                      </div>
+
+                      <!-- Action Buttons -->
+                      <div class="flex items-center justify-between">
+                        <div class="flex space-x-2">
+                          <button
+                            @click="dismissSearchHelp"
+                            class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors duration-200"
+                          >
+                            Entendido
+                          </button>
+
+                          <button
+                            v-if="!showNoResultsHelp"
+                            @click="toggleSearchHelp"
+                            class="px-3 py-1 text-xs bg-white text-blue-600 border border-blue-200 rounded-md hover:bg-blue-50 transition-colors duration-200"
+                            :title="helpDisabled ? 'Habilitar ayuda' : 'Deshabilitar ayuda'"
+                          >
+                            {{ helpDisabled ? 'Mostrar más tarde' : 'No mostrar más' }}
+                          </button>
+                        </div>
+
+                        <div class="text-xs text-blue-500">
+                          <span v-if="!showNoResultsHelp">{{ helpShowCount }}/3</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -478,6 +595,13 @@ const filterStatus = ref('all')
 const currentPage = ref(1)
 const pageSize = ref(10)
 
+// Search help states
+const showSearchHelp = ref(false)
+const helpDismissed = ref(false)
+const helpDisabled = ref(false)
+const searchFocused = ref(false)
+const helpShowCount = ref(0)
+
 // Modal states
 const showDeleteModal = ref(false)
 const empresaToDelete = ref(null)
@@ -519,6 +643,20 @@ const totalPages = computed(() => {
     ? filteredEmpresas.value.length
     : empresas.value.length
   return Math.ceil(filteredCount / pageSize.value)
+})
+
+// Smart search help computed properties
+const searchHelpVisible = computed(() => {
+  // Show help if not disabled, not dismissed, and either focused or no search results
+  return !helpDisabled.value && (!helpDismissed.value || (searchTerm.value.trim() && filteredEmpresas.value.length === 0))
+})
+
+const showNoResultsHelp = computed(() => {
+  // Show "no results" help when user searched but found nothing
+  return searchTerm.value.trim() && filteredEmpresas.value.filter(empresa =>
+    empresa.nombre.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+    empresa.dominio.toLowerCase().includes(searchTerm.value.toLowerCase())
+  ).length === 0
 })
 
 const uniqueDomains = computed(() => {
@@ -597,9 +735,61 @@ const clearFilters = () => {
   currentPage.value = 1
 }
 
+const clearSearch = () => {
+  searchTerm.value = ''
+}
+
+const focusSearch = () => {
+  // Focus on search input when Ctrl/Cmd + K is pressed
+  const searchInput = document.querySelector('input[placeholder*="Ej: universidad"]')
+  if (searchInput) {
+    searchInput.focus()
+    // Show a subtle indication that search was focused (like a toast notification could be added here)
+  }
+}
+
+// Smart search help methods
+const onSearchFocus = () => {
+  searchFocused.value = true
+
+  if (!helpDismissed.value && !helpDisabled.value) {
+    showSearchHelp.value = true
+  }
+}
+
+const onSearchBlur = () => {
+  searchFocused.value = false
+
+  // Hide help on blur (but keep if user is interacting with help)
+  setTimeout(() => {
+    if (!helpDismissed.value && !helpDisabled.value) {
+      showSearchHelp.value = false
+    }
+  }, 200)
+}
+
+const dismissSearchHelp = () => {
+  helpDismissed.value = true
+  showSearchHelp.value = false
+}
+
+const toggleSearchHelp = () => {
+  helpDisabled.value = !helpDisabled.value
+  if (helpDisabled.value) {
+    showSearchHelp.value = false
+    localStorage.setItem('searchHelpDisabled', 'true')
+  } else {
+    localStorage.removeItem('searchHelpDisabled')
+  }
+}
+
 // Lifecycle
 onMounted(() => {
   loadEmpresas()
+
+  // Check localStorage for user preferences
+  const helpDisabledStored = localStorage.getItem('searchHelpDisabled')
+  helpDisabled.value = helpDisabledStored === 'true'
 })
 
 // Watchers

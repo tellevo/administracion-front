@@ -217,10 +217,20 @@ const isActive = (path) => {
 ```javascript
 // EmpresaListView.vue responsive patterns:
 - Stats Grid: grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
-- Search Bar: flex-1 max-w-xs sm:flex-1 w-full
+- Enhanced Search: Floating label with gradient background + focus-ring
+- Control Shortcuts: ⌘K keyboard shortcuts + clear buttons
 - Action Buttons: btn-circle (mobile) + btn-text (desktop)
 - Data Display: .lg:hidden (cards) + .hidden.lg:block (table)
 - Pagination: join-item (mobile) + btn-group (desktop)
+- UX Enhancements: Help tooltips + real-time search feedback
+
+// New Search Component Features:
+- Floating Label: "🔍 Buscar Empresas" with emoji and primary color
+- Keyboard Shortcuts: Ctrl/Cmd + K for quick search focus
+- Rich Interactions: Hover shadows + focus ring effects
+- Contextual Help: "Ej: universidad, empresa.cl, organización..."
+- Smart Clear Button: Conditional visibility when search term exists
+- Visual Hierarchy: Gradients, shadows, and smooth transitions
 ```
 
 #### Touch-Optimization Guidelines
