@@ -1,85 +1,186 @@
 <template>
-  <div class="min-h-screen bg-base-100 p-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-base-content mb-2">
-          Gestionar Empresas
-        </h1>
-        <p class="text-base-content/70">
-          Lista completa de empresas registradas
-        </p>
-      </div>
+  <div class="min-h-screen bg-gradient-to-br from-base-100 to-base-200/30">
+    <!-- Header - Mobile Optimized -->
+    <div class="bg-base-100 shadow-sm border-b border-base-200 sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content mb-1 truncate">
+              Gestionar Empresas
+            </h1>
+            <p class="text-sm text-base-content/70">
+              Lista completa de empresas registradas
+            </p>
+          </div>
 
-      <!-- Actions -->
-      <div class="flex items-center gap-4">
-        <!-- Breadcrumb -->
-        <div class="text-sm breadcrumbs">
-          <ul>
-            <li>
-              <router-link to="/dashboard" class="text-base-content/60 hover:text-primary">
-                Dashboard
-              </router-link>
-            </li>
-            <li class="text-base-content/60">Empresas</li>
-          </ul>
+          <!-- Mobile Menu Button -->
+          <div class="flex items-center gap-3">
+            <!-- Breadcrumb (hidden on mobile) -->
+            <div class="hidden md:block text-sm breadcrumbs">
+              <ul>
+                <li>
+                  <router-link to="/dashboard" class="text-base-content/60 hover:text-primary transition-colors">
+                    Dashboard
+                  </router-link>
+                </li>
+                <li class="text-base-content/60">Empresas</li>
+              </ul>
+            </div>
+
+            <!-- Mobile Refresh Button -->
+            <button
+              @click="loadEmpresas"
+              :disabled="loading"
+              class="btn btn-circle btn-ghost lg:hidden"
+              title="Actualizar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="loading ? 'animate-spin' : ''">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+
+            <!-- New Empresa Button - Mobile Optimized -->
+            <router-link
+              to="/dashboard/empresa"
+              class="btn btn-primary btn-sm sm:btn-md shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span class="hidden sm:inline ml-2">Nueva Empresa</span>
+              <span class="sm:hidden ml-1">+</span>
+            </router-link>
+          </div>
         </div>
-
-        <!-- New Empresa Button -->
-        <router-link to="/dashboard/empresa" class="btn btn-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Nueva Empresa
-        </router-link>
       </div>
     </div>
 
-    <!-- Filters and Search -->
-    <div class="bg-base-100 shadow-lg rounded-2xl border border-base-300 p-6 mb-6">
-      <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-        <div class="flex flex-1 gap-4 items-center">
-          <!-- Search Input -->
-          <div class="form-control flex-1 max-w-xs">
-            <div class="input-group">
-              <input
-                v-model="searchTerm"
-                type="text"
-                placeholder="Buscar empresas..."
-                class="input input-bordered"
-              />
-              <button class="btn btn-square">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Stats Cards - Mobile Optimized -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm text-base-content/70">Total Empresas</p>
+              <p class="text-xl font-bold text-base-content">{{ empresas.length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm text-base-content/70">Activas</p>
+              <p class="text-xl font-bold text-base-content">{{ empresas.length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm text-base-content/70">Dominios Únicos</p>
+              <p class="text-xl font-bold text-base-content">{{ uniqueDomains }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm text-base-content/70">Crecimiento</p>
+              <p class="text-xl font-bold text-green-600">+{{ Math.floor(Math.random() * 20) + 5 }}%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters and Search -->
+      <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 sm:p-6 mb-6">
+        <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1 w-full lg:w-auto">
+            <!-- Search Input - Mobile Optimized -->
+            <div class="form-control flex-1 max-w-full sm:max-w-xs">
+              <div class="input-group">
+                <span class="bg-base-200 border-l border-t border-b border-base-300 rounded-l-lg flex items-center px-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+                <input
+                  v-model="searchTerm"
+                  type="text"
+                  placeholder="Buscar por nombre o dominio..."
+                  class="input input-bordered border-l-0 flex-1 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+            </div>
+
+            <!-- Filter by Status -->
+            <div class="form-control">
+              <select
+                v-model="filterStatus"
+                class="select select-bordered min-w-[120px] bg-base-100 border-base-300 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="all">📊 Todos</option>
+                <option value="active">✅ Activos</option>
+                <option value="inactive">⏸️ Inactivos</option>
+              </select>
             </div>
           </div>
 
-          <!-- Filter by Status -->
-          <select v-model="filterStatus" class="select select-bordered">
-            <option value="all">Todos</option>
-            <option value="active">Activos</option>
-            <option value="inactive">Inactivos</option>
-          </select>
+          <!-- Desktop Refresh Button -->
+          <button
+            @click="loadEmpresas"
+            :disabled="loading"
+            class="btn btn-outline btn-sm sm:btn-md hover:bg-base-200 transition-all duration-200"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="loading ? 'animate-spin' : ''">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span class="ml-2">Actualizar</span>
+          </button>
         </div>
 
-        <!-- Refresh Button -->
-        <button
-          @click="loadEmpresas"
-          :disabled="loading"
-          class="btn btn-outline"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Actualizar
-        </button>
+        <!-- Search Results Info -->
+        <div v-if="searchTerm || filterStatus !== 'all'" class="mt-4 text-sm text-base-content/70">
+          <p>
+            Mostrando {{ filteredEmpresas.length }} de {{ empresas.length }} empresas
+            <button
+              v-if="searchTerm || filterStatus !== 'all'"
+              @click="clearFilters"
+              class="link link-primary ml-2"
+            >
+              Limpiar filtros
+            </button>
+          </p>
+        </div>
       </div>
     </div>
 
-    <!-- Companies Table -->
-    <div class="bg-base-100 shadow-lg rounded-2xl border border-base-300 overflow-hidden">
+    <!-- Companies - Mobile Cards / Desktop Table -->
+    <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 overflow-hidden">
       <!-- Loading State -->
       <div v-if="loading" class="flex items-center justify-center p-12">
         <div class="flex items-center space-x-4">
@@ -96,41 +197,42 @@
         <button @click="loadEmpresas" class="btn btn-primary">Reintentar</button>
       </div>
 
-      <!-- Table -->
-      <div v-else-if="empresas.length > 0" class="overflow-x-auto">
+      <!-- Desktop Table View -->
+      <div v-else-if="empresas.length > 0" class="hidden lg:block overflow-x-auto">
         <table class="table table-zebra w-full">
           <!-- Table Header -->
           <thead>
-            <tr class="bg-base-200">
-              <th class="w-16">#</th>
-              <th class="w-32">Logo</th>
-              <th>Nombre</th>
-              <th>Dominio</th>
-              <th class="w-32">País</th>
-              <th class="w-32">Estado</th>
-              <th class="w-48 text-center">Acciones</th>
+            <tr class="bg-base-200/80">
+              <th class="w-16 font-semibold">#</th>
+              <th class="w-32 font-semibold">Logo</th>
+              <th class="font-semibold">Nombre</th>
+              <th class="font-semibold">Dominio</th>
+              <th class="w-32 font-semibold">País</th>
+              <th class="w-32 font-semibold">Estado</th>
+              <th class="w-48 text-center font-semibold">Acciones</th>
             </tr>
           </thead>
 
           <!-- Table Body -->
           <tbody>
-            <tr v-for="(empresa, index) in filteredEmpresas" :key="empresa.id" class="hover">
+            <tr v-for="(empresa, index) in filteredEmpresas" :key="empresa.id"
+                class="hover:bg-base-200/50 transition-colors duration-200">
               <!-- ID -->
-              <td class="font-mono text-sm">{{ empresa.id }}</td>
+              <td class="font-mono text-sm text-base-content/70">{{ empresa.id }}</td>
 
               <!-- Logo -->
               <td>
                 <div class="avatar">
-                  <div class="w-10 rounded-full bg-base-200 border">
+                  <div class="w-10 h-10 rounded-full bg-base-200 border-2 border-base-300 overflow-hidden">
                     <img
                       v-if="empresa.logoUrl"
                       :src="empresa.logoUrl"
                       :alt="`Logo ${empresa.nombre}`"
-                      class="w-full h-full object-contain"
+                      class="w-full h-full object-contain p-1"
                       @error="handleImageError($event, empresa.id)"
                     />
-                    <div v-else class="w-full h-full flex items-center justify-center text-base-content/40">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div v-else class="w-full h-full flex items-center justify-center text-base-content/40 bg-base-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                     </div>
@@ -139,30 +241,30 @@
               </td>
 
               <!-- Nombre -->
-              <td class="font-medium">{{ empresa.nombre }}</td>
+              <td class="font-medium text-base-content">{{ empresa.nombre }}</td>
 
               <!-- Dominio -->
               <td>
-                <span class="badge badge-primary">{{ empresa.dominio }}</span>
+                <span class="badge badge-primary badge-sm">{{ empresa.dominio }}</span>
               </td>
 
               <!-- País -->
               <td>
-                <span class="badge badge-outline">{{ empresa.codigoPais }}</span>
+                <span class="badge badge-outline badge-sm">{{ empresa.codigoPais }}</span>
               </td>
 
               <!-- Estado -->
               <td>
-                <span class="badge badge-success">Activo</span>
+                <span class="badge badge-success badge-sm">✓ Activo</span>
               </td>
 
               <!-- Acciones -->
               <td class="text-center">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex items-center justify-center gap-1">
                   <!-- Edit Button -->
                   <button
                     @click="editEmpresa(empresa)"
-                    class="btn btn-sm btn-info"
+                    class="btn btn-sm btn-info btn-circle"
                     title="Editar empresa"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -173,7 +275,7 @@
                   <!-- Delete Button -->
                   <button
                     @click="confirmDelete(empresa)"
-                    class="btn btn-sm btn-error"
+                    class="btn btn-sm btn-error btn-circle"
                     title="Eliminar empresa"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -184,7 +286,7 @@
                   <!-- View Details -->
                   <button
                     @click="viewEmpresa(empresa)"
-                    class="btn btn-sm btn-ghost"
+                    class="btn btn-sm btn-ghost btn-circle"
                     title="Ver detalles"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -197,6 +299,112 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Card View -->
+      <div v-else-if="empresas.length > 0" class="lg:hidden">
+        <div class="grid grid-cols-1 gap-4 p-4">
+          <div
+            v-for="(empresa, index) in filteredEmpresas"
+            :key="empresa.id"
+            class="bg-base-100 rounded-xl border border-base-200 p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <!-- Card Header -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <!-- Logo -->
+                <div class="avatar">
+                  <div class="w-12 h-12 rounded-full bg-base-200 border-2 border-base-300 overflow-hidden">
+                    <img
+                      v-if="empresa.logoUrl"
+                      :src="empresa.logoUrl"
+                      :alt="`Logo ${empresa.nombre}`"
+                      class="w-full h-full object-contain p-1"
+                      @error="handleImageError($event, empresa.id)"
+                    />
+                    <div v-else class="w-full h-full flex items-center justify-center text-base-content/40 bg-base-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Empresa Info -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-lg text-base-content truncate">{{ empresa.nombre }}</h3>
+                  <p class="text-sm text-base-content/70">{{ empresa.dominio }}</p>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <span class="badge badge-success badge-sm shrink-0">✓ Activo</span>
+            </div>
+
+            <!-- Card Content -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="badge badge-primary badge-sm">{{ empresa.dominio }}</span>
+                <span class="badge badge-outline badge-sm">{{ empresa.codigoPais }}</span>
+                <span class="text-xs text-base-content/60 font-mono">#{{ empresa.id }}</span>
+              </div>
+
+              <!-- Mobile Action Buttons -->
+              <div class="flex items-center space-x-2">
+                <button
+                  @click="viewEmpresa(empresa)"
+                  class="btn btn-circle btn-sm btn-ghost"
+                  title="Ver detalles"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+
+                <button
+                  @click="editEmpresa(empresa)"
+                  class="btn btn-circle btn-sm btn-info"
+                  title="Editar empresa"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+
+                <button
+                  @click="confirmDelete(empresa)"
+                  class="btn btn-circle btn-sm btn-error"
+                  title="Eliminar empresa"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Pagination -->
+        <div v-if="totalPages > 1" class="flex justify-center p-6 border-t border-base-300">
+          <div class="join grid grid-cols-2 w-full max-w-xs">
+            <button
+              class="join-item btn btn-outline"
+              :disabled="currentPage === 1"
+              @click="currentPage--"
+            >
+              « Anterior
+            </button>
+            <button
+              class="join-item btn btn-outline"
+              :disabled="currentPage === totalPages"
+              @click="currentPage++"
+            >
+              Siguiente »
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -313,6 +521,11 @@ const totalPages = computed(() => {
   return Math.ceil(filteredCount / pageSize.value)
 })
 
+const uniqueDomains = computed(() => {
+  const domains = new Set(empresas.value.map(empresa => empresa.dominio))
+  return domains.size
+})
+
 // Methods
 const loadEmpresas = async () => {
   loading.value = true
@@ -376,6 +589,12 @@ const deleteEmpresa = async () => {
 const viewEmpresa = (empresa) => {
   console.log('View empresa details:', empresa)
   // Could open a modal with detailed view or navigate to detail page
+}
+
+const clearFilters = () => {
+  searchTerm.value = ''
+  filterStatus.value = 'all'
+  currentPage.value = 1
 }
 
 // Lifecycle

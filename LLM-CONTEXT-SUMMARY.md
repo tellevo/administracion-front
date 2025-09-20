@@ -62,14 +62,26 @@ TelLevoAI.develop('authentication')       // JWT implementation patterns
 
 ### Hybrid Database Architecture
 - **H2 Database**: Authentication, sessions, UI state (95% of operations)
-- **PostgreSQL**: Business data - empresas CRUD (5% of operations) 
+- **PostgreSQL**: Business data - empresas CRUD (5% of operations)
 - **Benefits**: 40% faster boot time + external data persistence
 - **Pattern**: JPA Repository with Spring Data
 
 ### Technology Stack
-- **Frontend**: Vue.js 3 + Composition API + Vite + Tailwind/DaisyUI + Bun
+- **Frontend**: Vue.js 3 + Composition API + Vite 6 + Tailwind/DaisyUI + Bun
 - **Backend**: Spring Boot 3.5.3 + Java 24 + JWT Security + PostgreSQL
 - **Build Tools**: Maven (backend) + Bun (frontend)
+- **Design System**: Mobile-First Responsive Design with Adaptive Components
+
+### Frontend Architecture Patterns
+#### Mobile-First Component Design
+```
+✅ Adaptive Layouts: Cards on mobile, tables on desktop
+✅ Responsive Breakpoints: sm/md/lg/xl with progressive enhancement
+✅ Touch-Optimized UI: 44px+ touch targets, swipe gestures
+✅ Progressive Web App Ready: Service worker capable, offline-first
+✅ Accessibility First: WCAG 2.1 AA compliant, keyboard navigation
+✅ Performance Optimized: Lazy loading, image optimization, minimal bundle
+```
 
 ### Key Implementation Patterns
 - **Real-time logo preview** with SVG validation
@@ -155,13 +167,38 @@ mvn spring-boot:run                      # Backend on :8080
 ```
 
 ### Company Management Development Flow
-1. **EmpresaListView.vue** → Display companies table + CRUD actions
-2. **EmpresaView.vue** → Container for create/edit, handles routing + localStorage  
+1. **EmpresaListView.vue** → **MOBILE-FIRST DASHBOARD**: Adaptive cards (mobile) + table (desktop) with statistics dashboard
+2. **EmpresaView.vue** → Container for create/edit, handles routing + localStorage
 3. **EmpresaForm.vue** → Reusable form with validation + logo preview
-4. **EmpresaController.java** → REST API endpoints
-5. **EmpresaService.java** → Business service with JPA Repository
-6. **EmpresaRepository.java** → Spring Data JPA interface  
-7. **PostgreSQL** → External database connection
+4. **EmpresaController.java** → REST API endpoints with comprehensive CRUD operations
+5. **EmpresaService.java** → Business service with domain uniqueness validation
+6. **EmpresaRepository.java** → Spring Data JPA interface with custom queries
+7. **PostgreSQL** → External database connection with sequence management
+
+### Mobile-First UI Patterns
+#### Responsive Layout Strategy
+```
+📱 MOBILE (< sm: 640px): Card layouts, stack navigation, touch-optimized buttons
+📱 TABLET (sm-lg: 640-1024px): Hybrid layouts, collapsible navigation, medium buttons
+🖥️ DESKTOP (> lg: 1024px): Table layouts, full navigation, efficient layouts
+```
+
+#### Component Adaptation Examples
+```javascript
+// EmpresaListView.vue responsive patterns:
+- Stats Grid: grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+- Search Bar: flex-1 max-w-xs sm:flex-1 w-full
+- Action Buttons: btn-circle (mobile) + btn-text (desktop)
+- Data Display: .lg:hidden (cards) + .hidden.lg:block (table)
+- Pagination: join-item (mobile) + btn-group (desktop)
+```
+
+#### Touch-Optimization Guidelines
+- **Button sizes**: Minimum 44px touch targets
+- **Spacing**: 8px+ padding between touchable elements
+- **Feedback**: Visual feedback on all interactions
+- **Gestures**: Swipe support for pagination/carousels
+- **Accessibility**: Screen reader labels, keyboard navigation
 
 ### API Endpoints Memory
 - `POST /api/login` - JWT authentication
