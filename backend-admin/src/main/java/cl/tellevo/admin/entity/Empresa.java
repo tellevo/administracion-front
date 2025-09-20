@@ -24,7 +24,6 @@ public class Empresa {
     private String codigoPais;
 
     @NotBlank(message = "El dominio es obligatorio")
-    @Pattern(regexp = "^@[a-zA-Z]+\\.cl$", message = "El dominio debe tener el formato @nombreempresa.cl")
     @Size(max = 255, message = "El dominio no puede exceder 255 caracteres")
     @Column(name = "dominio", nullable = false, length = 255, unique = true)
     private String dominio;
