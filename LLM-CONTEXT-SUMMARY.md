@@ -161,19 +161,49 @@ The system successfully demonstrated:
 ### Project Setup
 ```bash
 bun install                              # Install frontend dependencies
-bun dev                                  # Frontend on :5174  
+bun dev                                  # Frontend on :5174
 mvn spring-boot:run                      # Backend on :8080
 # Default login: admin@tellevoapp.cl / admin123
+```
+
+### Navigation & Component Architecture
+#### Fixed Navigation Active State Logic
+**Issue Fixed:** Dashboard button was always active due to incorrect startsWith logic
+```javascript
+// BEFORE (Broken):
+const isActive = (path) => {
+  return route.path.startsWith(path)  // ❌ Dashboard active on all child routes
+}
+
+// AFTER (Fixed):
+const isActive = (path) => {
+  if (path === '/dashboard') return route.path === '/dashboard'     // ✅ Exact match
+  if (path === '/dashboard/stats') return route.path === '/dashboard/stats'
+  if (path === '/dashboard/settings') return route.path === '/dashboard/settings'
+  if (path === '/dashboard/empresas') return route.path === '/dashboard/empresas'
+  return route.path === path
+}
+```
+
+#### Responsive Layout Strategy
+**Mobile-First Design Implementation:**
+```javascript
+// DrawerLayout.vue responsive patterns:
+- Mobile Menu: lg:hidden (mobile slides in)
+- Desktop Sidebar: hidden lg:flex (persistent on desktop)
+- Active Navigation: Manual class binding with exact route matching
+- Touch Optimization: 44px+ touch targets for mobile interactions
 ```
 
 ### Company Management Development Flow
 1. **EmpresaListView.vue** → **MOBILE-FIRST DASHBOARD**: Adaptive cards (mobile) + table (desktop) with statistics dashboard
 2. **EmpresaView.vue** → Container for create/edit, handles routing + localStorage
 3. **EmpresaForm.vue** → Reusable form with validation + logo preview
-4. **EmpresaController.java** → REST API endpoints with comprehensive CRUD operations
-5. **EmpresaService.java** → Business service with domain uniqueness validation
-6. **EmpresaRepository.java** → Spring Data JPA interface with custom queries
-7. **PostgreSQL** → External database connection with sequence management
+4. **DrawerLayout.vue** → Fixed navigation component with proper active state handling
+5. **EmpresaController.java** → REST API endpoints with comprehensive CRUD operations
+6. **EmpresaService.java** → Business service with domain uniqueness validation
+7. **EmpresaRepository.java** → Spring Data JPA interface with custom queries
+8. **PostgreSQL** → External database connection with sequence management
 
 ### Mobile-First UI Patterns
 #### Responsive Layout Strategy

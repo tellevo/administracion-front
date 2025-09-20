@@ -1132,14 +1132,39 @@ LLM Memory Tags
 
 ### 🚨 Critical Issues & Quick Fixes
 
-**1. Backend Won't Start:**
+**1. Navigation Active Button Always Shows Dashboard:**
+```javascript
+ISSUE: Dashboard button always appears active when navigating to other pages
+SOLUTION: Fixed isActive function in DrawerLayout.vue to use exact route matching
+
+// OLD (Broken):
+const isActive = (path) => {
+  if (path === '/dashboard') return route.path === path
+  return route.path.startsWith(path)  // ❌ Wrong - affects ALL children
+}
+
+// NEW (Fixed):
+const isActive = (path) => {
+  if (path === '/dashboard') return route.path === '/dashboard'     // ✅ Exact match
+  if (path === '/dashboard/stats') return route.path === '/dashboard/stats'
+  if (path === '/dashboard/settings') return route.path === '/dashboard/settings'
+  if (path === '/dashboard/empresas') return route.path === '/dashboard/empresas'
+  return route.path === path
+}
+
+IMPACT: Only current page button appears active
+FILES: src/components/DrawerLayout.vue
+RESOLUTION: Navigation now properly highlights active page
+```
+
+**2. Backend Won't Start:**
 ```bash
 # Check: Docker/PGSQL connection
 # Fix: Ensure PostgreSQL is running: psql -h 192.168.100.14 -p 17432 -U postgres tellevoappdb
 # Alternative: Verify network connectivity to 192.168.100.14
 ```
 
-**2. Frontend Logo Preview Fails:**
+**3. Frontend Logo Preview Fails:**
 ```javascript
 ISSUE: CORS policy blocks external SVG fetching
 SOLUTION: User should use local/intranet SVG URLs or CORS-enabled sources
