@@ -179,58 +179,73 @@ class TelLevoLLMContextMemory {
 
       // Streaming Ventas Dashboard Memory
       streamingVentas: {
-        architecture: "Full-stack gRPC-WebSocket real-time streaming proxy",
+        architecture: "Full-stack gRPC-WebSocket real-time streaming proxy with critical external dependency",
+        criticalDependency: "REQUIRES ACTIVE gRPC SERVER on localhost:9090 for WebSocket connections to stay alive",
+        connectionStability: {
+          issue: "WebSocket connections are NOT permanent - depend entirely on gRPC server availability",
+          rootCause: "VentasWebSocketHandler closes WebSocket when gRPC stream ends (onCompleted/onError)",
+          failurePattern: "gRPC disconnect → WebSocket close → aggressive reconnection (1-32s cycles) → repeat failure",
+          symptoms: "Connection status constantly switching between connecting/disconnected",
+          impact: "Users see perpetual 'connecting' status when gRPC server is unavailable"
+        },
         components: ["VentasStreamView", "StreamStatusIndicator", "VentasStreamCard", "VentasStreamTable", "SortIndicator"],
         technologies: "Spring Boot WebSocket + gRPC Client + Vue.js Composition API + real-time dashboard",
         mobileFirstUx: "Responsive card layouts (mobile) + sortable tables (desktop) + live status indicators",
         realTimeFeatures: [
-          "Auto-reconnecting WebSocket with exponential backoff",
-          "Live connection status indicators",
+          "Auto-reconnecting WebSocket with exponential backoff (30s heartbeat, 5 max retries)",
+          "Live connection status indicators (connecting/connected/disconnected)",
           "Pause/resume streaming controls",
           "Advanced filtering (company/email/time ranges)",
           "Auto-scroll management with user controls",
-          "Real-time statistics dashboard"
+          "Real-time statistics dashboard (total/velocity/last sale)"
         ],
         dataFlow: "gRPC server (localhost:9090) → gRPC client → WebSocket handler → JSON conversion → Vue real-time updates",
         configuration: "Environment variables GRPC_VENTAS_HOST/GRPC_VENTAS_PORT (default localhost:9090)",
         navigation: "Fully integrated in DrawerLayout (mobile hamburger → desktop sidebar → collapsed icons)",
         backendFeatures: [
-          "Spring Boot WebSocket handler with authentication bypass",
-          "gRPC client with protobuf compilation",
-          "Health checks (/api/grpc/health endpoint)",
-          "Comprehensive error handling and logging",
-          "Connection pooling and timeout management"
+          "Spring Boot WebSocket handler with authentication bypass (/ws/ventas endpoint)",
+          "gRPC client with protobuf compilation and channel management",
+          "Health checks (/api/grpc/health endpoint - checks gRPC server connectivity)",
+          "Comprehensive error handling and logging with session tracking",
+          "Connection pooling and timeout management (10s connection timeout)"
         ],
         frontendFeatures: [
-          "Vue 3 Composition API with reactive updates",
-          "Debounced operations and virtual scrolling",
+          "Vue 3 Composition API with reactive updates and lifecycle management",
+          "Debounced operations and virtual scrolling for performance",
           "Clipboard integration and responsive controls",
-          "Memory management (1K item limit)",
-          "Accessibility-first design (WCAG 2.1 AA)"
+          "Memory management (1K item limit) and cleanup on unmount",
+          "Accessibility-first design (WCAG 2.1 AA) with proper focus management"
         ],
         performanceOptimizations: [
-          "Virtual scrolling for table performance",
-          "Debounced search and filtering",
-          "Heartbeat monitoring for connection health",
+          "Virtual scrolling for table performance with large datasets",
+          "Debounced search and filtering (300ms delay)",
+          "Heartbeat monitoring (30s interval) for connection health",
           "Memory cleanup and event listener management",
           "Lazy loading and progressive enhancement"
         ],
-        dataValidation: "{id, email, nombre_empresa, fecha_envio} with strict type validation",
+        dataValidation: "{id: number, email: string, nombre_empresa: string, fecha_envio: ISO string} with strict type validation",
         errorHandling: [
-          "Graceful gRPC server disconnection handling",
-          "WebSocket reconnection with user feedback",
-          "Connection timeout and retry logic",
-          "Server error reporting to frontend",
-          "Feedforward error prevention"
+          "Graceful gRPC server disconnection handling with session cleanup",
+          "WebSocket reconnection with user feedback and exponential backoff",
+          "Connection timeout and retry logic (max 5 attempts)",
+          "Server error reporting to frontend with user-friendly messages",
+          "Feedforward error prevention with health checks"
         ],
         route: "/dashboard/ventas-stream with Vue Router integration",
-        websocketUrl: "ws://localhost:8080/ws/ventas (bypasses authentication)",
+        websocketUrl: "ws://localhost:8080/ws/ventas (bypasses authentication for real-time data)",
         debugFeatures: [
-          "Complete logging pipeline",
-          "Health check endpoint at /api/grpc/health",
-          "Detailed stream event logging",
-          "Connection status monitoring",
-          "Browser console debug information"
+          "Complete logging pipeline with session IDs and timestamps",
+          "Health check endpoint at /api/grpc/health for connectivity testing",
+          "Detailed stream event logging (connection open/close/message)",
+          "Connection status monitoring and heartbeat tracking",
+          "Browser console debug information with connection info getter"
+        ],
+        troubleshooting: [
+          "Check if gRPC server is running on localhost:9090",
+          "Verify GRPC_VENTAS_HOST and GRPC_VENTAS_PORT environment variables",
+          "Check /api/grpc/health endpoint for server connectivity",
+          "Review browser console for WebSocket connection errors",
+          "Ensure gRPC service has proper protobuf compilation"
         ]
       }
     };

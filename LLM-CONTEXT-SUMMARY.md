@@ -157,7 +157,11 @@ The system successfully demonstrated:
 - **Files**: .env.production, nginx.conf, ecosystem.config.cjs
 
 ### Streaming Ventas Dashboard (`TELLEVO_VENTAS_STREAMING`)
-- **Architecture**: Full-stack gRPC-WebSocket real-time streaming proxy
+- **Architecture**: Full-stack gRPC-WebSocket real-time streaming proxy with dependency on external gRPC server
+- **CRITICAL DEPENDENCY**: Requires gRPC server running on `localhost:9090` (configurable via GRPC_VENTAS_HOST/GRPC_VENTAS_PORT)
+- **Connection Stability Issue**: WebSocket connections are NOT permanent - they depend entirely on gRPC server availability
+- **Failure Pattern**: When gRPC server disconnects, WebSocket closes immediately and attempts aggressive reconnection (1-2 second cycles)
+- **Root Cause**: `VentasWebSocketHandler.onCompleted()` and `onError()` methods close WebSocket when gRPC stream ends
 - **Mobile-First UX**: Responsive card layouts (mobile) + sortable tables (desktop) + live updates
 - **Real-time Features**: Auto-reconnecting WebSocket, live status indicators, pause/resume controls, advanced filtering (company/email/time), auto-scroll management
 - **Configuration**: Environment variables GRPC_VENTAS_HOST/GRPC_VENTAS_PORT with customizable defaults
