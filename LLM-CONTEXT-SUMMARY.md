@@ -174,6 +174,194 @@ The system successfully demonstrated:
 - **Solutions**: Use relative API paths, update JWT filter, configure nginx CORS
 - **Files**: .env.production, nginx.conf, ecosystem.config.cjs
 
+### WebSocket Connection Fixes (`TELLEVO_WEBSOCKET_PROTOCOL_FIX`)
+**Issue Fixed:** WebSocket protocol detection and hostname validation failures
+
+**PROBLEMS:**
+1. **Protocol Issue**: Production WebSocket was using WSS instead of WS
+2. **Hostname Detection**: Vue app environment returned empty hostname, breaking URL generation
+
+**SOLUTIONS:**
+
+**1. Secure Protocol Override:**
+```javascript
+shouldUseSecureWebSocket(backendHost) {
+  const nonSecureHosts = [
+    'admin.tellevoapp.com', // Production server needs WS instead of WSS
+  ]
+  return !nonSecureHosts.includes(backendHost)
+}
+```
+
+**2. Hostname Detection Fallback:**
+```javascript
+// Handle case where hostname detection fails (empty string)
+else if (!currentHost || currentHost.trim() === '') {
+  console.warn('[WebSocket Host Detection] Hostname detection failed, using production fallback')
+  backendHost = 'admin.tellevoapp.com'
+  backendPort = 8080
+  useCustomBackend = true
+}
+```
+
+**Features Added:**
+- ✅ Host-specific WebSocket protocol overrides
+- ✅ Environment variable control (`VITE_WEBSOCKET_SECURE=false`)
+- ✅ Hostname detection fallback for Vue app environments
+- ✅ Manual protocol forcing with `setForcedProtocol(protocol)`
+- ✅ Enhanced debugging with connection info and host detection logs
+- ✅ Better error handling for different deployment scenarios
+
+### Complete WebSocket Production Setup (`TELLEVO_WEBSOCKET_PRODUCTION_FINAL`)
+**STATUS:** ✅ FULLY WORKING - WebSocket connections operational in production
+
+## **🏗️ **Complete Architecture Overview:**
+
+```
+Vue App (Browser) 🖥️
+    ↓ wss://admin.tellevoapp.com/ws/ventas
+nginx Reverse Proxy 🌐 (Port 443, HTTPS)
+    ↓ ws://localhost:8080/ws/ventas (HTTP upgrade)
+Spring Boot Backend 🔧 (Port 8080, HTTP)
+    ↓ Real-time candidate data via gRPC → WebSocket JSON
+```
+
+## **🔧 **Production WebSocket Configuration:**
+
+### **1. Vue App (Frontend) - Auto-Detection Logic:**
+```javascript
+// Automatic HTTPS detection in src/services/ventasStream.js
+if (window.location.protocol === 'https:') {
+  // Routes through nginx for SSL termination
+  const url = `wss://${window.location.hostname}/ws/ventas`
+  // No port specified = defaults to 443 (nginx HTTPS)
+  return url
+} else if (import.meta.env.DEV) {
+  // Development: direct to Spring Boot
+  const url = `ws://localhost:${import.meta.env.VITE_BACKEND_PORT || 8080}/ws/ventas`
+  return url
+}
+```
+
+### **2. nginx Configuration (SSL Termination + WebSocket Proxy):**
+```nginx
+server {
+    listen 443 ssl;
+    server_name admin.tellevoapp.com;
+
+    # SSL certificates (Let's Encrypt)
+    ssl_certificate /etc/letsencrypt/live/admin.tellevoapp.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/admin.tellevoapp.com/privkey.pem;
+
+    # WebSocket proxy - CRITICAL for WebSocket connections
+    location /ws/ {
+        proxy_pass http://localhost:8080/ws/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+    }
+
+    # Standard HTTP proxy for API calls
+    location /api/ {
+        proxy_pass http://localhost:8080/api/;
+        # ... CORS and proxy headers
+    }
+
+    # Vue app static files
+    location / {
+        proxy_pass http://localhost:3000;
+        # ... proxy headers
+    }
+}
+```
+
+### **3. Spring Boot Configuration (CORS + WebSocket Handler):**
+**CORS Configuration (`WebSocketConfig.java`):**
+```java
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(ventasWebSocketHandler, "/ws/ventas")
+                .setAllowedOriginPatterns(
+                    "http://localhost:*",
+                    "https://*.tellevoapp.com",
+                    "https://admin.tellevoapp.com*",
+                    "http://*.tellevoapp.com",
+                    "http://*tellevoapp.com:*"
+                );
+    }
+}
+```
+
+## **🧪 **Testing & Verification:**
+
+### **Production Test (Working):**
+```bash
+$ wscat -c wss://admin.tellevoapp.com/ws/ventas
+Connected (press CTRL+C to quit)
+< {"id":1,"email":"prueba2@prueba.cl","nombre_empresa":"probando con app oficial","fecha_envio":"2025-09-21T00:20:52.994131"}
+Disconnected (code: 1000, reason: "")
+```
+
+### **Development Test:**
+```bash
+$ wscat -c ws://localhost:8080/ws/ventas
+# Should receive candidate data in development
+```
+
+### **Vue App Console Verification:**
+Production browser console should show:
+```
+[WebSocket Config] FINAL URL (nginx proxy - WSS): wss://admin.tellevoapp.com/ws/ventas
+[WebSocket Service] Connection opened successfully
+[VentasStreamView] WebSocket connected successfully
+```
+
+## **🔒 **Security Architecture:**
+
+- **SSL Termination:** nginx handles SSL certificates and encryption
+- **Origin Validation:** Spring Boot validates allowed domains
+- **Protocol Security:** WSS for encrypted WebSocket traffic
+- **Header Forwarding:** Proper proxy headers for authentication
+
+## **🚀 **Deployment Commands:**
+
+### **Backend (Spring Boot):**
+```bash
+mvn clean package
+java -jar target/tellevo-admin-1.0.0.jar --server.port=8080
+```
+
+### **Frontend (Vue + PM2):**
+```bash
+pnpm run build
+pm2 start ecosystem.config.cjs  # Serves on port 3000
+```
+
+### **nginx:**
+```bash
+sudo nginx -t  # Test config
+sudo nginx -s reload  # Apply changes
+```
+
+## **🎯 **Final Status:**
+
+✅ **Vue App Connection:** Working with WSS protocol
+✅ **nginx SSL Termination:** Handling HTTPS encryption
+✅ **WebSocket Proxy:** Properly forwarding upgrades
+✅ **Backend Handler:** Real-time candidate data streaming
+✅ **CORS Security:** Allowing production origins
+✅ **Development Flow:** Separate direct connection logic
+
+**WebSocket production deployment is COMPLETE and FUNCTIONAL! 🌟**
+
 ### Monitoreo de Candidatos (`TELLEVO_CANDIDATOS_MONITORING`)
 - **Architecture**: Full-stack gRPC-WebSocket candidate monitoring system with real-time connection
 - **CONNECTION**: Maintains persistent WebSocket connection to backend for live candidate data

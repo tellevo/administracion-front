@@ -364,21 +364,35 @@ const handleNewCandidato = (candidato) => {
 
 // Lifecycle
 onMounted(() => {
-  isLoading.value = false
+  console.log('[VentasStreamView] Component mounted, initializing WebSocket connection')
+  console.log('[VentasStreamView] Current location:', window.location.href)
+  console.log('[VentasStreamView] Environment:', import.meta.env)
+
+  isLoading.value = true // Keep loading until connection is established
 
   // Initialize WebSocket connection for real candidate data
   try {
+    console.log('[VentasStreamView] Calling ventasStreamService.connect()')
     ventasStreamService.connect()
+
+    console.log('[VentasStreamView] Setting up candidato listener')
     ventasStreamService.onCandidato(handleNewCandidato)
 
-    // Set a fallback if no connection after a delay
+    // Check connection status after a delay
     setTimeout(() => {
-      if (candidatos.value.length === 0) {
+      const connectionInfo = ventasStreamService.getConnectionInfo()
+      console.log('[VentasStreamView] Connection status after timeout:', connectionInfo)
+
+      if (!connectionInfo.connected) {
+        console.warn('[VentasStreamView] WebSocket not connected, showing error state')
+        isLoading.value = false
+      } else {
+        console.log('[VentasStreamView] WebSocket connected successfully')
         isLoading.value = false
       }
-    }, 2000)
+    }, 3000)
   } catch (error) {
-    console.warn('WebSocket connection failed, showing empty state:', error)
+    console.error('[VentasStreamView] WebSocket initialization failed:', error)
     isLoading.value = false
   }
 })

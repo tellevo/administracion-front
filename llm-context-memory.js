@@ -224,6 +224,32 @@ class TelLevoLLMContextMemory {
         }
       },
 
+    // WebSocket Production Setup - Complete Working Configuration
+    websocketProductionSetup: {
+      status: "FULLY_OPERATIONAL",
+      architecture: {
+        flow: "Vue App (HTTP/HTTPS) → nginx (SSL) → Spring Boot (HTTP) → gRPC → WebSocket JSON",
+        productionUrl: "wss://admin.tellevoapp.com/ws/ventas",
+        developmentUrl: "ws://localhost:8080/ws/ventas"
+      },
+      components: {
+        vueApp: "Automatic HTTPS detection - routes through nginx when window.location.protocol === 'https:'",
+        nginx: "SSL termination + WebSocket proxy (location /ws/ with upgrade headers)",
+        springBoot: "WebSocket handler with CORS allowing teLlevoapp.com origins",
+        grpc: "Streaming data source feeding WebSocket JSON responses"
+      },
+      testing: {
+        productionCommand: "wscat -c wss://admin.tellevoapp.com/ws/ventas # ✅ Working",
+        expectedResponse: "Real-time JSON: {\"id\":1,\"email\":\"user@domain.cl\",\"nombre_empresa\":\"Company Name\"}"
+      },
+      corsConfiguration: "setAllowedOriginPatterns allowing *.tellevoapp.com for both HTTP/HTTPS",
+      deploymentCommands: [
+        "Backend: mvn clean package && java -jar target/jar --server.port=8080",
+        "Frontend: pnpm run build && pm2 start ecosystem.config.cjs",
+        "nginx: sudo nginx -t && sudo nginx -s reload"
+      ]
+    },
+
     // EmpresaListView Simplified Header Design Memory
     empresaListViewHeaderDesign: {
       beforeComplex: "Heavy gradient background with multiple colors, animations, and complex visual elements that were overwhelming",

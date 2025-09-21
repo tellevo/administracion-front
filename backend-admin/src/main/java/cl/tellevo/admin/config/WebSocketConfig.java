@@ -19,10 +19,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(ventasWebSocketHandler, "/ws/ventas")
-                .setAllowedOrigins(
-                    "http://localhost:5173",
-                    "http://localhost:5174",
-                    "https://admin.tellevoapp.com"
+                .setAllowedOriginPatterns(
+                    "http://localhost:*",
+                    "https://*.tellevoapp.com",
+                    "https://*tellevoapp.com:*",
+                    "https://admin.tellevoapp.com*",
+                    "http://*.tellevoapp.com",     // HTTP support for teLlevoapp.com domains
+                    "http://*tellevoapp.com:*"     // HTTP support with ports
                 );
     }
 }

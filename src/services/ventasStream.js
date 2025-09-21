@@ -56,29 +56,49 @@ class VentasStreamService {
     else {
       const currentHost = window.location.hostname
 
-      // For production domains, assume backend is on same host:port
-      if (currentHost === 'admin.tellevoapp.com') {
-        backendHost = 'admin.tellevoapp.com'
-        backendPort = 8080
-        useCustomBackend = true
+      console.log('[WebSocket Host Detection] Current host:', currentHost, 'Protocol:', window.location.protocol)
+
+      // For production domains - handle various domain patterns
+      if (currentHost === 'admin.tellevoapp.com' ||
+          currentHost.includes('admin.tellevoapp.com') ||
+          currentHost.endsWith('.tellevoapp.com') ||
+          window.location.protocol === 'https:') {
+        console.log('[WebSocket Host Detection] Detected HTTPS production domain:', currentHost)
+        console.log('[WebSocket Host Detection] Will use WSS protocol')
+
+        // Use nginx public HTTPS endpoint (port 443)
+        backendHost = currentHost // Use current host to support subdomains
+        backendPort = 443 // NGINX HTTPS port
+        useCustomBackend = false // Let nginxdirect the connection
+        console.log('[WebSocket Host Detection] Using nginx endpoint:', backendHost + ':' + backendPort)
       }
       // For localhost development, use localhost
       else if (currentHost === 'localhost' || currentHost === '127.0.0.1' || currentHost.startsWith('192.168.')) {
         backendHost = 'localhost'
         backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
         useCustomBackend = true
+        console.log('[WebSocket Host Detection] Using localhost for development')
       }
-      // For other domains, assume backend is on same host (proxy setup)
+      // Handle case where hostname detection fails (empty string)
+      else if (!currentHost || currentHost.trim() === '') {
+        console.warn('[WebSocket Host Detection] Hostname detection failed, using production fallback')
+        // Fallback to production server when hostname is not available
+        backendHost = 'admin.tellevoapp.com'
+        backendPort = 8080
+        useCustomBackend = true
+      }
+      // For other domains, use production server (safety fallback)
       else {
-        backendHost = currentHost
-        backendPort = import.meta.env.VITE_BACKEND_PORT || (window.location.protocol === 'https:' ? 443 : 80)
-        useCustomBackend = false // Use relative URL for same-domain proxy
+        console.log('[WebSocket Host Detection] Unknown domain, using production fallback:', currentHost)
+        backendHost = 'admin.tellevoapp.com'
+        backendPort = 8080
+        useCustomBackend = true
       }
     }
 
     // For localhost backends, always use WS:// protocol (backend likely runs on HTTP)
-    // For other backends, match the frontend protocol (WS:// for HTTP, WSS:// for HTTPS)
-    const useSecure = backendHost !== 'localhost' && backendHost !== '127.0.0.1' && window.location.protocol === 'https:'
+    // For production domains, check if backend supports secure connections or if reverse proxy handles SSL
+    const useSecure = backendHost !== 'localhost' && backendHost !== '127.0.0.1' && window.location.protocol === 'https:' && this.shouldUseSecureWebSocket(backendHost)
     const protocol = useSecure ? 'wss:' : 'ws:'
 
     const resultUrl = useCustomBackend ? `${protocol}//${backendHost}:${backendPort}/ws/ventas` : `${protocol}//${window.location.host}/ws/ventas`
@@ -91,16 +111,23 @@ class VentasStreamService {
       resultUrl
     })
 
-    // In development or with custom backend, use backend environment variables
-    if (import.meta.env.DEV || useCustomBackend) {
-      // Use environment variables when available
+    // In development, use direct backend connection
+    if (import.meta.env.DEV) {
       const url = `${protocol}//${backendHost}:${backendPort}/ws/ventas`
-      console.log('[WebSocket Config] FINAL URL:', url)
+      console.log('[WebSocket Config] FINAL URL (dev):', url)
       return url
-    } else {
-      // Same host, no port (typical proxy setup for same-domain deployments)
-      const url = `${protocol}//${window.location.host}/ws/ventas`
-      console.log('[WebSocket Config] FINAL URL (same host):', url)
+    }
+    // In production HTTPS, use nginx proxy endpoint
+    else if (window.location.protocol === 'https:') {
+      // nginx handles SSL, so connect to nginx port without specifying port (443 default)
+      const url = `${protocol}//${window.location.hostname}/ws/ventas`
+      console.log('[WebSocket Config] FINAL URL (nginx proxy - WSS):', url)
+      return url
+    }
+    // For other production cases, use configured backend
+    else {
+      const url = `${protocol}//${backendHost}:${backendPort}/ws/ventas`
+      console.log('[WebSocket Config] FINAL URL (production):', url)
       return url
     }
   }
@@ -109,8 +136,11 @@ class VentasStreamService {
    * Initialize WebSocket connection
    */
   connect() {
+    console.log('[WebSocket Service] connect() called, current URL:', this.wsUrl)
+    console.log('[WebSocket Service] current state:', this.getConnectionInfo())
+
     if (this.isConnected || this.isConnecting) {
-      console.warn('WebSocket already connected or connecting')
+      console.warn('[WebSocket Service] Already connected or connecting, skipping')
       return
     }
 
@@ -118,34 +148,41 @@ class VentasStreamService {
     this.updateStatus('connecting')
 
     try {
+      console.log('[WebSocket Service] Creating new WebSocket connection to:', this.wsUrl)
       this.ws = new WebSocket(this.wsUrl)
 
-      // Set connection timeout
-      const timeoutId = setTimeout(() => {
-        if (this.isConnecting) {
-          console.error('WebSocket connection timeout')
-          this.handleConnectionError(new Error('Connection timeout'))
-        }
-      }, this.connectTimeout)
-
-      this.ws.onopen = (event) => {
-        clearTimeout(timeoutId)
-        this.handleConnectionOpen(event)
+    // Set connection timeout
+    const timeoutId = setTimeout(() => {
+      if (this.isConnecting) {
+        console.error(`[WebSocket Service] Connection timeout after ${this.connectTimeout}ms`)
+        console.error(`[WebSocket Service] URL: ${this.wsUrl}`)
+        console.error(`[WebSocket Service] ReadyState: ${this.ws ? this.ws.readyState : 'undefined'}`)
+        this.handleConnectionError(new Error('Connection timeout'))
       }
+    }, this.connectTimeout)
 
-      this.ws.onmessage = (event) => {
-        this.handleMessage(event)
-      }
+    this.ws.onopen = (event) => {
+      clearTimeout(timeoutId)
+      console.log('[WebSocket Service] Connection opened successfully')
+      this.handleConnectionOpen(event)
+    }
 
-      this.ws.onclose = (event) => {
-        clearTimeout(timeoutId)
-        this.handleConnectionClose(event)
-      }
+    this.ws.onmessage = (event) => {
+      console.log('[WebSocket Service] Message received:', event.data)
+      this.handleMessage(event)
+    }
 
-      this.ws.onerror = (event) => {
-        clearTimeout(timeoutId)
-        this.handleConnectionError(event)
-      }
+    this.ws.onclose = (event) => {
+      clearTimeout(timeoutId)
+      console.log(`[WebSocket Service] Connection closed, code: ${event.code}, reason: ${event.reason}`)
+      this.handleConnectionClose(event)
+    }
+
+    this.ws.onerror = (event) => {
+      console.error('[WebSocket Service] Connection error occurred')
+      clearTimeout(timeoutId)
+      this.handleConnectionError(event)
+    }
 
     } catch (error) {
       this.handleConnectionError(error)
@@ -349,6 +386,50 @@ class VentasStreamService {
   }
 
   /**
+   * Determine if secure WebSocket (WSS) should be used
+   * Some production setups use reverse proxies that handle SSL termination
+   */
+  shouldUseSecureWebSocket(backendHost) {
+    // Environment override - if set to false, always use insecure WebSocket
+    if (import.meta.env.VITE_WEBSOCKET_SECURE === 'false') {
+      return false
+    }
+
+    // Host-specific overrides for production deployments
+    const nonSecureHosts = [
+      // HTTPS hosts removed - now use secure WebSocket by default for HTTPS
+      // 'admin.tellevoapp.com', // Now uses WSS for HTTPS production
+    ]
+
+    // For specified hosts, force insecure WebSocket
+    if (nonSecureHosts.includes(backendHost)) {
+      console.log('[WebSocket Config] Forcing insecure WebSocket for host:', backendHost)
+      return false
+    }
+
+    // Default: use secure for non-localhost HTTPS connections
+    return true
+  }
+
+  /**
+   * Force protocol override (useful for debugging connection issues)
+   */
+  setForcedProtocol(protocol) {
+    console.log('[WebSocket Config] Forcing protocol override:', protocol)
+    // Store preference in localStorage for persistence
+    localStorage.setItem('websocketForcedProtocol', protocol)
+
+    // Update URL if forcing non-secure
+    if (protocol === 'ws') {
+      this.wsUrl = this.wsUrl.replace(/^wss:/, 'ws:')
+    } else {
+      this.wsUrl = this.wsUrl.replace(/^ws:/, 'wss:')
+    }
+
+    console.log('[WebSocket Config] Updated URL:', this.wsUrl)
+  }
+
+  /**
    * Get connection info for debugging
    */
   getConnectionInfo() {
@@ -357,7 +438,9 @@ class VentasStreamService {
       connected: this.isConnected,
       connecting: this.isConnecting,
       reconnectAttempts: this.reconnectAttempts,
-      readyState: this.ws ? this.ws.readyState : -1
+      readyState: this.ws ? this.ws.readyState : -1,
+      protocol: this.wsUrl.startsWith('wss:') ? 'wss' : 'ws',
+      forcedProtocol: localStorage.getItem('websocketForcedProtocol')
     }
   }
 }
