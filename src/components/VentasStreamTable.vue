@@ -33,7 +33,7 @@
               <SortIndicator :field="'fecha_envio'" :sortField="sortField" :sortOrder="sortOrder" />
             </div>
           </th>
-          <th class="w-24 font-semibold text-center">Estado</th>
+          <!-- Estado column removed as requested -->
           <th class="w-32 font-semibold text-center">Acciones</th>
         </tr>
       </thead>
@@ -41,21 +41,21 @@
       <!-- Table Body -->
       <tbody>
         <tr
-          v-for="venta in sortedVentas"
-          :key="venta.id"
+          v-for="candidato in sortedCandidatos"
+          :key="candidato.id"
           :class="[
             'hover:bg-base-200/50 transition-colors duration-200',
-            isRecent(venta.fecha_envio) ? 'bg-green-50/30 border-l-4 border-l-green-400' : ''
+            isRecent(candidato.fecha_envio) ? 'bg-green-50/30 border-l-4 border-l-green-400' : ''
           ]"
         >
           <!-- Row Number -->
           <td class="font-mono text-sm text-base-content/70">
-            {{ getRowNumber(venta) }}
+            {{ getRowNumber(candidato) }}
           </td>
 
           <!-- Sale ID -->
           <td class="font-mono text-sm font-medium text-primary">
-            #{{ venta.id }}
+            #{{ candidato.id }}
           </td>
 
           <!-- Company Name -->
@@ -64,17 +64,17 @@
               <!-- Company Avatar -->
               <div class="avatar">
                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-xs">
-                  {{ getCompanyInitial(venta.nombre_empresa) }}
+                  {{ getCompanyInitial(candidato.nombre_empresa) }}
                 </div>
               </div>
 
               <!-- Company Name -->
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-base-content text-sm leading-tight truncate max-w-xs">
-                  {{ venta.nombre_empresa }}
+                  {{ candidato.nombre_empresa }}
                 </div>
                 <!-- Live indicator for recent sales -->
-                <div v-if="isRecent(venta.fecha_envio)" class="flex items-center gap-1 mt-1">
+                <div v-if="isRecent(candidato.fecha_envio)" class="flex items-center gap-1 mt-1">
                   <div class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
                   <span class="text-xs text-green-600 font-medium">LIVE</span>
                 </div>
@@ -84,8 +84,8 @@
 
           <!-- Email (truncated on smaller screens) -->
           <td class="min-w-0">
-            <span class="text-sm text-base-content/80 truncate block max-w-xs" :title="venta.email">
-              {{ venta.email }}
+            <span class="text-sm text-base-content/80 truncate block max-w-xs" :title="candidato.email">
+              {{ candidato.email }}
             </span>
           </td>
 
@@ -93,28 +93,14 @@
           <td class="min-w-0">
             <div class="flex flex-col">
               <span class="text-sm font-medium text-base-content">
-                {{ formatDate(venta.fecha_envio) }}
+                {{ formatDate(candidato.fecha_envio) }}
               </span>
               <span class="text-xs text-base-content/60">
-                {{ formatTime(venta.fecha_envio) }}
+                {{ formatTime(candidato.fecha_envio) }}
               </span>
               <!-- Relative time -->
               <span class="text-xs text-base-content/50">
-                {{ getRelativeTime(venta.fecha_envio) }}
-              </span>
-            </div>
-          </td>
-
-          <!-- Status -->
-          <td class="text-center">
-            <div class="flex justify-center">
-              <span
-                :class="[
-                  'badge badge-xs font-medium px-2 py-1',
-                  isRecent(venta.fecha_envio) ? 'badge-success badge-outline' : 'badge-ghost'
-                ]"
-              >
-                {{ isRecent(venta.fecha_envio) ? 'Activa' : 'Procesada' }}
+                {{ getRelativeTime(candidato.fecha_envio) }}
               </span>
             </div>
           </td>
@@ -124,11 +110,11 @@
             <div class="flex items-center justify-center gap-1">
               <!-- View Details -->
               <button
-                @click="$emit('view-details', venta)"
+                @click="$emit('view-details', candidato)"
                 class="btn btn-ghost btn-square btn-xs"
-                :title="'Ver detalles de venta #' + venta.id"
+                :title="'Ver detalles de candidato #' + candidato.id"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0/24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
@@ -136,9 +122,9 @@
 
               <!-- Copy Email -->
               <button
-                @click="copyToClipboard(venta.email)"
+                @click="copyToClipboard(candidato.email)"
                 class="btn btn-ghost btn-square btn-xs"
-                :title="'Copiar email: ' + venta.email"
+                :title="'Copiar email: ' + candidato.email"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -151,11 +137,11 @@
     </table>
 
     <!-- Empty State -->
-    <div v-if="ventas.length === 0" class="flex items-center justify-center p-12">
+    <div v-if="candidatos.length === 0" class="flex items-center justify-center p-12">
       <div class="text-center">
-        <div class="text-6xl mb-4">📊</div>
-        <h3 class="text-xl font-bold text-base-content mb-2">No hay ventas para mostrar</h3>
-        <p class="text-base-content/70">Las ventas aparecerán aquí cuando se conecte al stream.</p>
+        <div class="text-6xl mb-4">👥</div>
+        <h3 class="text-xl font-bold text-base-content mb-2">No hay candidatos para mostrar</h3>
+        <p class="text-base-content/70">Los candidatos aparecerán aquí cuando llegue nueva información.</p>
       </div>
     </div>
   </div>
@@ -166,7 +152,7 @@ import { computed, ref, watch, nextTick } from 'vue'
 import SortIndicator from './SortIndicator.vue'
 
 const props = defineProps({
-  ventas: {
+  candidatos: {
     type: Array,
     default: () => []
   },
@@ -181,10 +167,10 @@ defineEmits(['view-details'])
 const sortField = ref('fecha_envio')
 const sortOrder = ref('desc') // 'asc' or 'desc'
 
-const sortedVentas = computed(() => {
-  if (!props.ventas.length) return []
+const sortedCandidatos = computed(() => {
+  if (!props.candidatos.length) return []
 
-  return [...props.ventas].sort((a, b) => {
+  return [...props.candidatos].sort((a, b) => {
     let aVal = a[sortField.value]
     let bVal = b[sortField.value]
 
@@ -208,8 +194,8 @@ const sortedVentas = computed(() => {
   })
 })
 
-// Watch for new ventas when auto-scroll is enabled
-watch(() => props.ventas.length, (newLength, oldLength) => {
+// Watch for new candidatos when auto-scroll is enabled
+watch(() => props.candidatos.length, (newLength, oldLength) => {
   if (props.autoScroll && newLength > oldLength && newLength > 0) {
     // Scroll to top to show newest items first
     nextTick(() => {
@@ -230,8 +216,8 @@ const sortBy = (field) => {
   }
 }
 
-const getRowNumber = (venta) => {
-  const index = props.ventas.findIndex(v => v.id === venta.id)
+const getRowNumber = (candidato) => {
+  const index = props.candidatos.findIndex(c => c.id === candidato.id)
   return index + 1
 }
 

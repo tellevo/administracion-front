@@ -177,16 +177,18 @@ class TelLevoLLMContextMemory {
         }
       },
 
-      // Streaming Ventas Dashboard Memory
-      streamingVentas: {
-        architecture: "Full-stack gRPC-WebSocket real-time streaming proxy with critical external dependency",
-        criticalDependency: "REQUIRES ACTIVE gRPC SERVER on localhost:9090 for WebSocket connections to stay alive",
+      // Monitoreo de Candidatos Memory
+      candidatosMonitoring: {
+        architecture: "Full-stack gRPC-WebSocket candidate monitoring system with critical external dependency",
+        criticalDependency: "REQUIRES ACTIVE gRPC SERVER on localhost:9090 for candidate data reception",
+        conceptualCorrection: "NOT a 'streaming dashboard' - is a candidate monitoring system where candidates express interest in TeLlevo applications",
         connectionStability: {
-          issue: "WebSocket connections are NOT permanent - depend entirely on gRPC server availability",
-          rootCause: "VentasWebSocketHandler closes WebSocket when gRPC stream ends (onCompleted/onError)",
-          failurePattern: "gRPC disconnect → WebSocket close → aggressive reconnection (1-32s cycles) → repeat failure",
-          symptoms: "Connection status constantly switching between connecting/disconnected",
-          impact: "Users see perpetual 'connecting' status when gRPC server is unavailable"
+          status: "PERSISTENT WebSocket connection maintained with automatic reconnection",
+          heartbeat: "30-second heartbeat system keeps connection alive",
+          reconnection: "Automatic exponential backoff reconnection (max 5 attempts)",
+          errorHandling: "Graceful failure states with user-friendly empty displays",
+          symptoms: "Shows live candidates when available, empty state when server offline (expected)",
+          impact: "Real-time monitoring when server active, graceful degradation when offline"
         },
         components: ["VentasStreamView", "StreamStatusIndicator", "VentasStreamCard", "VentasStreamTable", "SortIndicator"],
         technologies: "Spring Boot WebSocket + gRPC Client + Vue.js Composition API + real-time dashboard",
@@ -266,8 +268,9 @@ class TelLevoLLMContextMemory {
       'performance': this.contextMemory.performanceMetrics,
       'development': this.contextMemory.developmentPatterns,
       'project': this.contextMemory.projectInfo,
-      'streaming': this.contextMemory.streamingVentas,
-      'ventas-stream': this.contextMemory.streamingVentas
+      'streaming': this.contextMemory.candidatosMonitoring,
+      'ventas-stream': this.contextMemory.candidatosMonitoring,
+      'candidatos': this.contextMemory.candidatosMonitoring
     };
 
     return contextMap[area] || this.contextMemory;

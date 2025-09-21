@@ -13,10 +13,10 @@
         <!-- Company Info -->
         <div class="flex-1 min-w-0">
           <h3 class="font-semibold text-base-content text-sm leading-tight truncate">
-            {{ venta.nombre_empresa }}
+            {{ candidato.nombre_empresa }}
           </h3>
           <p class="text-xs text-base-content/70 mt-0.5">
-            📧 {{ venta.email }}
+            📧 {{ candidato.email }}
           </p>
         </div>
       </div>
@@ -24,7 +24,7 @@
       <!-- Sale ID Badge -->
       <div class="flex flex-col items-end gap-1 shrink-0">
         <div class="badge badge-primary badge-xs font-mono">
-          #{{ venta.id }}
+          #{{ candidato.id }}
         </div>
       </div>
     </div>
@@ -51,9 +51,9 @@
       <!-- Quick Actions -->
       <div class="flex items-center gap-1">
         <button
-          @click="$emit('view-details', venta)"
+          @click="$emit('view-details', candidato)"
           class="btn btn-ghost btn-circle btn-xs"
-          :title="'Ver detalles de venta #' + venta.id"
+          :title="'Ver detalles de candidato #' + candidato.id"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -66,9 +66,9 @@
     <!-- Expansion Indicator -->
     <div v-if="expanded" class="mt-3 pt-3 border-t border-base-200">
       <div class="text-xs text-base-content/60 space-y-1">
-        <div><strong>ID:</strong> {{ venta.id }}</div>
-        <div><strong>Empresa:</strong> {{ venta.nombre_empresa }}</div>
-        <div><strong>Email:</strong> {{ venta.email }}</div>
+        <div><strong>ID:</strong> {{ candidato.id }}</div>
+        <div><strong>Empresa:</strong> {{ candidato.nombre_empresa }}</div>
+        <div><strong>Email:</strong> {{ candidato.email }}</div>
         <div><strong>Fecha:</strong> {{ fullFormattedTime }}</div>
       </div>
     </div>
@@ -79,7 +79,7 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  venta: {
+  candidato: {
     type: Object,
     required: true,
     validator: (value) => {
@@ -99,11 +99,11 @@ const props = defineProps({
 defineEmits(['view-details'])
 
 const companyInitial = computed(() => {
-  return props.venta.nombre_empresa.charAt(0).toUpperCase()
+  return props.candidato.nombre_empresa.charAt(0).toUpperCase()
 })
 
 const formattedTime = computed(() => {
-  const time = new Date(props.venta.fecha_envio)
+  const time = new Date(props.candidato.fecha_envio)
   const now = new Date()
   const diffMs = now - time
 
@@ -136,7 +136,7 @@ const formattedTime = computed(() => {
 })
 
 const fullFormattedTime = computed(() => {
-  return new Date(props.venta.fecha_envio).toLocaleString('es-CL', {
+  return new Date(props.candidato.fecha_envio).toLocaleString('es-CL', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -147,7 +147,7 @@ const fullFormattedTime = computed(() => {
 })
 
 const isRecent = computed(() => {
-  const time = new Date(props.venta.fecha_envio)
+  const time = new Date(props.candidato.fecha_envio)
   const now = new Date()
   const diffMinutes = (now - time) / (1000 * 60)
   return diffMinutes <= 5 // Consider recent if within last 5 minutes

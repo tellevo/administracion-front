@@ -156,23 +156,23 @@ The system successfully demonstrated:
 - **Solutions**: Use relative API paths, update JWT filter, configure nginx CORS
 - **Files**: .env.production, nginx.conf, ecosystem.config.cjs
 
-### Streaming Ventas Dashboard (`TELLEVO_VENTAS_STREAMING`)
-- **Architecture**: Full-stack gRPC-WebSocket real-time streaming proxy with dependency on external gRPC server
-- **CRITICAL DEPENDENCY**: Requires gRPC server running on `localhost:9090` (configurable via GRPC_VENTAS_HOST/GRPC_VENTAS_PORT)
-- **Connection Stability Issue**: WebSocket connections are NOT permanent - they depend entirely on gRPC server availability
-- **Failure Pattern**: When gRPC server disconnects, WebSocket closes immediately and attempts aggressive reconnection (1-2 second cycles)
-- **Root Cause**: `VentasWebSocketHandler.onCompleted()` and `onError()` methods close WebSocket when gRPC stream ends
-- **Mobile-First UX**: Responsive card layouts (mobile) + sortable tables (desktop) + live updates
-- **Real-time Features**: Auto-reconnecting WebSocket, live status indicators, pause/resume controls, advanced filtering (company/email/time), auto-scroll management
-- **Configuration**: Environment variables GRPC_VENTAS_HOST/GRPC_VENTAS_PORT with customizable defaults
-- **Components**: VentasStreamView (main), StreamStatusIndicator, VentasStreamCard, VentasStreamTable, SortIndicator
+### Monitoreo de Candidatos (`TELLEVO_CANDIDATOS_MONITORING`)
+- **Architecture**: Full-stack gRPC-WebSocket candidate monitoring system with real-time connection
+- **CONNECTION**: Maintains persistent WebSocket connection to backend for live candidate data
+- **Backend Dependency**: Requires active Spring Boot backend on port 8080 (serves WebSocket on /ws/ventas)
+- **Data Source**: Real-time candidate data stream through WebSocket when backend receives it
+- **User Experience**: Shows live candidates as they arrive, empty when no recent activity
+- **Mobile-First UX**: Responsive card layouts (mobile) + sortable tables (desktop) + candidate data display
+- **Features**: Live WebSocket data reception, advanced filtering (company/email/time), manual refresh, auto-scroll management, search
+- **Configuration**: WebSocket URL automatically determined (development: ws://localhost:8080/ws/ventas)
+- **Components**: VentasStreamView (main), VentasStreamCard, VentasStreamTable, SortIndicator
 - **Navigation**: Fully integrated in DrawerLayout (mobile hamburger → desktop sidebar → collapsed icons)
-- **Backend**: Spring Boot WebSocket handler with gRPC client, protobuf compilation, health checks, comprehensive error handling
-- **Performance**: Memory management (1K item limit), debounced operations, virtual scrolling, heartbeat monitoring, connection pooling
-- **Data Flow**: gRPC stream → JSON conversion → WebSocket broadcast → Vue reactive updates
-- **Error Handling**: Graceful gRPC failures, WebSocket reconnection logic, user-friendly error messages
-- **Debug Features**: Complete logging pipeline (/api/grpc/health endpoint, detailed stream logs)
-- **Data Format**: {id, email, nombre_empresa, fecha_envio} with type validation and format conversion
+- **Backend**: Spring Boot WebSocket handler with gRPC bridge, protobuf compilation, health checks
+- **Performance**: Memory management (1K item limit), debounced operations, virtual scrolling, live updates
+- **Data Flow**: External gRPC server → Spring Boot WebSocket handler → JSON WebSocket → Vue live display
+- **Error Handling**: Automatic WebSocket reconnection, connection timeouts, user-friendly states
+- **Debug Features**: Complete logging pipeline, connection status monitoring, heartbeat system
+- **Data Format**: {id, email, nombre_empresa, fecha_envio} - live candidates from TeLlevo interest forms
 - **Route**: /dashboard/ventas-stream with Vue Router integration
 
 ## 🎯 Development Workflow Guidance

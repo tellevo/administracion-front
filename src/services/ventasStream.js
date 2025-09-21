@@ -254,7 +254,7 @@ class VentasStreamService {
     this.listeners.status.push(callback)
   }
 
-  onVenta(callback) {
+  onCandidato(callback) {
     this.listeners.venta.push(callback)
   }
 

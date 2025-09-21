@@ -6,78 +6,25 @@
         <div class="flex items-center justify-between flex-wrap gap-4">
           <div class="flex-1 min-w-0">
             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content mb-1 truncate">
-              📊 Streaming de Ventas
+              👥 Monitoreo de Candidatos
             </h1>
             <p class="text-sm text-base-content/70">
-              Monitoreo en tiempo real de ventas entrantes
+              Monitoreo de candidatos interesados en las aplicaciones de TeLlevo
             </p>
           </div>
 
-          <!-- Live Status & Controls -->
-          <div class="flex items-center gap-3">
-            <!-- Connection Status -->
-            <StreamStatusIndicator
-              :status="connectionStatus"
-              :stats="streamStats"
-              class="hidden sm:flex"
-            />
-
-            <!-- Mobile Status Badge -->
-            <div class="flex sm:hidden">
-              <div
-                :class="[
-                  'badge badge-sm font-medium px-3 py-1',
-                  connectionStatus === 'connected' ? 'badge-success' : 'badge-error'
-                ]"
-              >
-                <div class="flex items-center gap-1">
-                  <div
-                    :class="[
-                      'w-2 h-2 rounded-full',
-                      connectionStatus === 'connected' ? 'bg-green-400 animate-pulse' :
-                      connectionStatus === 'connecting' ? 'bg-yellow-400 animate-pulse' :
-                      'bg-red-400'
-                    ]"
-                  ></div>
-                  <span class="text-xs">
-                    {{ connectionStatus === 'connected' ? 'EN VIVO' :
-                       connectionStatus === 'connecting' ? 'CONECTANDO...' : 'DESCONECTADO' }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Control Buttons -->
-            <div class="flex items-center gap-2">
-              <!-- Pause/Resume Button -->
-              <button
-                @click="togglePause"
-                :class="[
-                  'btn btn-circle btn-sm',
-                  isPaused ? 'btn-success' : 'btn-warning'
-                ]"
-                :title="isPaused ? 'Reanudar streaming' : 'Pausar streaming'"
-              >
-                <svg v-if="isPaused" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l.707.707A1 1 0 0012.414 11H15m-3 3.5A2.5 2.5 0 1015.5 16H15m0 0v2m0-2h2" />
-                </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </button>
-
-              <!-- Refresh Button -->
-              <button
-                @click="reconnect"
-                :disabled="connectionStatus === 'connecting'"
-                class="btn btn-circle btn-sm btn-ghost"
-                title="Reconectar"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </button>
-            </div>
+          <!-- Control Buttons -->
+          <div class="flex items-center gap-2">
+            <!-- Refresh Button -->
+            <button
+              @click="reconnect"
+              class="btn btn-circle btn-sm btn-ghost"
+              title="Actualizar candidatos"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -86,7 +33,7 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <!-- Stats Cards - Mobile Optimized -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
         <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-3 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center gap-2">
             <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -103,27 +50,13 @@
 
         <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-3 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div class="min-w-0 flex-1">
-              <p class="text-xs text-base-content/70 truncate">Velocidad</p>
-              <p class="text-lg font-bold text-green-600">{{ todayStats.velocity }}/min</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-3 hover:shadow-xl transition-all duration-300">
-          <div class="flex items-center gap-2">
             <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-xs text-base-content/70 truncate">Última Venta</p>
+              <p class="text-xs text-base-content/70 truncate">Último Candidato</p>
               <p class="text-sm font-bold text-base-content">{{ lastSaleTime }}</p>
             </div>
           </div>
@@ -204,27 +137,19 @@
       <!-- Stream Data Container -->
       <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 overflow-hidden">
         <!-- Loading State -->
-        <div v-if="isConnecting" class="flex items-center justify-center p-12">
+        <div v-if="isLoading" class="flex items-center justify-center p-12">
           <div class="flex items-center space-x-4">
             <div class="loading loading-spinner loading-lg text-primary"></div>
-            <span class="text-lg font-medium">Conectando al stream de ventas...</span>
+            <span class="text-lg font-medium">Cargando candidatos...</span>
           </div>
         </div>
 
-        <!-- Error State -->
-        <div v-else-if="connectionError" class="p-8 text-center">
-          <div class="text-6xl mb-4">🔌</div>
-          <h3 class="text-xl font-bold text-error mb-2">Error de Conexión</h3>
-          <p class="text-base-content/70 mb-4">{{ connectionError }}</p>
-          <button @click="reconnect" class="btn btn-primary">Reintentar Conexión</button>
-        </div>
-
         <!-- No Data State -->
-        <div v-else-if="filteredVentas.length === 0" class="text-center p-12">
+        <div v-else-if="filteredCandidatos.length === 0" class="text-center p-12">
           <div class="text-6xl mb-4">📊</div>
-          <h3 class="text-xl font-bold text-base-content mb-2">Esperando ventas...</h3>
+          <h3 class="text-xl font-bold text-base-content mb-2">Esperando candidatos...</h3>
           <p class="text-base-content/70">
-            Las ventas aparecerán aquí en tiempo real cuando llegue nueva información.
+            Los candidatos aparecerán aquí cuando llegue nueva información.
           </p>
         </div>
 
@@ -233,9 +158,9 @@
           <!-- Mobile Card View -->
           <div class="lg:hidden p-4 space-y-3 max-h-96 overflow-y-auto" ref="mobileScrollContainer">
             <VentasStreamCard
-              v-for="venta in visibleVentas"
-              :key="venta.id"
-              :venta="venta"
+              v-for="candidato in visibleCandidatos"
+              :key="candidato.id"
+              :candidato="candidato"
               class="animate-fade-in"
             />
           </div>
@@ -243,8 +168,8 @@
           <!-- Desktop Table View -->
           <div class="hidden lg:block">
             <VentasStreamTable
-              :ventas="visibleVentas"
-              :auto-scroll="autoScrollEnabled && !isPaused"
+              :candidatos="visibleCandidatos"
+              :auto-scroll="autoScrollEnabled"
               class="max-h-96 overflow-y-auto"
               ref="tableScrollContainer"
             />
@@ -254,20 +179,13 @@
         <!-- Load More Button (if not auto-scrolling) -->
         <div v-if="!autoScrollEnabled && hasMoreItems" class="flex justify-center p-4 border-t border-base-300">
           <button @click="loadMoreItems" class="btn btn-outline btn-sm">
-            Cargar más ventas
+            Cargar más candidatos
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Mobile Floating Status -->
-    <div class="fixed bottom-4 right-4 lg:hidden z-50">
-      <StreamStatusIndicator
-        :status="connectionStatus"
-        :stats="streamStats"
-        compact
-      />
-    </div>
+
   </div>
 </template>
 
@@ -275,23 +193,14 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import VentasStreamCard from '@/components/VentasStreamCard.vue'
 import VentasStreamTable from '@/components/VentasStreamTable.vue'
-import StreamStatusIndicator from '@/components/StreamStatusIndicator.vue'
 import { ventasStreamService } from '@/services/ventasStream.js'
 
 // Reactive data
-const ventas = ref([])
-const isConnecting = ref(true)
-const connectionError = ref('')
-const connectionStatus = ref('connecting') // 'connecting', 'connected', 'disconnected'
-const isPaused = ref(false)
+const candidatos = ref([])
+const isLoading = ref(true)
 const searchTerm = ref('')
 const timeFilter = ref('all')
 const autoScrollEnabled = ref(true)
-const streamStats = ref({
-  total: 0,
-  velocity: 0,
-  uptime: 0
-})
 
 // Filters
 const currentPage = ref(1)
@@ -303,15 +212,15 @@ const mobileScrollContainer = ref(null)
 const tableScrollContainer = ref(null)
 
 // Computed properties
-const filteredVentas = computed(() => {
-  let filtered = ventas.value
+const filteredCandidatos = computed(() => {
+  let filtered = candidatos.value
 
   // Search filter
   if (searchTerm.value.trim()) {
     const term = searchTerm.value.toLowerCase()
-    filtered = filtered.filter(venta =>
-      venta.nombre_empresa.toLowerCase().includes(term) ||
-      venta.email.toLowerCase().includes(term)
+    filtered = filtered.filter(candidato =>
+      candidato.nombre_empresa.toLowerCase().includes(term) ||
+      candidato.email.toLowerCase().includes(term)
     )
   }
 
@@ -319,22 +228,22 @@ const filteredVentas = computed(() => {
   const now = new Date()
   switch (timeFilter.value) {
     case '5min':
-      filtered = filtered.filter(venta => {
-        const ventaTime = new Date(venta.fecha_envio)
-        return (now - ventaTime) <= 5 * 60 * 1000
+      filtered = filtered.filter(candidato => {
+        const candidatoTime = new Date(candidato.fecha_envio)
+        return (now - candidatoTime) <= 5 * 60 * 1000
       })
       break
     case '1hour':
-      filtered = filtered.filter(venta => {
-        const ventaTime = new Date(venta.fecha_envio)
-        return (now - ventaTime) <= 60 * 60 * 1000
+      filtered = filtered.filter(candidato => {
+        const candidatoTime = new Date(candidato.fecha_envio)
+        return (now - candidatoTime) <= 60 * 60 * 1000
       })
       break
     case 'today':
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-      filtered = filtered.filter(venta => {
-        const ventaTime = new Date(venta.fecha_envio)
-        return ventaTime >= today
+      filtered = filtered.filter(candidato => {
+        const candidatoTime = new Date(candidato.fecha_envio)
+        return candidatoTime >= today
       })
       break
   }
@@ -342,42 +251,34 @@ const filteredVentas = computed(() => {
   return filtered
 })
 
-const visibleVentas = computed(() => {
+const visibleCandidatos = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return filteredVentas.value.slice(start, end)
+  return filteredCandidatos.value.slice(start, end)
 })
 
 const hasMoreItems = computed(() => {
-  return visibleVentas.value.length < filteredVentas.value.length
+  return visibleCandidatos.value.length < filteredCandidatos.value.length
 })
 
 const todayStats = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const todayVentas = ventas.value.filter(venta => {
-    const ventaDate = new Date(venta.fecha_envio)
-    return ventaDate >= today
-  })
-
-  // Calculate velocity (sales per minute over last 5 minutes)
-  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000)
-  const recentVentas = todayVentas.filter(venta => {
-    const ventaDate = new Date(venta.fecha_envio)
-    return ventaDate >= fiveMinAgo
+  const todayCandidatos = candidatos.value.filter(candidato => {
+    const candidatoDate = new Date(candidato.fecha_envio)
+    return candidatoDate >= today
   })
 
   return {
-    total: todayVentas.length,
-    velocity: Math.round((recentVentas.length / 5) * 10) / 10 // Round to 1 decimal
+    total: todayCandidatos.length
   }
 })
 
 const lastSaleTime = computed(() => {
-  if (ventas.value.length === 0) return 'Nunca'
-  const lastVenta = ventas.value[ventas.value.length - 1]
-  const time = new Date(lastVenta.fecha_envio)
+  if (candidatos.value.length === 0) return 'Nunca'
+  const lastCandidato = candidatos.value[candidatos.value.length - 1]
+  const time = new Date(lastCandidato.fecha_envio)
   const now = new Date()
   const diffMinutes = Math.floor((now - time) / (1000 * 60))
 
@@ -387,7 +288,7 @@ const lastSaleTime = computed(() => {
 })
 
 const uniqueCompanies = computed(() => {
-  const companies = new Set(ventas.value.map(v => v.nombre_empresa))
+  const companies = new Set(candidatos.value.map(c => c.nombre_empresa))
   return companies.size
 })
 
@@ -404,10 +305,6 @@ const applyTimeFilter = () => {
   currentPage.value = 1
 }
 
-const togglePause = () => {
-  isPaused.value = !isPaused.value
-}
-
 const toggleAutoScroll = () => {
   autoScrollEnabled.value = !autoScrollEnabled.value
   if (autoScrollEnabled.value) {
@@ -416,20 +313,23 @@ const toggleAutoScroll = () => {
 }
 
 const reconnect = () => {
-  // Clear existing data for fresh start on manual reconnect
-  ventas.value = []
+  // Clear existing data for fresh start
+  candidatos.value = []
   currentPage.value = 1
-  streamStats.value = {
-    total: 0,
-    velocity: 0,
-    uptime: 0
+  isLoading.value = true
+
+  // Force WebSocket reconnection
+  try {
+    ventasStreamService.reconnect()
+
+    // Hide loading after reconnection attempt
+    setTimeout(() => {
+      isLoading.value = false
+    }, 1000)
+  } catch (error) {
+    console.warn('Reconnection failed:', error)
+    isLoading.value = false
   }
-
-  connectionStatus.value = 'connecting'
-  isConnecting.value = true
-  connectionError.value = ''
-
-  ventasStreamService.reconnect()
 }
 
 const loadMoreItems = () => {
@@ -441,69 +341,49 @@ const loadMoreItems = () => {
 const scrollToBottom = () => {
   nextTick(() => {
     const container = autoScrollEnabled.value ? mobileScrollContainer.value || tableScrollContainer.value : null
-    if (container && !isPaused.value) {
+    if (container) {
       container.scrollTop = container.scrollHeight
     }
   })
 }
 
-const handleNewVenta = (venta) => {
-  // Add new venta to the beginning (most recent first)
-  ventas.value.unshift(venta)
+const handleNewCandidato = (candidato) => {
+  // Add new candidato to the beginning (most recent first)
+  candidatos.value.unshift(candidato)
 
   // Keep only the most recent items to prevent memory issues
-  if (ventas.value.length > maxItems.value) {
-    ventas.value.splice(maxItems.value)
+  if (candidatos.value.length > maxItems.value) {
+    candidatos.value.splice(maxItems.value)
   }
-
-  // Update stats
-  streamStats.value.total = ventas.value.length
 
   // Auto-scroll if enabled
-  if (autoScrollEnabled.value && !isPaused.value) {
+  if (autoScrollEnabled.value) {
     scrollToBottom()
   }
-
-  // Update velocity calculation
-  const now = new Date()
-  const fiveMinAgo = new Date(now - 5 * 60 * 1000)
-  const recentVentas = ventas.value.filter(v => new Date(v.fecha_envio) >= fiveMinAgo)
-  streamStats.value.velocity = Math.round((recentVentas.length / 5) * 10) / 10
-}
-
-const handleConnectionStatusChange = (status) => {
-  connectionStatus.value = status
-  isConnecting.value = status === 'connecting'
-
-  if (status === 'connected') {
-    connectionError.value = ''
-  } else if (status === 'disconnected') {
-    // Check if we have data - if so, it was a successful stream completion
-    // If no data, it was a connection error
-    if (ventas.value.length > 0) {
-      connectionError.value = '' // Successful completion, show the data
-    } else {
-      connectionError.value = 'Conexión perdida. Intentando reconectar...'
-    }
-  }
-}
-
-const handleConnectionError = (error) => {
-  connectionError.value = error.message || 'Error de conexión'
-  connectionStatus.value = 'disconnected'
 }
 
 // Lifecycle
 onMounted(() => {
-  // Initialize WebSocket connection
-  ventasStreamService.connect()
-  ventasStreamService.onStatusChange(handleConnectionStatusChange)
-  ventasStreamService.onVenta(handleNewVenta)
-  ventasStreamService.onError(handleConnectionError)
+  isLoading.value = false
+
+  // Initialize WebSocket connection for real candidate data
+  try {
+    ventasStreamService.connect()
+    ventasStreamService.onCandidato(handleNewCandidato)
+
+    // Set a fallback if no connection after a delay
+    setTimeout(() => {
+      if (candidatos.value.length === 0) {
+        isLoading.value = false
+      }
+    }, 2000)
+  } catch (error) {
+    console.warn('WebSocket connection failed, showing empty state:', error)
+    isLoading.value = false
+  }
 })
 
 onBeforeUnmount(() => {
-  ventasStreamService.disconnect()
   if (debounceTimer) {
     clearTimeout(debounceTimer)
   }
