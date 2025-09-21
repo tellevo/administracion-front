@@ -166,13 +166,13 @@ class TelLevoLLMContextMemory {
       // Development Memory
       developmentPatterns: {
         quickStart: [
-          "bun install",
-          "bun dev (frontend on :5173)",
+          "bun install (USE BUN ONLY - do not use npm)",
+          "bun dev (frontend on :5174 - USE BUN ONLY)",
           "mvn spring-boot:run (backend on :8080)",
           "Default login: admin@tellevoapp.cl / admin123"
         ],
         commonCommands: {
-          frontend: ["bun dev", "bun run build", "bun run preview"],
+          frontend: ["bun dev (USE BUN ONLY)", "bun run build", "bun run preview"],
           backend: ["mvn spring-boot:run", "mvn clean compile", "mvn clean package"]
         }
       },

@@ -416,6 +416,15 @@ const toggleAutoScroll = () => {
 }
 
 const reconnect = () => {
+  // Clear existing data for fresh start on manual reconnect
+  ventas.value = []
+  currentPage.value = 1
+  streamStats.value = {
+    total: 0,
+    velocity: 0,
+    uptime: 0
+  }
+
   connectionStatus.value = 'connecting'
   isConnecting.value = true
   connectionError.value = ''

@@ -173,10 +173,10 @@ The system successfully demonstrated:
 
 ## 🎯 Development Workflow Guidance
 
-### Project Setup
+### Project Setup (IMPORTANT: Use BUN, not npm)
 ```bash
-bun install                              # Install frontend dependencies
-bun dev                                  # Frontend on :5174
+bun install                              # Install frontend dependencies (USE BUN ONLY)
+bun dev                                  # Frontend on :5174 (USE BUN ONLY - do not use npm)
 mvn spring-boot:run                      # Backend on :8080
 # Default login: admin@tellevoapp.cl / admin123
 ```
