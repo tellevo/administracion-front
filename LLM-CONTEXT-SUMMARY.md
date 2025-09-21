@@ -182,7 +182,23 @@ The system successfully demonstrated:
 bun install                              # Install frontend dependencies (USE BUN ONLY)
 bun dev                                  # Frontend on :5174 (USE BUN ONLY - do not use npm)
 mvn spring-boot:run                      # Backend on :8080
+pm2 start ecosystem.config.cjs          # Production server on http://127.0.0.1:3000
 # Default login: admin@tellevoapp.cl / admin123
+# Production login: http://admin.tellevoapp.com (with reverse proxy)
+```
+
+### Build Process & Production Deployment
+```bash
+# Development
+bun run dev                             # Vite dev server on :5174
+
+# Build for production
+bun run build                           # Production build in dist/ folder
+# Automatically loads .env.production variables
+
+# Serve production build
+pm2 start ecosystem.config.cjs          # PM2 + Bun server on :3000
+# Environment: NODE_ENV=production, VITE_ENV=production
 ```
 
 ### Navigation & Component Architecture

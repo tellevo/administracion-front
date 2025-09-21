@@ -33,14 +33,23 @@ class VentasStreamService {
    */
   getWebSocketUrl() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const host = window.location.host // Includes port if non-standard
 
-    // In development, connect to backend port 8080
-    // In production, usually same host/port
+    // Use environment variables for backend connection, fallback to same host
+    const backendHost = import.meta.env.VITE_BACKEND_HOST || window.location.hostname
+    const backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
+
+    // In development, connect to configured backend host/port
+    // In production, use environment variables or same host (proxy configuration)
     if (import.meta.env.DEV) {
-      return `${protocol}//${window.location.hostname}:8080/ws/ventas`
+      return `${protocol}//${backendHost}:${backendPort}/ws/ventas`
     } else {
-      return `${protocol}//${host}/ws/ventas`
+      if (import.meta.env.VITE_BACKEND_HOST && import.meta.env.VITE_BACKEND_HOST !== window.location.hostname) {
+        // Custom backend host configured
+        return `${protocol}//${backendHost}:${backendPort}/ws/ventas`
+      } else {
+        // Same host, no port (typical proxy setup)
+        return `${protocol}//${window.location.host}/ws/ventas`
+      }
     }
   }
 
