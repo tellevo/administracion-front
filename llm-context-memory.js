@@ -167,7 +167,7 @@ class TelLevoLLMContextMemory {
       developmentPatterns: {
         quickStart: [
           "bun install",
-          "bun dev (frontend on :5174)",
+          "bun dev (frontend on :5173)",
           "mvn spring-boot:run (backend on :8080)",
           "Default login: admin@tellevoapp.cl / admin123"
         ],
@@ -175,6 +175,63 @@ class TelLevoLLMContextMemory {
           frontend: ["bun dev", "bun run build", "bun run preview"],
           backend: ["mvn spring-boot:run", "mvn clean compile", "mvn clean package"]
         }
+      },
+
+      // Streaming Ventas Dashboard Memory
+      streamingVentas: {
+        architecture: "Full-stack gRPC-WebSocket real-time streaming proxy",
+        components: ["VentasStreamView", "StreamStatusIndicator", "VentasStreamCard", "VentasStreamTable", "SortIndicator"],
+        technologies: "Spring Boot WebSocket + gRPC Client + Vue.js Composition API + real-time dashboard",
+        mobileFirstUx: "Responsive card layouts (mobile) + sortable tables (desktop) + live status indicators",
+        realTimeFeatures: [
+          "Auto-reconnecting WebSocket with exponential backoff",
+          "Live connection status indicators",
+          "Pause/resume streaming controls",
+          "Advanced filtering (company/email/time ranges)",
+          "Auto-scroll management with user controls",
+          "Real-time statistics dashboard"
+        ],
+        dataFlow: "gRPC server (localhost:9090) → gRPC client → WebSocket handler → JSON conversion → Vue real-time updates",
+        configuration: "Environment variables GRPC_VENTAS_HOST/GRPC_VENTAS_PORT (default localhost:9090)",
+        navigation: "Fully integrated in DrawerLayout (mobile hamburger → desktop sidebar → collapsed icons)",
+        backendFeatures: [
+          "Spring Boot WebSocket handler with authentication bypass",
+          "gRPC client with protobuf compilation",
+          "Health checks (/api/grpc/health endpoint)",
+          "Comprehensive error handling and logging",
+          "Connection pooling and timeout management"
+        ],
+        frontendFeatures: [
+          "Vue 3 Composition API with reactive updates",
+          "Debounced operations and virtual scrolling",
+          "Clipboard integration and responsive controls",
+          "Memory management (1K item limit)",
+          "Accessibility-first design (WCAG 2.1 AA)"
+        ],
+        performanceOptimizations: [
+          "Virtual scrolling for table performance",
+          "Debounced search and filtering",
+          "Heartbeat monitoring for connection health",
+          "Memory cleanup and event listener management",
+          "Lazy loading and progressive enhancement"
+        ],
+        dataValidation: "{id, email, nombre_empresa, fecha_envio} with strict type validation",
+        errorHandling: [
+          "Graceful gRPC server disconnection handling",
+          "WebSocket reconnection with user feedback",
+          "Connection timeout and retry logic",
+          "Server error reporting to frontend",
+          "Feedforward error prevention"
+        ],
+        route: "/dashboard/ventas-stream with Vue Router integration",
+        websocketUrl: "ws://localhost:8080/ws/ventas (bypasses authentication)",
+        debugFeatures: [
+          "Complete logging pipeline",
+          "Health check endpoint at /api/grpc/health",
+          "Detailed stream event logging",
+          "Connection status monitoring",
+          "Browser console debug information"
+        ]
       }
     };
   }
@@ -193,7 +250,9 @@ class TelLevoLLMContextMemory {
       'components': this.contextMemory.componentArchitecture,
       'performance': this.contextMemory.performanceMetrics,
       'development': this.contextMemory.developmentPatterns,
-      'project': this.contextMemory.projectInfo
+      'project': this.contextMemory.projectInfo,
+      'streaming': this.contextMemory.streamingVentas,
+      'ventas-stream': this.contextMemory.streamingVentas
     };
 
     return contextMap[area] || this.contextMemory;

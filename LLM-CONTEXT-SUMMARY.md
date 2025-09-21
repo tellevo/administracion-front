@@ -157,16 +157,19 @@ The system successfully demonstrated:
 - **Files**: .env.production, nginx.conf, ecosystem.config.cjs
 
 ### Streaming Ventas Dashboard (`TELLEVO_VENTAS_STREAMING`)
-- **Architecture**: gRPC-Backend ↔ WebSocket-Frontend streaming proxy
-- **Mobile-First UX**: Card layouts on mobile, table on desktop with live updates
-- **Real-time Features**: Live status indicators, auto-scroll controls, pause/resume, filtering
-- **Configuration**: Environment-based gRPC connection (GRPC_VENTAS_HOST/GRPC_VENTAS_PORT)
-- **Components**: VentasStreamView, StreamStatusIndicator, VentasStreamCard, VentasStreamTable
-- **Navigation**: Integrated in all drawer layouts (mobile/desktop/collapsed)
-- **Backend**: Spring WebSocket handler bridging gRPC to WebSocket endpoints
-- **Performance**: Virtual scrolling, debounced updates, reconnection logic, memory management
-- **Data Format**: {id, email, nombre_empresa, fecha_envio} with live validation
-- **Route**: /dashboard/ventas-stream accessible from navigation menu
+- **Architecture**: Full-stack gRPC-WebSocket real-time streaming proxy
+- **Mobile-First UX**: Responsive card layouts (mobile) + sortable tables (desktop) + live updates
+- **Real-time Features**: Auto-reconnecting WebSocket, live status indicators, pause/resume controls, advanced filtering (company/email/time), auto-scroll management
+- **Configuration**: Environment variables GRPC_VENTAS_HOST/GRPC_VENTAS_PORT with customizable defaults
+- **Components**: VentasStreamView (main), StreamStatusIndicator, VentasStreamCard, VentasStreamTable, SortIndicator
+- **Navigation**: Fully integrated in DrawerLayout (mobile hamburger → desktop sidebar → collapsed icons)
+- **Backend**: Spring Boot WebSocket handler with gRPC client, protobuf compilation, health checks, comprehensive error handling
+- **Performance**: Memory management (1K item limit), debounced operations, virtual scrolling, heartbeat monitoring, connection pooling
+- **Data Flow**: gRPC stream → JSON conversion → WebSocket broadcast → Vue reactive updates
+- **Error Handling**: Graceful gRPC failures, WebSocket reconnection logic, user-friendly error messages
+- **Debug Features**: Complete logging pipeline (/api/grpc/health endpoint, detailed stream logs)
+- **Data Format**: {id, email, nombre_empresa, fecha_envio} with type validation and format conversion
+- **Route**: /dashboard/ventas-stream with Vue Router integration
 
 ## 🎯 Development Workflow Guidance
 
