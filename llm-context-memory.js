@@ -74,10 +74,12 @@ class TelLevoLLMContextMemory {
           stateManagement: "Composition API + localStorage"
         },
         security: {
-          authentication: "JWT Bearer tokens",
+          authentication: "JWT Bearer tokens with role-based authorization",
+          authorization: "@PreAuthorize('hasRole('ADMIN')') on empresa operations",
           storage: "localStorage for persistence",
           tokenExpiry: "86400000ms (24 hours)",
-          defaultCredentials: { username: "admin@tellevoapp.cl", password: "admin123" }
+          defaultCredentials: { username: "admin@tellevoapp.cl", password: "admin123" },
+          roles: "ADMIN role required for empresa CRUD operations"
         }
       },
 
@@ -85,14 +87,17 @@ class TelLevoLLMContextMemory {
       apiEndpoints: {
         authentication: {
           login: { method: "POST", path: "/api/login", desc: "JWT authentication" },
-          health: { method: "GET", path: "/api/health", desc: "System health check" }
+          health: { method: "GET", path: "/api/health", desc: "System health check" },
+          test: { method: "GET", path: "/api/test", desc: "Auth service test endpoint" }
         },
         empresas: {
           create: { method: "POST", path: "/api/empresas", desc: "Create new company" },
           list: { method: "GET", path: "/api/empresas", desc: "List all companies" },
           get: { method: "GET", path: "/api/empresas/{id}", desc: "Get company by ID" },
+          getByDomain: { method: "GET", path: "/api/empresas/dominio/{dominio}", desc: "Get company by domain" },
           update: { method: "PUT", path: "/api/empresas/{id}", desc: "Update company" },
-          delete: { method: "DELETE", path: "/api/empresas/{id}", desc: "Delete company" }
+          delete: { method: "DELETE", path: "/api/empresas/{id}", desc: "Delete company" },
+          health: { method: "GET", path: "/api/empresas/health", desc: "Empresa service health check" }
         }
       },
 
@@ -353,12 +358,26 @@ class TelLevoLLMContextMemory {
       },
       techStack: this.contextMemory.techStack,
       developmentWorkflow: this.contextMemory.developmentPatterns,
-      monitoringKeywords: [
-        "TELLEVO_ADMIN_HYBRID_MULTIDB",
-        "TELLEVO_VITE6_CSS_PIPELINE", 
-        "TELLEVO_BACKEND_CONNECTION",
-        "TELLEVO_PRODUCTION_DEPLOY"
-      ]
+        monitoringKeywords: [
+          "TELLEVO_ADMIN_HYBRID_MULTIDB",
+          "TELLEVO_VITE6_CSS_PIPELINE",
+          "TELLEVO_BACKEND_CONNECTION",
+          "TELLEVO_PRODUCTION_DEPLOY",
+          "TELLEVO_VENTAS_STREAMING"
+        ],
+        streamingFeatures: {
+          type: "gRPC-WebSocket Proxy Architecture",
+          technologies: "Spring Boot WebSocket + gRPC Client + Vue.js real-time dashboard",
+          mobileFirst: "Responsive cards/table with live updates, pause/resume controls",
+          performance: "Virtual scrolling, debounced updates, reconnection logic, memory management",
+          configuration: "Environment variables GRPC_VENTAS_HOST/GRPC_VENTAS_PORT with defaults",
+          components: "VentasStreamView, StreamStatusIndicator, VentasStreamCard, VentasStreamTable, SortIndicator",
+          navigation: "Integrated in all DrawerLayout variants (mobile/desktop/collapsed)",
+          dataFormat: "{id, email, nombre_empresa, fecha_envio} with live validation",
+          route: "/dashboard/ventas-stream accessible from navigation menu",
+          websocket: "ws://localhost:8080/ws/ventas with authentication bypass",
+          features: "Real-time stats, filtering, sorting, clipboard integration, live indicators"
+        }
     };
   }
 }

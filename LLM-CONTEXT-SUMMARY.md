@@ -151,10 +151,22 @@ The system successfully demonstrated:
 - **Solutions**: Verify postgres.url, check CORS origins, fix JwtAuthenticationFilter
 - **Files**: application.properties, SecurityConfig.java, JwtAuthenticationFilter.java
 
-### Production Deployment (`TELLEVO_PRODUCTION_DEPLOY`)  
+### Production Deployment (`TELLEVO_PRODUCTION_DEPLOY`)
 - **Symptoms**: API routing to localhost, 403 on login, CORS preflight failures
 - **Solutions**: Use relative API paths, update JWT filter, configure nginx CORS
 - **Files**: .env.production, nginx.conf, ecosystem.config.cjs
+
+### Streaming Ventas Dashboard (`TELLEVO_VENTAS_STREAMING`)
+- **Architecture**: gRPC-Backend ↔ WebSocket-Frontend streaming proxy
+- **Mobile-First UX**: Card layouts on mobile, table on desktop with live updates
+- **Real-time Features**: Live status indicators, auto-scroll controls, pause/resume, filtering
+- **Configuration**: Environment-based gRPC connection (GRPC_VENTAS_HOST/GRPC_VENTAS_PORT)
+- **Components**: VentasStreamView, StreamStatusIndicator, VentasStreamCard, VentasStreamTable
+- **Navigation**: Integrated in all drawer layouts (mobile/desktop/collapsed)
+- **Backend**: Spring WebSocket handler bridging gRPC to WebSocket endpoints
+- **Performance**: Virtual scrolling, debounced updates, reconnection logic, memory management
+- **Data Format**: {id, email, nombre_empresa, fecha_envio} with live validation
+- **Route**: /dashboard/ventas-stream accessible from navigation menu
 
 ## 🎯 Development Workflow Guidance
 
@@ -243,11 +255,14 @@ const isActive = (path) => {
 ### API Endpoints Memory
 - `POST /api/login` - JWT authentication
 - `GET /api/health` - System health check
-- `POST /api/empresas` - Create new company
-- `GET /api/empresas` - List all companies
-- `GET /api/empresas/{id}` - Get company by ID  
-- `PUT /api/empresas/{id}` - Update company
-- `DELETE /api/empresas/{id}` - Delete company
+- `GET /api/test` - Auth service test endpoint
+- `POST /api/empresas` - Create new company (ADMIN role required)
+- `GET /api/empresas` - List all companies (ADMIN role required)
+- `GET /api/empresas/{id}` - Get company by ID (ADMIN role required)
+- `GET /api/empresas/dominio/{dominio}` - Get company by domain (ADMIN role required)
+- `PUT /api/empresas/{id}` - Update company (ADMIN role required)
+- `DELETE /api/empresas/{id}` - Delete company (ADMIN role required)
+- `GET /api/empresas/health` - Empresa service health check
 
 ## 🔄 Performance Metrics from Memory
 

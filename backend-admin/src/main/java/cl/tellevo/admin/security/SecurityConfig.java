@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/test").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/ws/**").permitAll() // WebSocket endpoints
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated()
             );
@@ -71,6 +72,8 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        // WebSocket CORS is handled by WebSocketConfig, but ensure /ws/** is covered
+        source.registerCorsConfiguration("/ws/**", configuration);
         return source;
     }
 }

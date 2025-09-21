@@ -8,6 +8,7 @@ import DashboardStats from '../views/dashboard/DashboardStats.vue'
 import DashboardSettings from '../views/dashboard/DashboardSettings.vue'
 import EmpresaView from '../views/dashboard/EmpresaView.vue'
 import EmpresaListView from '../views/dashboard/EmpresaListView.vue'
+import VentasStreamView from '../views/dashboard/VentasStreamView.vue'
 
 const routes = [
   { path: '/', component: LoginView },
@@ -22,7 +23,8 @@ const routes = [
       { path: 'stats', component: DashboardStats },
       { path: 'settings', component: DashboardSettings },
       { path: 'empresa', component: EmpresaView },
-      { path: 'empresas', component: EmpresaListView }
+      { path: 'empresas', component: EmpresaListView },
+      { path: 'ventas-stream', component: VentasStreamView }
     ]
   }
 ]

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "cl.tellevo.admin.grpc.ventas";
+option java_outer_classname = "VentasProto";
+
+package ventas;
+
+service VentasService {
+    rpc StreamVentas (VentasRequest) returns (stream VentasResponse);
+}
+
+message VentasRequest {
+    // No fields needed for now, as we're streaming all ventas.
+}
+
+message VentasResponse {
+    int32 id = 1;
+    string email = 2;
+    string nombre_empresa = 3;
+    string fecha_envio = 4; // Representing LocalDateTime as string for simplicity
+}

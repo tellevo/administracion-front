@@ -87,6 +87,18 @@
             </svg>
             Empresas
           </router-link>
+
+          <router-link
+            to="/dashboard/ventas-stream"
+            @click="closeMobileMenu"
+            class="flex items-center px-4 py-3 rounded-lg font-medium transition-colors"
+            :class="isActive('/dashboard/ventas-stream') ? 'bg-blue-500 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Ventas Stream
+          </router-link>
         </nav>
 
         <!-- Mobile Menu Footer -->
@@ -181,6 +193,17 @@
             </svg>
             Empresas
           </router-link>
+
+          <router-link
+            to="/dashboard/ventas-stream"
+            class="flex items-center px-4 py-3 rounded-lg font-medium transition-colors"
+            :class="isActive('/dashboard/ventas-stream') ? 'bg-blue-500 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Ventas Stream
+          </router-link>
         </nav>
 
         <!-- Desktop Navigation - Collapsed -->
@@ -227,6 +250,17 @@
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </router-link>
+
+            <router-link
+              to="/dashboard/ventas-stream"
+              class="tooltip tooltip-right flex items-center justify-center p-3 rounded-lg transition-colors"
+              data-tip="Ventas Stream"
+              :class="isActive('/dashboard/ventas-stream') ? 'bg-blue-500 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </router-link>
           </div>
@@ -313,6 +347,8 @@ const isActive = (path) => {
     return route.path === '/dashboard/settings'
   } else if (path === '/dashboard/empresas') {
     return route.path === '/dashboard/empresas'
+  } else if (path === '/dashboard/ventas-stream') {
+    return route.path === '/dashboard/ventas-stream'
   }
 
   // Fallback for any other routes
