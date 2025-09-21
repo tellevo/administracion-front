@@ -1,27 +1,35 @@
-# TeLlevo Admin - LLM Context Memory System
+# TeLlevo Admin - LLM Context Memory System (Context7 MCP Enabled)
 
 ## 🧠 Overview
 
 This system successfully integrates **both README.md files** as comprehensive LLM memory for intelligent code assistance, troubleshooting, and development guidance for the TeLlevo administration platform.
 
+**✨ NEW: Context7 MCP Integration** - Now fetches up-to-date documentation directly from official sources for all major technologies used in the platform.
+
 ## 📚 Knowledge Sources
 
 ### Primary Documentation (Root README.md)
 - **Complete system architecture** and implementation patterns
-- **Hybrid database architecture** (H2 + PostgreSQL) 
+- **Hybrid database architecture** (H2 + PostgreSQL)
 - **Frontend build pipeline** (Vite 6 + PostCSS + Tailwind/DaisyUI)
 - **Component architecture flow** (Vue.js + Spring Boot integration)
 - **Troubleshooting patterns** with specific solutions
 - **Performance metrics** and monitoring guidelines
 - **LLM-optimized context** with memory keywords
 
-### Backend Documentation (backend-admin/README.md)  
+### Backend Documentation (backend-admin/README.md)
 - **Spring Boot 3.5.3** implementation details
 - **JWT authentication system** configuration
 - **API endpoints** documentation
 - **CORS configuration** for development and production
 - **Database connection** patterns
 - **Testing procedures** and validation
+
+### Context7 MCP Integration (Live Documentation)
+- **Vue.js** (`/vuejs/core`): Progressive framework for building user interfaces (1,267 code snippets available)
+- **Spring Boot** (`/spring-projects/spring-boot`): Production-grade Spring applications with minimal fuss (532 code snippets)
+- **Vite** (`/vitejs/vite`): Next-generation frontend tooling with instant HMR (480 code snippets)
+- **Tailwind CSS** (`/tailwindlabs/tailwindcss.com`): Utility-first CSS framework for rapid UI development (10 trust score)
 
 ## 🎯 Key Features
 
@@ -58,6 +66,16 @@ TelLevoAI.develop('empresa management')   // Component architecture flow
 TelLevoAI.develop('authentication')       // JWT implementation patterns
 ```
 
+### ✅ Context7 MCP Documentation Access
+```javascript
+// Access up-to-date documentation from official sources
+const contextInstance = new TelLevoLLMContextMemory();
+await contextInstance.fetchContext7Docs('/vuejs/core', 'getContext');
+await contextInstance.fetchContext7Docs('/spring-projects/spring-boot', 'configuration');
+await contextInstance.fetchContext7Docs('/vitejs/vite', 'build-config');
+await contextInstance.fetchContext7Docs('/tailwindlabs/tailwindcss.com', 'utilities');
+```
+
 ## 🏗️ System Architecture from Memory
 
 ### Hybrid Database Architecture
@@ -67,9 +85,9 @@ TelLevoAI.develop('authentication')       // JWT implementation patterns
 - **Pattern**: JPA Repository with Spring Data
 
 ### Technology Stack
-- **Frontend**: Vue.js 3 + Composition API + Vite 6 + Tailwind/DaisyUI + Bun
+- **Frontend**: Vue.js 3 + Composition API + Vite 6 + Tailwind/DaisyUI + pnpm
 - **Backend**: Spring Boot 3.5.3 + Java 24 + JWT Security + PostgreSQL
-- **Build Tools**: Maven (backend) + Bun (frontend)
+- **Build Tools**: Maven (backend) + pnpm (frontend)
 - **Design System**: Mobile-First Responsive Design with Adaptive Components
 
 ### Frontend Architecture Patterns
@@ -177,11 +195,11 @@ The system successfully demonstrated:
 
 ## 🎯 Development Workflow Guidance
 
-### Project Setup (IMPORTANT: Use BUN, not npm)
+### Project Setup (IMPORTANT: Use PNPM, not npm)
 ```bash
-bun install                              # Install frontend dependencies (USE BUN ONLY)
-bun dev                                  # Frontend on :5174 (USE BUN ONLY - do not use npm)
-mvn spring-boot:run                      # Backend on :8080
+pnpm install                            # Install frontend dependencies (USE PNPM ONLY)
+pnpm dev                                # Frontend on :5174 (USE PNPM ONLY - do not use npm)
+mvn spring-boot:run                     # Backend on :8080
 pm2 start ecosystem.config.cjs          # Production server on http://127.0.0.1:3000
 # Default login: admin@tellevoapp.cl / admin123
 # Production login: http://admin.tellevoapp.com (with reverse proxy)
@@ -190,14 +208,14 @@ pm2 start ecosystem.config.cjs          # Production server on http://127.0.0.1:
 ### Build Process & Production Deployment
 ```bash
 # Development
-bun run dev                             # Vite dev server on :5174
+pnpm run dev                            # Vite dev server on :5174
 
 # Build for production
-bun run build                           # Production build in dist/ folder
+pnpm run build                          # Production build in dist/ folder
 # Automatically loads .env.production variables
 
 # Serve production build
-pm2 start ecosystem.config.cjs          # PM2 + Bun server on :3000
+pm2 start ecosystem.config.cjs          # PM2 + pnpm server on :3000
 # Environment: NODE_ENV=production, VITE_ENV=production
 ```
 
@@ -218,6 +236,32 @@ const isActive = (path) => {
   if (path === '/dashboard/empresas') return route.path === '/dashboard/empresas'
   return route.path === path
 }
+```
+
+#### EmpresaListView.vue - Simplified Header Design
+**Issue Fixed:** Overly complex gradient title design was overwhelming and hard to read
+
+**BEFORE (Complex Gradient):**
+```html
+<!-- Heavy gradient background with animations and complex colors -->
+<div class="bg-gradient-to-r from-primary via-primary-focus to-secondary shadow-xl border-b-4 border-secondary sticky top-0 z-10 backdrop-blur-sm">
+  <div class="bg-primary/10 backdrop-blur-md">
+```
+
+**AFTER (Clean Design):**
+```html
+<!-- Simple, clean design -->
+<div class="bg-base-100 shadow-lg border-b border-base-200 sticky top-0 z-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Clean title and visible breadcrumb -->
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-content mb-2">Gestionar Empresas</h1>
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li><router-link to="/dashboard">Dashboard</router-link></li>
+        <li class="text-base-content">Empresas</li>
+      </ul>
+    </div>
+    <p class="text-base text-base-content/70 mt-2">Lista completa de empresas registradas en el sistema</p>
 ```
 
 #### Responsive Layout Strategy

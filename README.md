@@ -17,7 +17,7 @@
 
 ### 🏗️ System Architecture Overview
 **ARCHITECTURE_TYPE**: JPA Repository Architecture (Full PostgreSQL Migration)
-**FRONTEND_STACK**: Vue.js 3 + Composition API + Vite 6 + Tailwind/DaisyUI + Bun
+**FRONTEND_STACK**: Vue.js 3 + Composition API + Vite 6 + Tailwind/DaisyUI + pnpm
 **DESIGN_SYSTEM**: Mobile-First Responsive Design + Adaptive Components
 **BACKEND_STACK**: Spring Boot 3.x + JWT Security + PostgreSQL Database + JPA
 **KEY_FEATURES**: Real-time Logo Preview, Company CRUD Operations, Reactive Forms, JWT Authentication
@@ -44,22 +44,22 @@ theme: {
 ### 🚀 Quick Start
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Development server
-bun dev
+pnpm dev
 
 # Production build
-bun run build
+pnpm run build
 
 # Preview production build
-bun run preview
+pnpm run preview
 
 # Type checking
-bun run typecheck
+pnpm run typecheck
 
 # Clean build files
-bun run clean
+pnpm run clean
 ```
 
 ### 💅 Styling Guidelines
@@ -1108,7 +1108,7 @@ module.exports = {
 Operational Guidance
 - Verified successful builds with:
   - Node: npx vite build
-  - Bun: bun run build
+  - pnpm: pnpm run build
 - Preview: bun run preview (default http://localhost:4173)
 - Browserslist warning is informational. To update:
   npx update-browserslist-db@latest
@@ -1118,7 +1118,7 @@ Guardrails (LLM & Human Editors)
 - Do not change build.cssMinify away from 'esbuild' unless you also validate minifier compatibility with Tailwind/DaisyUI.
 - Keep postcss.config.js as ESM (export default) as long as package.json has "type": "module".
 - Do not import DaisyUI internals (e.g., 'daisyui/src/theming/themes'); define themes directly in tailwind.config.js.
-- Ensure Node >= 18 if using Node to build (Vite 6 requires a modern runtime). Bun builds are also supported.
+- Ensure Node >= 18 if using Node to build (Vite 6 requires a modern runtime).
 
 LLM Memory Tags
 - MEMORY_KEYWORD: TELLEVO_VITE6_CSS_PIPELINE
@@ -1128,7 +1128,7 @@ LLM Memory Tags
   2) Confirm build.cssMinify: 'esbuild'
   3) Ensure postcss.config.js uses export default
   4) Verify no DaisyUI internal imports in Tailwind config
-  5) Re-run: npx vite build and bun run build
+  5) Re-run: npx vite build
 
 ### 🚨 Critical Issues & Quick Fixes
 
@@ -1182,7 +1182,7 @@ RESULT: Nginx properly proxies API requests to backend
 VITE_API_URL=/api  // ← FIXED: Use relative path for nginx proxying
 
 Build & Deploy:
-bun run build  // Creates updated dist/ with relative API paths
+pnpm run build  // Creates updated dist/ with relative API paths
 # Deploy dist/ to server and update nginx config
 ```
 

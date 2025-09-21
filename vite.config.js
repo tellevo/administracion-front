@@ -3,9 +3,15 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
 export default defineConfig(({ command, mode }) => {
-  // Load env file based on `mode`
-  const env = loadEnv(mode, process.cwd())
-  
+  // Load env file based on `mode` in the `envDir` directory.
+  const env = loadEnv(mode, process.cwd(), '')
+
+  // Log the loaded environment for debugging
+  console.log(`[Vite Build] Mode: ${mode}, Command: ${command}`)
+  console.log(`[Vite Build] PROD: ${mode === 'production' || env.PROD === 'true'}`)
+  console.log(`[Vite Build] VITE_ENV: ${env.VITE_ENV}`)
+  console.log(`[Vite Build] VITE_BACKEND_HOST: ${env.VITE_BACKEND_HOST}`)
+
   return {
     plugins: [vue()],
     css: {

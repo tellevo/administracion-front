@@ -32,24 +32,76 @@ class VentasStreamService {
    * Generate WebSocket URL based on current location
    */
   getWebSocketUrl() {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    // DEBUG: Log environment variables for troubleshooting
+    console.log('[WebSocket Config] Environment:', {
+      PROD: import.meta.env.PROD,
+      DEV: import.meta.env.DEV,
+      VITE_BACKEND_HOST: import.meta.env.VITE_BACKEND_HOST,
+      VITE_BACKEND_PORT: import.meta.env.VITE_BACKEND_PORT,
+      VITE_ENV: import.meta.env.VITE_ENV,
+      currentHostname: window.location.hostname,
+      currentHost: window.location.host
+    })
 
-    // Use environment variables for backend connection, fallback to same host
-    const backendHost = import.meta.env.VITE_BACKEND_HOST || window.location.hostname
-    const backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
+    // Determine backend host/port based on environment detection
+    let backendHost, backendPort, useCustomBackend
 
-    // In development, connect to configured backend host/port
-    // In production, use environment variables or same host (proxy configuration)
-    if (import.meta.env.DEV) {
-      return `${protocol}//${backendHost}:${backendPort}/ws/ventas`
-    } else {
-      if (import.meta.env.VITE_BACKEND_HOST && import.meta.env.VITE_BACKEND_HOST !== window.location.hostname) {
-        // Custom backend host configured
-        return `${protocol}//${backendHost}:${backendPort}/ws/ventas`
-      } else {
-        // Same host, no port (typical proxy setup)
-        return `${protocol}//${window.location.host}/ws/ventas`
+    // If explicitly set in environment, use it
+    if (import.meta.env.VITE_BACKEND_HOST) {
+      backendHost = import.meta.env.VITE_BACKEND_HOST
+      backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
+      useCustomBackend = true
+    }
+    // Otherwise, detect based on current hostname and assume backend is on same server
+    else {
+      const currentHost = window.location.hostname
+
+      // For production domains, assume backend is on same host:port
+      if (currentHost === 'admin.tellevoapp.com') {
+        backendHost = 'admin.tellevoapp.com'
+        backendPort = 8080
+        useCustomBackend = true
       }
+      // For localhost development, use localhost
+      else if (currentHost === 'localhost' || currentHost === '127.0.0.1' || currentHost.startsWith('192.168.')) {
+        backendHost = 'localhost'
+        backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
+        useCustomBackend = true
+      }
+      // For other domains, assume backend is on same host (proxy setup)
+      else {
+        backendHost = currentHost
+        backendPort = import.meta.env.VITE_BACKEND_PORT || (window.location.protocol === 'https:' ? 443 : 80)
+        useCustomBackend = false // Use relative URL for same-domain proxy
+      }
+    }
+
+    // For localhost backends, always use WS:// protocol (backend likely runs on HTTP)
+    // For other backends, match the frontend protocol (WS:// for HTTP, WSS:// for HTTPS)
+    const useSecure = backendHost !== 'localhost' && backendHost !== '127.0.0.1' && window.location.protocol === 'https:'
+    const protocol = useSecure ? 'wss:' : 'ws:'
+
+    const resultUrl = useCustomBackend ? `${protocol}//${backendHost}:${backendPort}/ws/ventas` : `${protocol}//${window.location.host}/ws/ventas`
+
+    console.log('[WebSocket Config] Decided:', {
+      backendHost,
+      backendPort,
+      useCustomBackend,
+      useSecure,
+      resultUrl
+    })
+
+    // In development or with custom backend, use backend environment variables
+    if (import.meta.env.DEV || useCustomBackend) {
+      // Use environment variables when available
+      const url = `${protocol}//${backendHost}:${backendPort}/ws/ventas`
+      console.log('[WebSocket Config] FINAL URL:', url)
+      return url
+    } else {
+      // Same host, no port (typical proxy setup for same-domain deployments)
+      const url = `${protocol}//${window.location.host}/ws/ventas`
+      console.log('[WebSocket Config] FINAL URL (same host):', url)
+      return url
     }
   }
 

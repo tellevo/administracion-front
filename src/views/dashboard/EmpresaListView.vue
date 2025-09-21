@@ -1,31 +1,33 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-base-100 to-base-200/30">
-    <!-- Header - Mobile Optimized -->
-    <div class="bg-base-100 shadow-sm border-b border-base-200 sticky top-0 z-10">
+    <!-- Header - Simple Clean Design -->
+    <div class="bg-base-100 shadow-lg border-b border-base-200 sticky top-0 z-10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center justify-between flex-wrap gap-4">
           <div class="flex-1 min-w-0">
-            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content mb-1 truncate">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-content mb-2">
               Gestionar Empresas
             </h1>
-            <p class="text-sm text-base-content/70">
-              Lista completa de empresas registradas
-            </p>
-          </div>
 
-          <!-- Mobile Menu Button -->
-          <div class="flex items-center gap-3">
-            <!-- Breadcrumb (hidden on mobile) -->
-            <div class="hidden md:block text-sm breadcrumbs">
+            <!-- Breadcrumb - Now clearly visible -->
+            <div class="text-sm breadcrumbs">
               <ul>
                 <li>
                   <router-link to="/dashboard" class="text-base-content/60 hover:text-primary transition-colors">
                     Dashboard
                   </router-link>
                 </li>
-                <li class="text-base-content/60">Empresas</li>
+                <li class="text-base-content">Empresas</li>
               </ul>
             </div>
+
+            <p class="text-base text-base-content/70 mt-2">
+              Lista completa de empresas registradas en el sistema
+            </p>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="flex items-center gap-3">
 
             <!-- Mobile Refresh Button -->
             <button

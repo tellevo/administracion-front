@@ -1,6 +1,9 @@
 #!/bin/bash
-bun clean
-bun install
-bun run build
-tar -acvf adm.tar dist
+rm -rf dist/
+#rm -rf node_modules/.vite
+pnpm clean
+pnpm install
+pnpm run build
+tar -acvf adm.tar dist/
 scp -i ~/.ssh/id_hsg adm.tar root@srv962541.hstgr.cloud:~/administracion/
+scp -i ~/.ssh/id_hsg .env.production root@srv962541.hstgr.cloud:~/administracion/
