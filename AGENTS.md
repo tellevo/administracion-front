@@ -5,8 +5,10 @@
 ### Frontend (Vue.js + Vite)
 - `pnpm dev`: Start development server
 - `pnpm build`: Build for production
+- `pnpm build:clean`: Clean and build
 - `pnpm typecheck`: Run TypeScript checks
 - `pnpm preview`: Preview production build
+- `pnpm clean`: Clean dist and cache
 
 ### Backend (Spring Boot + Maven)
 - `mvn clean compile`: Clean and compile
@@ -32,4 +34,4 @@
 - Error Handling: Try-catch in async functions, user-friendly messages
 
 ## Memory Rules
-See .github/copilot-instructions.md for LLM context, business rules, and Byterover tool workflows.
+See .github/copilot-instructions.md for LLM context, business rules, and Byterover tool workflows. Always reference README.md for system architecture and use Byterover tools for knowledge management.
