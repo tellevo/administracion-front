@@ -46,12 +46,17 @@ class VentasStreamService {
     // Determine backend host/port based on environment detection
     let backendHost, backendPort, useCustomBackend
 
-    // If explicitly set in environment, use it
-    if (import.meta.env.VITE_BACKEND_HOST) {
-      backendHost = import.meta.env.VITE_BACKEND_HOST
-      backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
-      useCustomBackend = true
-    }
+     // If explicitly set in environment, use it
+     if (import.meta.env.VITE_BACKEND_HOST) {
+       backendHost = import.meta.env.VITE_BACKEND_HOST
+       backendPort = import.meta.env.VITE_BACKEND_PORT || 8080
+       useCustomBackend = true
+
+       // For production domains, use nginx proxy instead of custom backend
+       if (backendHost === 'admin.tellevoapp.com' || backendHost.includes('tellevoapp.com')) {
+         useCustomBackend = false
+       }
+     }
     // Otherwise, detect based on current hostname and assume backend is on same server
     else {
       const currentHost = window.location.hostname
