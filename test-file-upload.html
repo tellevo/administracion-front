@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test File Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        .upload-area.dragover { border-color: #007bff; background-color: #f8f9fa; }
+        .file-info { margin-top: 10px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Test File Upload Functionality</h1>
+
+    <div class="upload-area" id="uploadArea">
+        <p>Drag and drop a file here or click to select</p>
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,image/svg+xml" style="display: none;">
+    </div>
+
+    <div id="fileInfo" class="file-info" style="display: none;">
+        <h3>Selected File:</h3>
+        <p id="fileName"></p>
+        <p id="fileSize"></p>
+        <p id="fileType"></p>
+        <img id="preview" style="max-width: 200px; max-height: 200px; display: none;">
+    </div>
+
+    <div id="validation" style="display: none;">
+        <p id="validationMessage"></p>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const validation = document.getElementById('validation');
+
+        // Click to select file
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // File selection
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // Validate file
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+
+            let isValid = true;
+            let message = '';
+
+            if (file.size > maxSize) {
+                isValid = false;
+                message = 'File size exceeds 5MB limit';
+            } else if (!allowedTypes.includes(file.type)) {
+                isValid = false;
+                message = 'File type not allowed. Only PNG, JPG, and SVG files are accepted';
+            } else {
+                message = 'File is valid!';
+            }
+
+            // Display file info
+            document.getElementById('fileName').textContent = `Name: ${file.name}`;
+            document.getElementById('fileSize').textContent = `Size: ${(file.size / 1024 / 1024).toFixed(2)} MB`;
+            document.getElementById('fileType').textContent = `Type: ${file.type}`;
+
+            // Show preview for images
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            fileInfo.style.display = 'block';
+
+            // Show validation
+            const validationMessage = document.getElementById('validationMessage');
+            validationMessage.textContent = message;
+            validationMessage.className = isValid ? 'success' : 'error';
+            validation.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -40,7 +40,17 @@ export const api = {
     get: (id) => apiClient.get(`/empresas/${id}`),
     create: (data) => apiClient.post('/empresas', data),
     update: (id, data) => apiClient.put(`/empresas/${id}`, data),
-    delete: (id) => apiClient.delete(`/empresas/${id}`)
+    delete: (id) => apiClient.delete(`/empresas/${id}`),
+    // New file upload endpoints
+    createWithUpload: (formData) => apiClient.post('/empresas/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    updateWithUpload: (id, formData) => apiClient.put(`/empresas/${id}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    uploadLogo: (id, formData) => apiClient.post(`/empresas/${id}/logo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
   },
   // Optional: registration endpoint if backend supports it later
   register: (data) => apiClient.post('/register', data)

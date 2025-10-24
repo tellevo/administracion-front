@@ -217,10 +217,125 @@
                 <code class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
                   https://cdn.worldvectorlogo.com/logos/universidad-catolica.svg
                 </code>
-              </div>
-            </div>
+               </div>
+             </div>
 
-            <!-- Submit Button -->
+             <!-- File Upload Section -->
+             <div class="form-control group">
+               <label class="label mb-3">
+                 <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
+                   <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg mr-3 shadow-sm">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                     </svg>
+                   </div>
+                   O Subir Archivo de Logo
+                   <span class="text-gray-500 ml-2">(PNG, JPG, SVG - máx. 5MB)</span>
+                 </span>
+               </label>
+
+               <!-- File Upload Area -->
+               <div
+                 class="relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer"
+                 :class="{
+                   'border-green-300 bg-green-50': selectedFile && !errors.logoFile,
+                   'border-red-300 bg-red-50': errors.logoFile,
+                   'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50': !selectedFile && !isDragOver,
+                   'border-blue-400 bg-blue-50': isDragOver
+                 }"
+                 @dragover="handleDragOver"
+                 @dragleave="handleDragLeave"
+                 @drop="handleDrop"
+                 @click="$refs.fileInput.click()"
+               >
+                 <input
+                   ref="fileInput"
+                   type="file"
+                   class="hidden"
+                   accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                   @change="handleFileSelect"
+                 />
+
+                 <div class="p-8 text-center">
+                   <!-- No file selected -->
+                   <div v-if="!selectedFile" class="space-y-4">
+                     <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                       </svg>
+                     </div>
+                     <div>
+                       <p class="text-lg font-medium text-gray-700">
+                         Arrastra y suelta tu archivo aquí
+                       </p>
+                       <p class="text-sm text-gray-500 mt-1">
+                         o <span class="text-blue-500 font-medium">haz clic para seleccionar</span>
+                       </p>
+                     </div>
+                   </div>
+
+                   <!-- File selected -->
+                   <div v-else class="space-y-4">
+                     <!-- File Preview -->
+                     <div class="flex justify-center">
+                       <div class="relative group">
+                         <img
+                           v-if="filePreview"
+                           :src="filePreview"
+                           alt="File preview"
+                           class="h-20 w-20 object-contain rounded-lg border-2 border-gray-200"
+                         />
+                         <div v-else class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                           </svg>
+                         </div>
+                         <!-- Remove file button -->
+                         <button
+                           type="button"
+                           class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                           @click.stop="removeFile"
+                         >
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                           </svg>
+                         </button>
+                       </div>
+                     </div>
+
+                     <!-- File Info -->
+                     <div class="text-center">
+                       <p class="text-sm font-medium text-gray-700">{{ selectedFile.name }}</p>
+                       <p class="text-xs text-gray-500">
+                         {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB • {{ selectedFile.type }}
+                       </p>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+               <!-- File Upload Error -->
+               <label v-if="errors.logoFile" class="label">
+                 <span class="label-text-alt text-red-500 font-medium flex items-center">
+                   <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                   </svg>
+                   {{ errors.logoFile }}
+                 </span>
+               </label>
+
+               <!-- File Upload Success -->
+               <label v-if="selectedFile && !errors.logoFile" class="label">
+                 <span class="label-text-alt text-green-600 font-medium flex items-center">
+                   <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                   </svg>
+                   Archivo seleccionado correctamente
+                 </span>
+               </label>
+             </div>
+
+             <!-- Submit Button -->
             <div class="form-control pt-6">
               <button
                 type="submit"
@@ -303,14 +418,16 @@ const emit = defineEmits(['empresa-created', 'empresa-updated', 'empresa-error']
 const form = reactive({
   nombre: '',
   dominio: '',
-  logoUrl: ''
+  logoUrl: '',
+  logoFile: null
 })
 
 // Validation errors
 const errors = reactive({
   nombre: '',
   dominio: '',
-  logoUrl: ''
+  logoUrl: '',
+  logoFile: ''
 })
 
 // Logo validation states
@@ -318,6 +435,12 @@ const isValidSvgUrl = ref(false)
 const loadingImage = ref(false)
 const imageLoaded = ref(false)
 const imageError = ref(false)
+
+// File upload states
+const selectedFile = ref(null)
+const filePreview = ref('')
+const isDragOver = ref(false)
+const uploadProgress = ref(0)
 
 // Form states
 const isSubmitting = ref(false)
@@ -329,15 +452,15 @@ const dominioRegex = /^@[a-zA-Z0-9.-]+\.[a-z]{2,}$/
 
 // Computed properties
 const isFormValid = computed(() => {
+  const hasValidLogo = (form.logoUrl && !errors.logoUrl && isValidSvgUrl.value) ||
+                       (selectedFile.value && !errors.logoFile)
+
   return (
     form.nombre.trim() &&
     form.dominio &&
-    form.logoUrl &&
+    hasValidLogo &&
     !errors.nombre &&
-    !errors.dominio &&
-    !errors.logoUrl &&
-    isValidSvgUrl.value
-    // Removed: && imageLoaded.value - Allow submission with valid URL format even if image preview fails
+    !errors.dominio
   )
 })
 
@@ -448,6 +571,99 @@ const handleImageLoad = () => {
   errors.logoUrl = ''
 }
 
+// File handling methods
+const validateFile = (file) => {
+  if (!file) {
+    errors.logoFile = 'Debe seleccionar un archivo'
+    return false
+  }
+
+  // Check file size (5MB limit)
+  const maxSize = 5 * 1024 * 1024 // 5MB
+  if (file.size > maxSize) {
+    errors.logoFile = 'El archivo no puede superar los 5MB'
+    return false
+  }
+
+  // Check file type
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']
+  if (!allowedTypes.includes(file.type)) {
+    errors.logoFile = 'Solo se permiten archivos PNG, JPG o SVG'
+    return false
+  }
+
+  errors.logoFile = ''
+  return true
+}
+
+const handleFileSelect = (event) => {
+  const file = event.target.files[0]
+  if (file && validateFile(file)) {
+    selectedFile.value = file
+    createFilePreview(file)
+    // Clear URL when file is selected
+    form.logoUrl = ''
+    isValidSvgUrl.value = false
+    imageLoaded.value = false
+  }
+}
+
+const handleDragOver = (event) => {
+  event.preventDefault()
+  isDragOver.value = true
+}
+
+const handleDragLeave = (event) => {
+  event.preventDefault()
+  isDragOver.value = false
+}
+
+const handleDrop = (event) => {
+  event.preventDefault()
+  isDragOver.value = false
+
+  const files = event.dataTransfer.files
+  if (files.length > 0) {
+    const file = files[0]
+    if (validateFile(file)) {
+      selectedFile.value = file
+      createFilePreview(file)
+      // Clear URL when file is selected
+      form.logoUrl = ''
+      isValidSvgUrl.value = false
+      imageLoaded.value = false
+    }
+  }
+}
+
+const createFilePreview = (file) => {
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    filePreview.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+const removeFile = () => {
+  selectedFile.value = null
+  filePreview.value = ''
+  errors.logoFile = ''
+}
+
+const clearLogoSelection = () => {
+  // Clear file selection
+  selectedFile.value = null
+  filePreview.value = ''
+  errors.logoFile = ''
+
+  // Clear URL selection
+  form.logoUrl = ''
+  isValidSvgUrl.value = false
+  imageLoaded.value = false
+  imageError.value = false
+  errors.logoUrl = ''
+}
+
 // Submit form
 const submitForm = async () => {
   if (!isFormValid.value) {
@@ -457,39 +673,68 @@ const submitForm = async () => {
   isSubmitting.value = true
   successMessage.value = ''
   errorMessage.value = ''
+  uploadProgress.value = 0
 
   try {
-    const requestData = {
-      nombre: form.nombre.trim(),
-      dominio: form.dominio.trim(),
-      logoUrl: form.logoUrl.trim()
-    }
-
     let response
 
-    if (isEditMode.value && empresaId.value) {
-      // Update existing empresa
-      response = await api.empresas.update(empresaId.value, requestData)
-      successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
+    if (selectedFile.value) {
+      // Handle file upload
+      const formData = new FormData()
+      formData.append('nombre', form.nombre.trim())
+      formData.append('dominio', form.dominio.trim())
+      formData.append('logoFile', selectedFile.value)
 
-      // Emit update event
-      emit('empresa-updated', response.data)
+      if (isEditMode.value && empresaId.value) {
+        // Update existing empresa with file upload
+        response = await api.empresas.updateWithUpload(empresaId.value, formData)
+        successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
 
-      // Clear localStorage after edit
-      localStorage.removeItem('empresaToEdit')
+        // Emit update event
+        emit('empresa-updated', response.data)
 
-      // Navigate back to list (optional)
-      // router.push('/dashboard/empresas')
+        // Clear localStorage after edit
+        localStorage.removeItem('empresaToEdit')
+      } else {
+        // Create new empresa with file upload
+        response = await api.empresas.createWithUpload(formData)
+        successMessage.value = response.data.message || 'Empresa creada exitosamente'
+
+        // Emit create event
+        emit('empresa-created', response.data)
+
+        // Reset form after successful submission
+        resetForm()
+      }
     } else {
-      // Create new empresa
-      response = await api.empresas.create(requestData)
-      successMessage.value = response.data.message || 'Empresa creada exitosamente'
+      // Handle URL-based upload (existing functionality)
+      const requestData = {
+        nombre: form.nombre.trim(),
+        dominio: form.dominio.trim(),
+        logoUrl: form.logoUrl.trim()
+      }
 
-      // Emit create event
-      emit('empresa-created', response.data)
+      if (isEditMode.value && empresaId.value) {
+        // Update existing empresa
+        response = await api.empresas.update(empresaId.value, requestData)
+        successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
 
-      // Reset form after successful submission
-      resetForm()
+        // Emit update event
+        emit('empresa-updated', response.data)
+
+        // Clear localStorage after edit
+        localStorage.removeItem('empresaToEdit')
+      } else {
+        // Create new empresa
+        response = await api.empresas.create(requestData)
+        successMessage.value = response.data.message || 'Empresa creada exitosamente'
+
+        // Emit create event
+        emit('empresa-created', response.data)
+
+        // Reset form after successful submission
+        resetForm()
+      }
     }
 
   } catch (error) {
@@ -548,6 +793,12 @@ const resetForm = () => {
   loadingImage.value = false
   imageLoaded.value = false
   imageError.value = false
+
+  // Clear file-related data
+  selectedFile.value = null
+  filePreview.value = ''
+  isDragOver.value = false
+  uploadProgress.value = 0
 }
 
 // Watch for form changes to clear messages
