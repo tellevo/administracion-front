@@ -31,39 +31,7 @@ public class EmpresaController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    /**
-     * Create a new empresa
-     * @param request empresa data
-     * @return ResponseEntity with created empresa data
-     */
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> crearEmpresa(@Valid @RequestBody EmpresaRequest request) {
-        try {
-            logger.info("POST /api/empresas - Creating empresa with dominio: {}", request.getDominio());
 
-            EmpresaResponse response = empresaService.crearEmpresa(request);
-
-            logger.info("Empresa created successfully with ID: {}", response.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (IllegalArgumentException e) {
-            logger.warn("Business rule violation: {}", e.getMessage());
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
-        } catch (Exception e) {
-            logger.error("Unexpected error while creating empresa: {}", e.getMessage(), e);
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error interno del servidor al crear la empresa");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
-    }
 
     /**
      * Get all empresas
@@ -158,40 +126,7 @@ public class EmpresaController {
         }
     }
 
-    /**
-     * Update empresa by ID
-     * @param id empresa ID
-     * @param request updated empresa data
-     * @return ResponseEntity with updated empresa data
-     */
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizarEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaRequest request) {
-        try {
-            logger.info("PUT /api/empresas/{} - Updating empresa", id);
 
-            EmpresaResponse response = empresaService.actualizarEmpresa(id, request);
-
-            logger.info("Empresa updated successfully with ID: {}", id);
-            return ResponseEntity.ok(response);
-
-        } catch (IllegalArgumentException e) {
-            logger.warn("Business rule violation while updating empresa {}: {}", id, e.getMessage());
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
-        } catch (Exception e) {
-            logger.error("Unexpected error while updating empresa with ID {}: {}", id, e.getMessage(), e);
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error interno del servidor al actualizar la empresa");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
-    }
 
     /**
      * Delete empresa by ID
@@ -231,8 +166,7 @@ public class EmpresaController {
      * Create empresa with file upload
      * @param nombre empresa name
      * @param dominio empresa domain
-     * @param logoUrl logo URL (optional if file is provided)
-     * @param logoFile logo file (optional if URL is provided)
+     * @param logoFile logo file (required)
      * @return ResponseEntity with created empresa data
      */
     @PostMapping("/upload")
@@ -240,32 +174,14 @@ public class EmpresaController {
     public ResponseEntity<?> crearEmpresaConArchivo(
             @RequestParam("nombre") String nombre,
             @RequestParam("dominio") String dominio,
-            @RequestParam(value = "logoUrl", required = false) String logoUrl,
-            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) {
+            @RequestParam("logoFile") MultipartFile logoFile) {
 
         try {
             logger.info("POST /api/empresas/upload - Creating empresa with file upload: {}", dominio);
 
-            EmpresaUploadRequest request = new EmpresaUploadRequest(nombre, dominio, logoUrl, logoFile);
-
-            // Validate that at least one logo option is provided
-            if (!request.hasLogo()) {
-                Map<String, String> errorResponse = new HashMap<>();
-                errorResponse.put("message", "Debe proporcionar una URL de logo o un archivo de imagen");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-            }
+            EmpresaUploadRequest request = new EmpresaUploadRequest(nombre, dominio, logoFile);
 
             EmpresaResponse response = empresaService.crearEmpresaConArchivo(request);
-
-            // If file was uploaded, store it and update the empresa
-            if (request.hasLogoFile()) {
-                Long empresaId = response.getId();
-                String fileUrl = empresaService.storeEmpresaLogo(empresaId, logoFile);
-                response.setLogoUrl(fileUrl);
-
-                // Update the response with the file URL
-                response = empresaService.obtenerEmpresaPorId(empresaId);
-            }
 
             logger.info("Empresa created with file upload successfully with ID: {}", response.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -293,8 +209,7 @@ public class EmpresaController {
      * @param id empresa ID
      * @param nombre empresa name
      * @param dominio empresa domain
-     * @param logoUrl logo URL (optional if file is provided)
-     * @param logoFile logo file (optional if URL is provided)
+     * @param logoFile logo file (required)
      * @return ResponseEntity with updated empresa data
      */
     @PutMapping("/{id}/upload")
@@ -303,24 +218,14 @@ public class EmpresaController {
             @PathVariable Long id,
             @RequestParam("nombre") String nombre,
             @RequestParam("dominio") String dominio,
-            @RequestParam(value = "logoUrl", required = false) String logoUrl,
-            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) {
+            @RequestParam("logoFile") MultipartFile logoFile) {
 
         try {
             logger.info("PUT /api/empresas/{}/upload - Updating empresa with file upload", id);
 
-            EmpresaUploadRequest request = new EmpresaUploadRequest(nombre, dominio, logoUrl, logoFile);
+            EmpresaUploadRequest request = new EmpresaUploadRequest(nombre, dominio, logoFile);
 
             EmpresaResponse response = empresaService.actualizarEmpresaConArchivo(id, request);
-
-            // If file was uploaded, store it and update the empresa
-            if (request.hasLogoFile()) {
-                String fileUrl = empresaService.storeEmpresaLogo(id, logoFile);
-                response.setLogoUrl(fileUrl);
-
-                // Update the response with the file URL
-                response = empresaService.obtenerEmpresaPorId(id);
-            }
 
             logger.info("Empresa updated with file upload successfully with ID: {}", id);
             return ResponseEntity.ok(response);

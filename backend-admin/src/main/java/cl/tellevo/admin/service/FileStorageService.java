@@ -75,7 +75,7 @@ public class FileStorageService {
 
         try {
             String fileName = generateFileName(file, empresaId);
-            Path empresaDir = Paths.get(uploadDir, "empresas", empresaId.toString());
+            Path empresaDir = Paths.get(uploadDir);
 
             // Create empresa directory if it doesn't exist
             if (!Files.exists(empresaDir)) {
@@ -91,10 +91,9 @@ public class FileStorageService {
             Path targetLocation = empresaDir.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            String relativePath = "empresas/" + empresaId + "/" + fileName;
-            logger.info("File stored successfully: {}", relativePath);
+            logger.info("File stored successfully: {}", fileName);
 
-            return relativePath;
+            return fileName;
 
         } catch (IOException e) {
             logger.error("Could not store file for empresa {}: {}", empresaId, file.getOriginalFilename(), e);

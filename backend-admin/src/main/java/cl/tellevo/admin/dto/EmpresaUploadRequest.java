@@ -1,6 +1,7 @@
 package cl.tellevo.admin.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,17 +17,15 @@ public class EmpresaUploadRequest {
     @Size(max = 255, message = "El dominio no puede exceder 255 caracteres")
     private String dominio;
 
-    private String logoUrl;
-
+    @NotNull(message = "El archivo del logo es obligatorio")
     private MultipartFile logoFile;
 
     // Constructors
     public EmpresaUploadRequest() {}
 
-    public EmpresaUploadRequest(String nombre, String dominio, String logoUrl, MultipartFile logoFile) {
+    public EmpresaUploadRequest(String nombre, String dominio, MultipartFile logoFile) {
         this.nombre = nombre;
         this.dominio = dominio;
-        this.logoUrl = logoUrl;
         this.logoFile = logoFile;
     }
 
@@ -47,14 +46,6 @@ public class EmpresaUploadRequest {
         this.dominio = dominio;
     }
 
-    public String getLogoUrl() {
-        return logoUrl;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
     public MultipartFile getLogoFile() {
         return logoFile;
     }
@@ -64,16 +55,8 @@ public class EmpresaUploadRequest {
     }
 
     // Validation methods
-    public boolean hasLogoUrl() {
-        return logoUrl != null && !logoUrl.trim().isEmpty();
-    }
-
     public boolean hasLogoFile() {
         return logoFile != null && !logoFile.isEmpty();
-    }
-
-    public boolean hasLogo() {
-        return hasLogoUrl() || hasLogoFile();
     }
 
     @Override
@@ -81,7 +64,6 @@ public class EmpresaUploadRequest {
         return "EmpresaUploadRequest{" +
                 "nombre='" + nombre + '\'' +
                 ", dominio='" + dominio + '\'' +
-                ", logoUrl='" + logoUrl + '\'' +
                 ", hasLogoFile=" + hasLogoFile() +
                 '}';
     }

@@ -15,9 +15,6 @@ public class EmpresaRequest {
     @Size(max = 255, message = "El dominio no puede exceder 255 caracteres")
     private String dominio;
 
-    @NotBlank(message = "La URL del logo es obligatoria")
-    @Pattern(regexp = ".*\\.svg$", message = "La URL del logo debe terminar en .svg")
-    @Size(max = 500, message = "La URL del logo no puede exceder 500 caracteres")
     private String logoUrl;
 
     // Constructors
