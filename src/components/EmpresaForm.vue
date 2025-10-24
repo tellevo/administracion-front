@@ -99,128 +99,125 @@
               </label>
             </div>
 
-            <!-- Logo URL Field with Preview -->
-            <div class="form-control group">
-              <label class="label mb-3">
-                <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
-                  <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  URL del Logo
-                  <span class="text-red-500 ml-1">*</span>
-                </span>
-                <div class="badge badge-secondary badge-sm">
-                  Formato: .svg
-                </div>
-              </label>
-              <div class="relative">
-                <input
-                  v-model="form.logoUrl"
-                  type="url"
-                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl border-2 transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
-                  placeholder="https://ejemplo.com/logo.svg"
-                  :class="{
-                    'border-red-300 bg-red-50 focus:border-red-500': errors.logoUrl,
-                    'border-green-300 bg-green-50 focus:border-green-500': form.logoUrl && !errors.logoUrl && isValidSvgUrl
-                  }"
-                  @input="validateLogoUrl"
-                />
-                <div v-if="form.logoUrl && !errors.logoUrl && isValidSvgUrl && imageLoaded" class="absolute right-4 top-1/2 transform -translate-y-1/2">
-                  <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Error Messages -->
-              <label v-if="errors.logoUrl" class="label">
-                <span class="label-text-alt text-red-500 font-medium flex items-center">
-                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                  </svg>
-                  {{ errors.logoUrl }}
-                </span>
-              </label>
-              <label v-else-if="form.logoUrl && !isValidSvgUrl" class="label">
-                <span class="label-text-alt text-red-500 font-medium flex items-center">
-                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                  </svg>
-                  La URL debe terminar en .svg
-                </span>
-              </label>
 
-              <!-- Logo Preview Section -->
-              <div v-if="form.logoUrl && isValidSvgUrl" class="mt-6">
-                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
-                  <h4 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    Vista Previa del Logo
-                  </h4>
-                  
-                  <div class="flex flex-col items-center space-y-4">
-                    <!-- Loading State -->
-                    <div v-if="loadingImage" class="flex items-center space-x-3 py-8">
-                      <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                      <span class="text-gray-600 font-medium">Cargando imagen...</span>
+
+             <!-- File Upload Section -->
+             <div class="form-control group">
+                <label class="label mb-3">
+                  <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
+                    <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg mr-3 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
                     </div>
+                    Subir Archivo de Logo
+                    <span class="text-red-500 ml-1">*</span>
+                    <span class="text-gray-500 ml-2">(PNG, JPG, SVG - máx. 5MB)</span>
+                  </span>
+                </label>
 
-                    <!-- Logo Display -->
-                    <div v-else-if="imageLoaded" class="relative group">
-                      <div class="bg-white rounded-2xl p-6 shadow-lg border-2 border-gray-100 group-hover:shadow-xl transition-all duration-300">
-                        <img
-                          :src="form.logoUrl"
-                          alt="Logo preview"
-                          class="h-24 w-24 object-contain mx-auto rounded-lg"
-                          @error="handleImageError"
-                          @load="handleImageLoad"
-                        />
-                      </div>
-                      <div class="absolute -top-2 -right-2 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    </div>
+               <!-- File Upload Area -->
+               <div
+                 class="relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer"
+                 :class="{
+                   'border-green-300 bg-green-50': selectedFile && !errors.logoFile,
+                   'border-red-300 bg-red-50': errors.logoFile,
+                   'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50': !selectedFile && !isDragOver,
+                   'border-blue-400 bg-blue-50': isDragOver
+                 }"
+                 @dragover="handleDragOver"
+                 @dragleave="handleDragLeave"
+                 @drop="handleDrop"
+                 @click="$refs.fileInput.click()"
+               >
+                 <input
+                   ref="fileInput"
+                   type="file"
+                   class="hidden"
+                   accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                   @change="handleFileSelect"
+                 />
 
-                    <!-- Success Message -->
-                    <div v-if="imageLoaded" class="text-center bg-green-50 rounded-xl p-4 border border-green-200">
-                      <p class="text-green-700 font-semibold flex items-center justify-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Logo cargado correctamente
-                      </p>
-                      <p class="text-green-600 text-sm mt-1">
-                        El logo está listo para usar
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                 <div class="p-8 text-center">
+                   <!-- No file selected -->
+                   <div v-if="!selectedFile" class="space-y-4">
+                     <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                       </svg>
+                     </div>
+                     <div>
+                       <p class="text-lg font-medium text-gray-700">
+                         Arrastra y suelta tu archivo aquí
+                       </p>
+                       <p class="text-sm text-gray-500 mt-1">
+                         o <span class="text-blue-500 font-medium">haz clic para seleccionar</span>
+                       </p>
+                     </div>
+                   </div>
 
-              <!-- Examples -->
-              <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <p class="text-sm text-blue-700 font-medium mb-2 flex items-center">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  Ejemplo de URL válida:
-                </p>
-                <code class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                  https://cdn.worldvectorlogo.com/logos/universidad-catolica.svg
-                </code>
-              </div>
-            </div>
+                   <!-- File selected -->
+                   <div v-else class="space-y-4">
+                     <!-- File Preview -->
+                     <div class="flex justify-center">
+                       <div class="relative group">
+                         <img
+                           v-if="filePreview"
+                           :src="filePreview"
+                           alt="File preview"
+                           class="h-20 w-20 object-contain rounded-lg border-2 border-gray-200"
+                         />
+                         <div v-else class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                           </svg>
+                         </div>
+                         <!-- Remove file button -->
+                         <button
+                           type="button"
+                           class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                           @click.stop="removeFile"
+                         >
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                           </svg>
+                         </button>
+                       </div>
+                     </div>
 
-            <!-- Submit Button -->
+                     <!-- File Info -->
+                     <div class="text-center">
+                       <p class="text-sm font-medium text-gray-700">{{ selectedFile.name }}</p>
+                       <p class="text-xs text-gray-500">
+                         {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB • {{ selectedFile.type }}
+                       </p>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+               <!-- File Upload Error -->
+               <label v-if="errors.logoFile" class="label">
+                 <span class="label-text-alt text-red-500 font-medium flex items-center">
+                   <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                   </svg>
+                   {{ errors.logoFile }}
+                 </span>
+               </label>
+
+               <!-- File Upload Success -->
+               <label v-if="selectedFile && !errors.logoFile" class="label">
+                 <span class="label-text-alt text-green-600 font-medium flex items-center">
+                   <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                   </svg>
+                   Archivo seleccionado correctamente
+                 </span>
+               </label>
+             </div>
+
+             <!-- Submit Button -->
             <div class="form-control pt-6">
               <button
                 type="submit"
@@ -303,21 +300,23 @@ const emit = defineEmits(['empresa-created', 'empresa-updated', 'empresa-error']
 const form = reactive({
   nombre: '',
   dominio: '',
-  logoUrl: ''
+  logoFile: null
 })
 
 // Validation errors
 const errors = reactive({
   nombre: '',
   dominio: '',
-  logoUrl: ''
+  logoFile: ''
 })
 
-// Logo validation states
-const isValidSvgUrl = ref(false)
-const loadingImage = ref(false)
-const imageLoaded = ref(false)
-const imageError = ref(false)
+
+
+// File upload states
+const selectedFile = ref(null)
+const filePreview = ref('')
+const isDragOver = ref(false)
+const uploadProgress = ref(0)
 
 // Form states
 const isSubmitting = ref(false)
@@ -329,15 +328,14 @@ const dominioRegex = /^@[a-zA-Z0-9.-]+\.[a-z]{2,}$/
 
 // Computed properties
 const isFormValid = computed(() => {
+  const hasValidLogo = selectedFile.value && !errors.logoFile
+
   return (
     form.nombre.trim() &&
     form.dominio &&
-    form.logoUrl &&
+    hasValidLogo &&
     !errors.nombre &&
-    !errors.dominio &&
-    !errors.logoUrl &&
-    isValidSvgUrl.value
-    // Removed: && imageLoaded.value - Allow submission with valid URL format even if image preview fails
+    !errors.dominio
   )
 })
 
@@ -384,68 +382,84 @@ const validateField = (field) => {
   }
 }
 
-const validateLogoUrl = () => {
-  const url = form.logoUrl
 
-  // Basic URL validation
-  if (!url) {
-    errors.logoUrl = 'La URL del logo es obligatoria'
-    isValidSvgUrl.value = false
-    return
+
+// File handling methods
+const validateFile = (file) => {
+  if (!file) {
+    errors.logoFile = 'Debe seleccionar un archivo'
+    return false
   }
 
-  // Check if URL ends with .svg
-  if (!url.toLowerCase().endsWith('.svg')) {
-    errors.logoUrl = 'La URL debe terminar en .svg'
-    isValidSvgUrl.value = false
-    imageLoaded.value = false
-    imageError.value = false
-    return
+  // Check file size (5MB limit)
+  const maxSize = 5 * 1024 * 1024 // 5MB
+  if (file.size > maxSize) {
+    errors.logoFile = 'El archivo no puede superar los 5MB'
+    return false
   }
 
-  // URL is valid for .svg extension
-  errors.logoUrl = ''
-  isValidSvgUrl.value = true
+  // Check file type
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']
+  if (!allowedTypes.includes(file.type)) {
+    errors.logoFile = 'Solo se permiten archivos PNG, JPG o SVG'
+    return false
+  }
 
-  // Attempt to load the image
-  validateImage(url)
+  errors.logoFile = ''
+  return true
 }
 
-const validateImage = (url) => {
-  if (!url) return
-
-  loadingImage.value = true
-  imageLoaded.value = false
-  imageError.value = false
-
-  const img = new Image()
-
-  img.onload = () => {
-    loadingImage.value = false
-    imageLoaded.value = true
-    imageError.value = false
+const handleFileSelect = (event) => {
+  const file = event.target.files[0]
+  if (file && validateFile(file)) {
+    selectedFile.value = file
+    createFilePreview(file)
   }
-
-  img.onerror = () => {
-    loadingImage.value = false
-    imageLoaded.value = false
-    imageError.value = true
-    errors.logoUrl = 'No se pudo cargar la imagen desde esta URL'
-  }
-
-  img.src = url
 }
 
-const handleImageError = () => {
-  imageError.value = true
-  imageLoaded.value = false
-  errors.logoUrl = 'Error al cargar la imagen del logo'
+const handleDragOver = (event) => {
+  event.preventDefault()
+  isDragOver.value = true
 }
 
-const handleImageLoad = () => {
-  imageLoaded.value = true
-  imageError.value = false
-  errors.logoUrl = ''
+const handleDragLeave = (event) => {
+  event.preventDefault()
+  isDragOver.value = false
+}
+
+const handleDrop = (event) => {
+  event.preventDefault()
+  isDragOver.value = false
+
+  const files = event.dataTransfer.files
+  if (files.length > 0) {
+    const file = files[0]
+    if (validateFile(file)) {
+      selectedFile.value = file
+      createFilePreview(file)
+    }
+  }
+}
+
+const createFilePreview = (file) => {
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    filePreview.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+const removeFile = () => {
+  selectedFile.value = null
+  filePreview.value = ''
+  errors.logoFile = ''
+}
+
+const clearLogoSelection = () => {
+  // Clear file selection
+  selectedFile.value = null
+  filePreview.value = ''
+  errors.logoFile = ''
 }
 
 // Submit form
@@ -457,40 +471,38 @@ const submitForm = async () => {
   isSubmitting.value = true
   successMessage.value = ''
   errorMessage.value = ''
+  uploadProgress.value = 0
 
-  try {
-    const requestData = {
-      nombre: form.nombre.trim(),
-      dominio: form.dominio.trim(),
-      logoUrl: form.logoUrl.trim()
-    }
+    try {
+      let response
 
-    let response
+      // Handle file upload (required)
+      const formData = new FormData()
+      formData.append('nombre', form.nombre.trim())
+      formData.append('dominio', form.dominio.trim())
+      formData.append('logoFile', selectedFile.value)
 
-    if (isEditMode.value && empresaId.value) {
-      // Update existing empresa
-      response = await api.empresas.update(empresaId.value, requestData)
-      successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
+      if (isEditMode.value && empresaId.value) {
+        // Update existing empresa with file upload
+        response = await api.empresas.updateWithUpload(empresaId.value, formData)
+        successMessage.value = response.data.message || 'Empresa actualizada exitosamente'
 
-      // Emit update event
-      emit('empresa-updated', response.data)
+        // Emit update event
+        emit('empresa-updated', response.data)
 
-      // Clear localStorage after edit
-      localStorage.removeItem('empresaToEdit')
+        // Clear localStorage after edit
+        localStorage.removeItem('empresaToEdit')
+      } else {
+        // Create new empresa with file upload
+        response = await api.empresas.createWithUpload(formData)
+        successMessage.value = response.data.message || 'Empresa creada exitosamente'
 
-      // Navigate back to list (optional)
-      // router.push('/dashboard/empresas')
-    } else {
-      // Create new empresa
-      response = await api.empresas.create(requestData)
-      successMessage.value = response.data.message || 'Empresa creada exitosamente'
+        // Emit create event
+        emit('empresa-created', response.data)
 
-      // Emit create event
-      emit('empresa-created', response.data)
-
-      // Reset form after successful submission
-      resetForm()
-    }
+        // Reset form after successful submission
+        resetForm()
+      }
 
   } catch (error) {
     console.error('Error submitting empresa:', error)
@@ -538,16 +550,16 @@ const submitForm = async () => {
 const resetForm = () => {
   form.nombre = ''
   form.dominio = ''
-  form.logoUrl = ''
 
   Object.keys(errors).forEach(key => {
     errors[key] = ''
   })
 
-  isValidSvgUrl.value = false
-  loadingImage.value = false
-  imageLoaded.value = false
-  imageError.value = false
+  // Clear file-related data
+  selectedFile.value = null
+  filePreview.value = ''
+  isDragOver.value = false
+  uploadProgress.value = 0
 }
 
 // Watch for form changes to clear messages
@@ -560,20 +572,10 @@ watch(form, () => {
 if (props.empresa) {
   form.nombre = props.empresa.nombre || ''
   form.dominio = props.empresa.dominio || ''
-  form.logoUrl = props.empresa.logoUrl || ''
-
-  if (form.logoUrl) {
-    validateLogoUrl()
-  }
 } else if (localStorage.getItem('empresaToEdit')) {
   const storedEmpresa = JSON.parse(localStorage.getItem('empresaToEdit'))
   form.nombre = storedEmpresa.nombre || ''
   form.dominio = storedEmpresa.dominio || ''
-  form.logoUrl = storedEmpresa.logoUrl || ''
-
-  if (form.logoUrl) {
-    validateLogoUrl()
-  }
 }
 </script>
 

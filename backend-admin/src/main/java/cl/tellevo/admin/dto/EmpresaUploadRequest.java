@@ -1,10 +1,12 @@
 package cl.tellevo.admin.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
-public class EmpresaRequest {
+public class EmpresaUploadRequest {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 255, message = "El nombre no puede exceder 255 caracteres")
@@ -15,15 +17,16 @@ public class EmpresaRequest {
     @Size(max = 255, message = "El dominio no puede exceder 255 caracteres")
     private String dominio;
 
-    private String logoUrl;
+    @NotNull(message = "El archivo del logo es obligatorio")
+    private MultipartFile logoFile;
 
     // Constructors
-    public EmpresaRequest() {}
+    public EmpresaUploadRequest() {}
 
-    public EmpresaRequest(String nombre, String dominio, String logoUrl) {
+    public EmpresaUploadRequest(String nombre, String dominio, MultipartFile logoFile) {
         this.nombre = nombre;
         this.dominio = dominio;
-        this.logoUrl = logoUrl;
+        this.logoFile = logoFile;
     }
 
     // Getters and Setters
@@ -43,20 +46,25 @@ public class EmpresaRequest {
         this.dominio = dominio;
     }
 
-    public String getLogoUrl() {
-        return logoUrl;
+    public MultipartFile getLogoFile() {
+        return logoFile;
     }
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
+    public void setLogoFile(MultipartFile logoFile) {
+        this.logoFile = logoFile;
+    }
+
+    // Validation methods
+    public boolean hasLogoFile() {
+        return logoFile != null && !logoFile.isEmpty();
     }
 
     @Override
     public String toString() {
-        return "EmpresaRequest{" +
+        return "EmpresaUploadRequest{" +
                 "nombre='" + nombre + '\'' +
                 ", dominio='" + dominio + '\'' +
-                ", logoUrl='" + logoUrl + '\'' +
+                ", hasLogoFile=" + hasLogoFile() +
                 '}';
     }
 }

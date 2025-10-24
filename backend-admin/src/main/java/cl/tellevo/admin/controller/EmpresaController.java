@@ -2,7 +2,9 @@ package cl.tellevo.admin.controller;
 
 import cl.tellevo.admin.dto.EmpresaRequest;
 import cl.tellevo.admin.dto.EmpresaResponse;
+import cl.tellevo.admin.dto.EmpresaUploadRequest;
 import cl.tellevo.admin.service.EmpresaService;
+import cl.tellevo.admin.service.FileStorageService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,39 +28,10 @@ public class EmpresaController {
     @Autowired
     private EmpresaService empresaService;
 
-    /**
-     * Create a new empresa
-     * @param request empresa data
-     * @return ResponseEntity with created empresa data
-     */
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> crearEmpresa(@Valid @RequestBody EmpresaRequest request) {
-        try {
-            logger.info("POST /api/empresas - Creating empresa with dominio: {}", request.getDominio());
+    @Autowired
+    private FileStorageService fileStorageService;
 
-            EmpresaResponse response = empresaService.crearEmpresa(request);
 
-            logger.info("Empresa created successfully with ID: {}", response.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (IllegalArgumentException e) {
-            logger.warn("Business rule violation: {}", e.getMessage());
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
-        } catch (Exception e) {
-            logger.error("Unexpected error while creating empresa: {}", e.getMessage(), e);
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error interno del servidor al crear la empresa");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
-    }
 
     /**
      * Get all empresas
@@ -152,40 +126,7 @@ public class EmpresaController {
         }
     }
 
-    /**
-     * Update empresa by ID
-     * @param id empresa ID
-     * @param request updated empresa data
-     * @return ResponseEntity with updated empresa data
-     */
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizarEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaRequest request) {
-        try {
-            logger.info("PUT /api/empresas/{} - Updating empresa", id);
 
-            EmpresaResponse response = empresaService.actualizarEmpresa(id, request);
-
-            logger.info("Empresa updated successfully with ID: {}", id);
-            return ResponseEntity.ok(response);
-
-        } catch (IllegalArgumentException e) {
-            logger.warn("Business rule violation while updating empresa {}: {}", id, e.getMessage());
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
-        } catch (Exception e) {
-            logger.error("Unexpected error while updating empresa with ID {}: {}", id, e.getMessage(), e);
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error interno del servidor al actualizar la empresa");
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
-    }
 
     /**
      * Delete empresa by ID
@@ -216,6 +157,140 @@ public class EmpresaController {
 
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Error interno del servidor al eliminar la empresa");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * Create empresa with file upload
+     * @param nombre empresa name
+     * @param dominio empresa domain
+     * @param logoFile logo file (required)
+     * @return ResponseEntity with created empresa data
+     */
+    @PostMapping("/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> crearEmpresaConArchivo(
+            @RequestParam("nombre") String nombre,
+            @RequestParam("dominio") String dominio,
+            @RequestParam("logoFile") MultipartFile logoFile) {
+
+        try {
+            logger.info("POST /api/empresas/upload - Creating empresa with file upload: {}", dominio);
+
+            EmpresaUploadRequest request = new EmpresaUploadRequest(nombre, dominio, logoFile);
+
+            EmpresaResponse response = empresaService.crearEmpresaConArchivo(request);
+
+            logger.info("Empresa created with file upload successfully with ID: {}", response.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Business rule violation: {}", e.getMessage());
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        } catch (Exception e) {
+            logger.error("Unexpected error while creating empresa with file upload: {}", e.getMessage(), e);
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error interno del servidor al crear la empresa");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * Update empresa with file upload
+     * @param id empresa ID
+     * @param nombre empresa name
+     * @param dominio empresa domain
+     * @param logoFile logo file (required)
+     * @return ResponseEntity with updated empresa data
+     */
+    @PutMapping("/{id}/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarEmpresaConArchivo(
+            @PathVariable Long id,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("dominio") String dominio,
+            @RequestParam("logoFile") MultipartFile logoFile) {
+
+        try {
+            logger.info("PUT /api/empresas/{}/upload - Updating empresa with file upload", id);
+
+            EmpresaUploadRequest request = new EmpresaUploadRequest(nombre, dominio, logoFile);
+
+            EmpresaResponse response = empresaService.actualizarEmpresaConArchivo(id, request);
+
+            logger.info("Empresa updated with file upload successfully with ID: {}", id);
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Business rule violation while updating empresa {}: {}", id, e.getMessage());
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        } catch (Exception e) {
+            logger.error("Unexpected error while updating empresa with file upload {}: {}", id, e.getMessage(), e);
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error interno del servidor al actualizar la empresa");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    /**
+     * Upload logo for existing empresa
+     * @param id empresa ID
+     * @param logoFile logo file
+     * @return ResponseEntity with file upload response
+     */
+    @PostMapping("/{id}/logo")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> subirLogoEmpresa(
+            @PathVariable Long id,
+            @RequestParam("logoFile") MultipartFile logoFile) {
+
+        try {
+            logger.info("POST /api/empresas/{}/logo - Uploading logo for empresa", id);
+
+            if (logoFile == null || logoFile.isEmpty()) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "Debe proporcionar un archivo de imagen");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            String fileUrl = empresaService.storeEmpresaLogo(id, logoFile);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Logo subido exitosamente");
+            response.put("logoUrl", fileUrl);
+
+            logger.info("Logo uploaded successfully for empresa ID: {}", id);
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            logger.warn("Business rule violation while uploading logo for empresa {}: {}", id, e.getMessage());
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        } catch (Exception e) {
+            logger.error("Unexpected error while uploading logo for empresa {}: {}", id, e.getMessage(), e);
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error interno del servidor al subir el logo");
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }

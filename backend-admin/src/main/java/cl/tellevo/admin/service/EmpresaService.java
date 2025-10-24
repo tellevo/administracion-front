@@ -2,12 +2,15 @@ package cl.tellevo.admin.service;
 
 import cl.tellevo.admin.dto.EmpresaRequest;
 import cl.tellevo.admin.dto.EmpresaResponse;
+import cl.tellevo.admin.dto.EmpresaUploadRequest;
 import cl.tellevo.admin.entity.Empresa;
 import cl.tellevo.admin.repository.EmpresaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,48 +23,13 @@ public class EmpresaService {
     @Autowired
     private EmpresaRepository empresaRepository;
 
-    /**
-     * Create a new empresa
-     * @param request the empresa request data
-     * @return EmpresaResponse with created empresa data
-     */
-    public EmpresaResponse crearEmpresa(EmpresaRequest request) {
-        logger.info("Attempting to create empresa with dominio: {}", request.getDominio());
+    @Autowired
+    private FileStorageService fileStorageService;
 
-        // Check if dominio already exists
-        if (empresaRepository.existsByDominio(request.getDominio().trim())) {
-            logger.warn("Empresa with dominio {} already exists", request.getDominio());
-            throw new IllegalArgumentException("Ya existe una empresa con este dominio");
-        }
+    @Value("${app.images.url.path}")
+    private String imagesBaseUrl;
 
-        try {
-            Empresa empresa = new Empresa(
-                request.getNombre().trim(),
-                request.getDominio().trim(),
-                request.getLogoUrl().trim()
-            );
 
-            Empresa savedEmpresa = empresaRepository.save(empresa);
-            logger.info("Empresa created successfully with ID: {}", savedEmpresa.getId());
-
-            return new EmpresaResponse(
-                savedEmpresa.getId(),
-                savedEmpresa.getNombre(),
-                savedEmpresa.getCodigoPais(),
-                savedEmpresa.getDominio(),
-                savedEmpresa.getLogoUrl(),
-                "Empresa creada exitosamente"
-            );
-        } catch (Exception e) {
-            logger.error("Database error while creating empresa: {}", e.getMessage(), e);
-
-            if (e.getMessage().contains("duplicate key value") || e.getMessage().contains("constraint")) {
-                throw new IllegalArgumentException("Ya existe una empresa con este dominio");
-            }
-
-            throw new RuntimeException("Error al crear la empresa", e);
-        }
-    }
 
     /**
      * Get all empresas
@@ -133,55 +101,7 @@ public class EmpresaService {
         );
     }
 
-    /**
-     * Update empresa
-     * @param id the empresa ID
-     * @param request the updated empresa data
-     * @return EmpresaResponse with updated empresa data
-     */
-    public EmpresaResponse actualizarEmpresa(Long id, EmpresaRequest request) {
-        logger.info("Attempting to update empresa with ID: {}", id);
 
-        Empresa existingEmpresa = empresaRepository.findById(id)
-            .orElseThrow(() -> {
-                logger.warn("Empresa with ID {} not found for update", id);
-                return new IllegalArgumentException("Empresa no encontrada");
-            });
-
-        // Check if new dominio conflicts with existing empresas (excluding current one)
-        String newDominio = request.getDominio().trim();
-        if (!existingEmpresa.getDominio().equals(newDominio) &&
-            empresaRepository.existsByDominio(newDominio)) {
-            logger.warn("Empresa with dominio {} already exists", newDominio);
-            throw new IllegalArgumentException("Ya existe una empresa con este dominio");
-        }
-
-        try {
-            existingEmpresa.setNombre(request.getNombre().trim());
-            existingEmpresa.setDominio(newDominio);
-            existingEmpresa.setLogoUrl(request.getLogoUrl().trim());
-
-            Empresa updatedEmpresa = empresaRepository.save(existingEmpresa);
-            logger.info("Empresa updated successfully with ID: {}", id);
-
-            return new EmpresaResponse(
-                updatedEmpresa.getId(),
-                updatedEmpresa.getNombre(),
-                updatedEmpresa.getCodigoPais(),
-                updatedEmpresa.getDominio(),
-                updatedEmpresa.getLogoUrl(),
-                "Empresa actualizada exitosamente"
-            );
-        } catch (Exception e) {
-            logger.error("Database error while updating empresa with ID {}: {}", id, e.getMessage(), e);
-
-            if (e.getMessage().contains("duplicate key value") || e.getMessage().contains("constraint")) {
-                throw new IllegalArgumentException("Ya existe una empresa con este dominio");
-            }
-
-            throw new RuntimeException("Error al actualizar la empresa", e);
-        }
-    }
 
     /**
      * Delete empresa
@@ -198,6 +118,9 @@ public class EmpresaService {
             });
 
         try {
+            // Delete associated files first
+            fileStorageService.deleteEmpresaFiles(id);
+
             empresaRepository.deleteById(id);
             logger.info("Empresa deleted successfully with ID: {}", id);
             return new EmpresaResponse("Empresa eliminada exitosamente");
@@ -205,5 +128,120 @@ public class EmpresaService {
             logger.error("Database error while deleting empresa with ID {}: {}", id, e.getMessage(), e);
             throw new RuntimeException("Error al eliminar la empresa", e);
         }
+    }
+
+    /**
+     * Create empresa with file upload support
+     * @param request the empresa upload request data
+     * @return EmpresaResponse with created empresa data
+     */
+    public EmpresaResponse crearEmpresaConArchivo(EmpresaUploadRequest request) {
+        logger.info("Attempting to create empresa with file upload: {}", request.getDominio());
+
+        // Check if dominio already exists
+        if (empresaRepository.existsByDominio(request.getDominio().trim())) {
+            logger.warn("Empresa with dominio {} already exists", request.getDominio());
+            throw new IllegalArgumentException("Ya existe una empresa con este dominio");
+        }
+
+        try {
+            // Create empresa with placeholder logo URL, will be updated after file storage
+            Empresa empresa = new Empresa(
+                request.getNombre().trim(),
+                request.getDominio().trim(),
+                "file://placeholder" // Placeholder, will be updated after file upload
+            );
+
+            Empresa savedEmpresa = empresaRepository.save(empresa);
+            logger.info("Empresa created successfully with ID: {}", savedEmpresa.getId());
+
+            // Store the uploaded file and update the empresa
+            String fileUrl = storeEmpresaLogo(savedEmpresa.getId(), request.getLogoFile());
+
+            return new EmpresaResponse(
+                savedEmpresa.getId(),
+                savedEmpresa.getNombre(),
+                savedEmpresa.getCodigoPais(),
+                savedEmpresa.getDominio(),
+                fileUrl,
+                "Empresa creada exitosamente"
+            );
+        } catch (Exception e) {
+            logger.error("Database error while creating empresa: {}", e.getMessage(), e);
+            throw new RuntimeException("Error al crear la empresa", e);
+        }
+    }
+
+    /**
+     * Update empresa with file upload support
+     * @param id the empresa ID
+     * @param request the updated empresa data
+     * @return EmpresaResponse with updated empresa data
+     */
+    public EmpresaResponse actualizarEmpresaConArchivo(Long id, EmpresaUploadRequest request) {
+        logger.info("Attempting to update empresa with ID: {} and file upload", id);
+
+        Empresa existingEmpresa = empresaRepository.findById(id)
+            .orElseThrow(() -> {
+                logger.warn("Empresa with ID {} not found for update", id);
+                return new IllegalArgumentException("Empresa no encontrada");
+            });
+
+        // Check if new dominio conflicts with existing empresas (excluding current one)
+        String newDominio = request.getDominio().trim();
+        if (!existingEmpresa.getDominio().equals(newDominio) &&
+            empresaRepository.existsByDominio(newDominio)) {
+            logger.warn("Empresa with dominio {} already exists", newDominio);
+            throw new IllegalArgumentException("Ya existe una empresa con este dominio");
+        }
+
+        try {
+            // Store the uploaded file and update the empresa
+            String fileUrl = storeEmpresaLogo(id, request.getLogoFile());
+
+            existingEmpresa.setNombre(request.getNombre().trim());
+            existingEmpresa.setDominio(newDominio);
+            existingEmpresa.setLogoUrl(fileUrl);
+
+            Empresa updatedEmpresa = empresaRepository.save(existingEmpresa);
+            logger.info("Empresa updated successfully with ID: {}", id);
+
+            return new EmpresaResponse(
+                updatedEmpresa.getId(),
+                updatedEmpresa.getNombre(),
+                updatedEmpresa.getCodigoPais(),
+                updatedEmpresa.getDominio(),
+                fileUrl,
+                "Empresa actualizada exitosamente"
+            );
+        } catch (Exception e) {
+            logger.error("Database error while updating empresa with ID {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Error al actualizar la empresa", e);
+        }
+    }
+
+
+
+    /**
+     * Store uploaded file and update empresa logo URL
+     * @param empresaId the empresa ID
+     * @param file the uploaded file
+     * @return the file URL
+     */
+    public String storeEmpresaLogo(Long empresaId, MultipartFile file) {
+        logger.info("Storing logo file for empresa ID: {}", empresaId);
+
+        String relativePath = fileStorageService.storeFile(file, empresaId);
+        String fileUrl = imagesBaseUrl + relativePath;
+
+        // Update empresa with the file URL
+        Empresa empresa = empresaRepository.findById(empresaId)
+            .orElseThrow(() -> new IllegalArgumentException("Empresa no encontrada"));
+
+        empresa.setLogoUrl(fileUrl);
+        empresaRepository.save(empresa);
+
+        logger.info("Logo stored and empresa updated for ID: {}", empresaId);
+        return fileUrl;
     }
 }
