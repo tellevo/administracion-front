@@ -52,6 +52,9 @@ export const api = {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
   },
+  dashboard: {
+    overview: () => apiClient.get('/dashboard/overview')
+  },
   // Optional: registration endpoint if backend supports it later
   register: (data) => apiClient.post('/register', data)
 }

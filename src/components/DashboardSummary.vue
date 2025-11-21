@@ -138,7 +138,7 @@
   
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
+import { api } from '@/services/api' // Use authenticated API client
 import { Users, Car, Route, Leaf, HandCoins, TrendingUp, Building, BarChart3 } from 'lucide-vue-next'
 
 const cards = ref([])
@@ -193,7 +193,7 @@ const getTotalKmShared = () => {
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/api/dashboard/overview')
+    const { data } = await api.dashboard.overview()
     dashboardData.value = data
     
     cards.value = [

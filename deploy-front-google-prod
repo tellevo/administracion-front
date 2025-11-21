@@ -1,0 +1,8 @@
+#!/bin/bash
+rm -rf dist/
+rm -rf node_modules/.vite
+pnpm clean
+pnpm install
+pnpm run build
+tar -acvf adm.tar dist/
+gcopyprod adm.tar
