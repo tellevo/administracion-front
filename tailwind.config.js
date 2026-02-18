@@ -6,36 +6,29 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: '#1d4ed8', // Azul
-        secondary: '#4f46e5', // Índigo
-        accent: '#0ea5e9', // Celeste
-        neutral: '#3d4451', // Gris oscuro
-        'base-100': '#ffffff',
-        'base-200': '#f8fafc',
-        'base-300': '#f1f5f9',
-        info: '#3b82f6',
-        success: '#22c55e',
-        warning: '#f59e0b',
-        error: '#ef4444',
-      },
+      // Custom extensions can go here, but colors should be handled by DaisyUI themes
     },
   },
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
       {
-        light: {
+        dark: {
           primary: '#1d4ed8',
           secondary: '#4f46e5',
           accent: '#0ea5e9',
           neutral: '#3d4451',
-          'base-100': '#ffffff',
-          'base-200': '#f8fafc',
-          'base-300': '#f1f5f9',
+          'base-100': '#1f2937', // Darker background
+          'base-200': '#111827',
+          'base-300': '#374151',
+          info: '#3b82f6',
+          success: '#22c55e',
+          warning: '#f59e0b',
+          error: '#ef4444',
         },
       },
     ],
+    darkTheme: "dark",
     base: true,
     styled: true,
     utils: true,
