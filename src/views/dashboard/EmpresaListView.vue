@@ -63,8 +63,8 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center">
-            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
@@ -77,8 +77,8 @@
 
         <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center">
-            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="w-10 h-10 bg-success rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -91,8 +91,8 @@
 
         <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center">
-            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
             </div>
@@ -105,14 +105,14 @@
 
         <div class="bg-base-100 shadow-lg rounded-xl border border-base-200 p-4 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center">
-            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-accent-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
             <div>
               <p class="text-sm text-base-content/70">Crecimiento</p>
-              <p class="text-xl font-bold text-green-600">+{{ Math.floor(Math.random() * 20) + 5 }}%</p>
+              <p class="text-xl font-bold text-success">+{{ Math.floor(Math.random() * 20) + 5 }}%</p>
             </div>
           </div>
         </div>
@@ -129,7 +129,6 @@
                 <label class="absolute -top-2 left-4 bg-base-100 px-2 text-sm font-medium text-primary z-10 transition-all duration-200">
                   🔍 Buscar Empresas
                 </label>
-
                 <!-- Enhanced Search Input -->
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -206,9 +205,9 @@
                       </div>
 
                       <!-- Contextual Message -->
-                      <div class="text-sm text-blue-800 mb-3">
+                      <div class="text-sm text-base-content/80 mb-3">
                         <template v-if="showNoResultsHelp">
-                          <span class="font-medium">Intenta con:</span>
+                          <span class="font-medium text-info">Intenta con:</span>
                           <ul class="mt-2 space-y-1">
                             <li>• Nombre completo: "Universidad Católica"</li>
                             <li>• Parte del nombre: "universidad"</li>
@@ -218,11 +217,11 @@
                         </template>
                         <template v-else>
                           <p>Busca empresas por:
-                            <strong class="bg-blue-200 px-1 rounded">Nombre completo</strong>,
-                            <strong class="bg-blue-200 px-1 rounded">Parte del nombre</strong>,
-                            <strong class="bg-blue-200 px-1 rounded">Dominio (@dominio.cl)</strong>
+                            <strong class="bg-info/10 text-info px-1 rounded">Nombre completo</strong>,
+                            <strong class="bg-info/10 text-info px-1 rounded">Parte del nombre</strong>,
+                            <strong class="bg-info/10 text-info px-1 rounded">Dominio (@dominio.cl)</strong>
                           </p>
-                          <p class="mt-2 text-xs text-blue-600">💡 Presiona <kbd class="bg-blue-200 px-1 rounded text-xs mx-1">⌘K</kbd> para buscar rápido</p>
+                          <p class="mt-2 text-xs text-info">💡 Presiona <kbd class="bg-base-200 border border-base-300 px-1 rounded text-xs mx-1 text-base-content">⌘K</kbd> para buscar rápido</p>
                         </template>
                       </div>
 
@@ -231,7 +230,7 @@
                         <div class="flex space-x-2">
                           <button
                             @click="dismissSearchHelp"
-                            class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors duration-200"
+                            class="px-3 py-1 text-xs bg-info/10 text-info rounded-md hover:bg-info/20 transition-colors duration-200 border border-info/20"
                           >
                             Entendido
                           </button>
@@ -239,14 +238,14 @@
                           <button
                             v-if="!showNoResultsHelp"
                             @click="toggleSearchHelp"
-                            class="px-3 py-1 text-xs bg-white text-blue-600 border border-blue-200 rounded-md hover:bg-blue-50 transition-colors duration-200"
+                            class="px-3 py-1 text-xs bg-base-100 text-base-content/70 border border-base-300 rounded-md hover:bg-base-200 transition-colors duration-200"
                             :title="helpDisabled ? 'Habilitar ayuda' : 'Deshabilitar ayuda'"
                           >
                             {{ helpDisabled ? 'Mostrar más tarde' : 'No mostrar más' }}
                           </button>
                         </div>
 
-                        <div class="text-xs text-blue-500">
+                        <div class="text-xs text-info/70">
                           <span v-if="!showNoResultsHelp">{{ helpShowCount }}/3</span>
                         </div>
                       </div>
@@ -808,8 +807,8 @@ watch([searchTerm, filterStatus], () => {
 
 .table th {
   font-weight: 600;
-  background-color: #f8fafc;
-  color: inherit;
+  background-color: hsl(var(--b2) / 0.5);
+  color: hsl(var(--bc));
 }
 
 .table td {
@@ -825,19 +824,19 @@ watch([searchTerm, filterStatus], () => {
 
 /* Modal backdrop blur */
 .modal {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(0 0 0 / 0.5);
   backdrop-filter: blur(4px);
 }
 
 /* Enhanced badge styling */
 .badge-primary {
-  background-color: #1d4ed8;
-  color: white;
+  background-color: hsl(var(--p));
+  color: hsl(var(--pc));
 }
 
 .badge-error {
-  background-color: #ef4444;
-  color: white;
+  background-color: hsl(var(--er));
+  color: hsl(var(--erc));
 }
 
 /* Animation for loading states */

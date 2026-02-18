@@ -1,28 +1,28 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-base-200 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <div class="flex justify-center items-center space-x-3 mb-6">
-        <div class="bg-white p-3 rounded-full shadow-sm border border-gray-200">
+        <div class="bg-base-100 p-3 rounded-full shadow-sm border border-base-300">
           <img :src="logo" alt="TeLlevo" class="h-8 w-8">
         </div>
       </div>
-      <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900">
+      <h2 class="text-center text-3xl font-bold tracking-tight text-base-content">
         Iniciar Sesión
       </h2>
-      <p class="mt-2 text-center text-sm text-gray-600">
+      <p class="mt-2 text-center text-sm text-base-content/70">
         Accede a tu panel de administración
-        <span class="block mt-1 text-green-600 font-medium">TeLlevo - Movilidad Sostenible</span>
+        <span class="block mt-1 text-primary font-medium">TeLlevo - Movilidad Sostenible</span>
       </p>
     </div>
 
     <!-- Form -->
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border border-gray-200">
+      <div class="bg-base-100 py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 border border-base-300">
         <form @submit.prevent="login" class="space-y-6">
           <!-- Email Field -->
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="email" class="block text-sm font-medium text-base-content/80 mb-2">
               Correo Electrónico
             </label>
             <div class="relative">
@@ -32,7 +32,7 @@
                 type="email"
                 autocomplete="email"
                 required
-                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                class="input input-bordered w-full px-3 py-2 border-base-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors text-base-content bg-base-100"
                 placeholder="admin@empresa.com"
               />
             </div>
@@ -40,7 +40,7 @@
 
           <!-- Password Field -->
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="password" class="block text-sm font-medium text-base-content/80 mb-2">
               Contraseña
             </label>
             <div class="relative">
@@ -50,7 +50,7 @@
                 type="password"
                 autocomplete="current-password"
                 required
-                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                class="input input-bordered w-full px-3 py-2 border-base-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-colors text-base-content bg-base-100"
                 placeholder="••••••••••"
               />
             </div>
@@ -59,7 +59,7 @@
           <!-- Forgot Password -->
           <div class="flex items-center justify-between">
             <div class="text-sm">
-              <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+              <a href="#" class="font-medium text-primary hover:text-primary-focus transition-colors">
                 ¿Olvidaste tu contraseña?
               </a>
             </div>
@@ -70,13 +70,11 @@
             <button
               type="submit"
               :disabled="loading"
-              class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              class="btn btn-primary w-full flex justify-center py-2.5 px-4 text-sm font-medium rounded-md text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              <span v-if="loading" class="absolute left-0 inset-y-0 flex items-center pl-3">
-                <div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-              </span>
-              <span v-if="!loading" class="absolute left-0 inset-y-0 flex items-center pl-3">
-                <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400 transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <span v-if="loading" class="loading loading-spinner loading-sm mr-2"></span>
+              <span v-if="!loading" class="mr-2">
+                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
                 </svg>
               </span>
@@ -88,10 +86,10 @@
           <div class="mt-6">
             <div class="relative">
               <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-300" />
+                <div class="w-full border-t border-base-300" />
               </div>
               <div class="relative flex justify-center text-sm">
-                <span class="px-2 bg-white text-gray-500">¿Nuevo en TeLlevo?</span>
+                <span class="px-2 bg-base-100 text-base-content/60">¿Nuevo en TeLlevo?</span>
               </div>
             </div>
 
@@ -99,7 +97,7 @@
               <button
                 type="button"
                 @click="irARegistro"
-                class="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                class="btn btn-outline w-full flex justify-center py-2.5 px-4 rounded-md shadow-sm text-sm font-medium transition-colors hover:bg-base-200"
               >
                 Crear Cuenta Administrativa
               </button>
@@ -111,17 +109,17 @@
         <transition name="fade">
           <div v-if="mensaje" class="mt-6">
             <div :class="[
-              'rounded-md p-4 text-sm',
+              'rounded-md p-4 text-sm alert',
               esError 
-                ? 'bg-red-50 border border-red-200 text-red-800' 
-                : 'bg-green-50 border border-green-200 text-green-800'
+                ? 'alert-error' 
+                : 'alert-success'
             ]">
               <div class="flex">
                 <div class="flex-shrink-0">
-                  <svg v-if="esError" class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <svg v-if="esError" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
                   </svg>
-                  <svg v-else class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <svg v-else class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.407 9.864a.75.75 0 00-1.214.882l2.5 3.5a.75.75 0 001.214 0l4-5.5z" clip-rule="evenodd" />
                   </svg>
                 </div>
@@ -137,22 +135,16 @@
 
     <!-- Footer -->
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-        <div class="flex items-center justify-center space-x-2">
-          <svg class="h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.407 9.864a.75.75 0 00-1.214.882l2.5 3.5a.75.75 0 001.214 0l4-5.5z" clip-rule="evenodd" />
-          </svg>
-          <p class="text-sm text-green-700 font-medium">
-            Sistema seguro y certificado
-          </p>
-        </div>
-        <div class="mt-2 text-center">
-          <p class="text-xs text-green-600">
-            Hemos reducido <span class="font-semibold">1,245,678 kg</span> de CO₂ este mes
-          </p>
-          <div class="mt-2 bg-green-200 rounded-full h-2">
-            <div class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 78%"></div>
+      <div class="alert alert-success shadow-lg">
+        <div>
+          <svg class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <div>
+            <h3 class="font-bold">Sistema seguro y certificado</h3>
+            <div class="text-xs">Hemos reducido <span class="font-semibold">1,245,678 kg</span> de CO₂ este mes</div>
           </div>
+        </div>
+        <div class="flex-none">
+           <progress class="progress progress-primary w-20" value="70" max="100"></progress>
         </div>
       </div>
     </div>

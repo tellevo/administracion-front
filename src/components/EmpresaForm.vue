@@ -5,38 +5,38 @@
             <!-- Nombre Field -->
             <div class="form-control group">
               <label class="label mb-3">
-                <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
-                  <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="label-text text-lg font-semibold text-base-content flex items-center">
+                  <div class="inline-flex items-center justify-center w-8 h-8 bg-primary/20 rounded-lg mr-3 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
                   Nombre de la Empresa
-                  <span class="text-red-500 ml-1">*</span>
+                  <span class="text-error ml-1">*</span>
                 </span>
               </label>
               <div class="relative">
                 <input
                   v-model="form.nombre"
                   type="text"
-                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl border-2 transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
+                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl transition-all duration-300 focus:shadow-lg focus:shadow-primary/20 text-base-content bg-base-100"
                   placeholder="Ingrese el nombre de la empresa"
                   :class="{
-                    'border-red-300 bg-red-50 focus:border-red-500': errors.nombre,
-                    'border-green-300 bg-green-50 focus:border-green-500': form.nombre && !errors.nombre
+                    'input-error': errors.nombre,
+                    'input-success': form.nombre && !errors.nombre
                   }"
                   @input="validateField('nombre')"
                 />
                 <div v-if="form.nombre && !errors.nombre" class="absolute right-4 top-1/2 transform -translate-y-1/2">
-                  <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 bg-success rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-success-content" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                   </div>
                 </div>
               </div>
               <label v-if="errors.nombre" class="label">
-                <span class="label-text-alt text-red-500 font-medium flex items-center">
+                <span class="label-text-alt text-error font-medium flex items-center">
                   <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                   </svg>
@@ -48,41 +48,41 @@
             <!-- Dominio Field -->
             <div class="form-control group">
               <label class="label mb-3">
-                <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
-                  <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="label-text text-lg font-semibold text-base-content flex items-center">
+                  <div class="inline-flex items-center justify-center w-8 h-8 bg-secondary/20 rounded-lg mr-3 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
                     </svg>
                   </div>
                   Dominio de la Empresa
-                  <span class="text-red-500 ml-1">*</span>
+                  <span class="text-error ml-1">*</span>
                 </span>
-                <div class="badge badge-info badge-sm">
-                  Formato: @empresa.dominio (ej: @empresa.cl, @empresa.com)
+                <div class="badge badge-info badge-sm badge-outline">
+                  Formato: @empresa.dominio
                 </div>
               </label>
               <div class="relative">
                 <input
                   v-model="form.dominio"
                   type="text"
-                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl border-2 transition-all duration-300 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-500/20"
+                  class="input input-bordered w-full h-14 text-lg pl-5 pr-12 rounded-xl transition-all duration-300 focus:shadow-lg focus:shadow-secondary/20 text-base-content bg-base-100"
                   placeholder="Ej: @pucv.cl"
                   :class="{
-                    'border-red-300 bg-red-50 focus:border-red-500': errors.dominio,
-                    'border-green-300 bg-green-50 focus:border-green-500': form.dominio && !errors.dominio
+                    'input-error': errors.dominio,
+                    'input-success': form.dominio && !errors.dominio
                   }"
                   @input="validateField('dominio')"
                 />
                 <div v-if="form.dominio && !errors.dominio" class="absolute right-4 top-1/2 transform -translate-y-1/2">
-                  <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 bg-success rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-success-content" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                   </div>
                 </div>
               </div>
               <label v-if="errors.dominio" class="label">
-                <span class="label-text-alt text-red-500 font-medium flex items-center">
+                <span class="label-text-alt text-error font-medium flex items-center">
                   <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                   </svg>
@@ -90,8 +90,8 @@
                 </span>
               </label>
               <label v-else-if="form.dominio && !errors.dominio" class="label">
-                <span class="label-text-alt text-green-600 font-medium flex items-center">
-                  <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="label-text-alt text-success font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Formato válido
@@ -104,15 +104,15 @@
              <!-- File Upload Section -->
              <div class="form-control group">
                 <label class="label mb-3">
-                  <span class="label-text text-lg font-semibold text-gray-700 flex items-center">
-                    <div class="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg mr-3 shadow-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="label-text text-lg font-semibold text-base-content flex items-center">
+                    <div class="inline-flex items-center justify-center w-8 h-8 bg-accent/20 rounded-lg mr-3 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                     </div>
                     Subir Archivo de Logo
-                    <span class="text-red-500 ml-1">*</span>
-                    <span class="text-gray-500 ml-2">(PNG, JPG, SVG - máx. 5MB)</span>
+                    <span class="text-error ml-1">*</span>
+                    <span class="text-base-content/50 ml-2">(PNG, JPG, SVG - máx. 5MB)</span>
                   </span>
                 </label>
 
@@ -120,10 +120,10 @@
                <div
                  class="relative border-2 border-dashed rounded-xl transition-all duration-300 cursor-pointer"
                  :class="{
-                   'border-green-300 bg-green-50': selectedFile && !errors.logoFile,
-                   'border-red-300 bg-red-50': errors.logoFile,
-                   'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50': !selectedFile && !isDragOver,
-                   'border-blue-400 bg-blue-50': isDragOver
+                   'border-success bg-success/5': selectedFile && !errors.logoFile,
+                   'border-error bg-error/5': errors.logoFile,
+                   'border-base-300 bg-base-200 hover:border-primary hover:bg-base-300': !selectedFile && !isDragOver,
+                   'border-primary bg-primary/10': isDragOver
                  }"
                  @dragover="handleDragOver"
                  @dragleave="handleDragLeave"
@@ -141,17 +141,17 @@
                  <div class="p-8 text-center">
                    <!-- No file selected -->
                    <div v-if="!selectedFile" class="space-y-4">
-                     <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <div class="w-16 h-16 mx-auto bg-base-100 rounded-full flex items-center justify-center">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                        </svg>
                      </div>
                      <div>
-                       <p class="text-lg font-medium text-gray-700">
+                       <p class="text-lg font-medium text-base-content">
                          Arrastra y suelta tu archivo aquí
                        </p>
-                       <p class="text-sm text-gray-500 mt-1">
-                         o <span class="text-blue-500 font-medium">haz clic para seleccionar</span>
+                       <p class="text-sm text-base-content/60 mt-1">
+                         o <span class="text-primary font-medium">haz clic para seleccionar</span>
                        </p>
                      </div>
                    </div>
@@ -165,17 +165,17 @@
                            v-if="filePreview"
                            :src="filePreview"
                            alt="File preview"
-                           class="h-20 w-20 object-contain rounded-lg border-2 border-gray-200"
+                           class="h-20 w-20 object-contain rounded-lg border-2 border-base-200"
                          />
-                         <div v-else class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <div v-else class="w-20 h-20 bg-base-200 rounded-lg flex items-center justify-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                            </svg>
                          </div>
                          <!-- Remove file button -->
                          <button
                            type="button"
-                           class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                           class="absolute -top-2 -right-2 w-6 h-6 bg-error text-error-content rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
                            @click.stop="removeFile"
                          >
                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -187,8 +187,8 @@
 
                      <!-- File Info -->
                      <div class="text-center">
-                       <p class="text-sm font-medium text-gray-700">{{ selectedFile.name }}</p>
-                       <p class="text-xs text-gray-500">
+                       <p class="text-sm font-medium text-base-content">{{ selectedFile.name }}</p>
+                       <p class="text-xs text-base-content/60">
                          {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB • {{ selectedFile.type }}
                        </p>
                      </div>
@@ -198,7 +198,7 @@
 
                <!-- File Upload Error -->
                <label v-if="errors.logoFile" class="label">
-                 <span class="label-text-alt text-red-500 font-medium flex items-center">
+                 <span class="label-text-alt text-error font-medium flex items-center">
                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                    </svg>
@@ -208,8 +208,8 @@
 
                <!-- File Upload Success -->
                <label v-if="selectedFile && !errors.logoFile" class="label">
-                 <span class="label-text-alt text-green-600 font-medium flex items-center">
-                   <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <span class="label-text-alt text-success font-medium flex items-center">
+                   <svg class="w-4 h-4 mr-1 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                    </svg>
                    Archivo seleccionado correctamente
@@ -223,8 +223,8 @@
                 type="submit"
                 class="btn h-16 w-full text-lg font-semibold rounded-xl border-0 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 :class="{
-                  'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white': isFormValid && !isSubmitting,
-                  'bg-gray-300 text-gray-500 cursor-not-allowed': !isFormValid || isSubmitting
+                  'btn-primary text-white': isFormValid && !isSubmitting,
+                  'btn-disabled': !isFormValid || isSubmitting
                 }"
                 :disabled="!isFormValid || isSubmitting"
               >
@@ -241,18 +241,18 @@
             </div>
 
             <!-- Success Message -->
-            <div v-if="successMessage" class="alert bg-green-50 border-green-200 text-green-700 shadow-lg rounded-xl">
+            <div v-if="successMessage" class="alert alert-success shadow-lg rounded-xl">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div class="w-10 h-10 bg-success-content/10 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
                 <div class="ml-3">
-                  <h3 class="text-sm font-medium text-green-800">¡Operación Exitosa!</h3>
-                  <div class="mt-2 text-sm text-green-700">
+                  <h3 class="text-sm font-medium text-success-content">¡Operación Exitosa!</h3>
+                  <div class="mt-2 text-sm text-success-content/80">
                     <p>{{ successMessage }}</p>
                   </div>
                 </div>
@@ -260,18 +260,18 @@
             </div>
 
             <!-- Error Message -->
-            <div v-if="errorMessage" class="alert bg-red-50 border-red-200 text-red-700 shadow-lg rounded-xl">
+            <div v-if="errorMessage" class="alert alert-error shadow-lg rounded-xl">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div class="w-10 h-10 bg-error-content/10 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error-content" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
                 <div class="ml-3">
-                  <h3 class="text-sm font-medium text-red-800">Error en la Operación</h3>
-                  <div class="mt-2 text-sm text-red-700">
+                  <h3 class="text-sm font-medium text-error-content">Error en la Operación</h3>
+                  <div class="mt-2 text-sm text-error-content/80">
                     <p>{{ errorMessage }}</p>
                   </div>
                 </div>
@@ -612,8 +612,8 @@ if (props.empresa) {
 /* Custom focus states with enhanced glow */
 .input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 14px 0 rgba(59, 130, 246, 0.15);
+  border-color: hsl(var(--p));
+  box-shadow: 0 0 0 3px hsla(var(--p) / 0.1), 0 4px 14px 0 hsla(var(--p) / 0.15);
 }
 
 /* Enhanced button hover effects */
@@ -675,17 +675,17 @@ if (props.empresa) {
 }
 
 .min-h-screen::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: hsla(var(--bc) / 0.05);
   border-radius: 4px;
 }
 
 .min-h-screen::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  background: linear-gradient(135deg, hsl(var(--p)), hsl(var(--s)));
   border-radius: 4px;
 }
 
 .min-h-screen::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background: linear-gradient(135deg, hsl(var(--pf)), hsl(var(--sf)));
 }
 
 /* Enhanced input field styling */
@@ -695,7 +695,7 @@ if (props.empresa) {
 }
 
 .input-bordered:hover {
-  border-color: #93c5fd;
+  border-color: hsl(var(--p) / 0.5);
 }
 
 /* Badge enhancements */
@@ -706,7 +706,7 @@ if (props.empresa) {
 
 /* Form control group hover effects */
 .form-control.group:hover .label-text {
-  color: #374151;
+  color: hsl(var(--bc));
 }
 
 /* Enhanced card styling */
