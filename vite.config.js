@@ -25,9 +25,10 @@ export default defineConfig(({ command, mode }) => {
     server: {
       host: true,
       port: 5173,
+      allowedHosts: [ 'gonzalo-asus.taila386ce.ts.net' ],
       proxy: env.VITE_API_URL === '/api' ? {
         '/api': {
-          target: 'http://localhost:16080',
+          target: 'http://gonzalo-asus.taila386ce.ts.net:16080',
           changeOrigin: true,
           secure: false,
         },
